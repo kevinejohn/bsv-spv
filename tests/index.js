@@ -38,4 +38,6 @@ const dataDir = path.join(__dirname);
     ),
     122000
   );
+
+  console.log(spv.getHeader({ height: 123000 }));
 })();

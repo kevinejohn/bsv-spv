@@ -1,10 +1,11 @@
 const lmdb = require("node-lmdb");
 const bsv = require("bsv-minimal");
-const Headers = require("bsv-headers");
 
 class DbHeaders {
-  constructor({ dataDir, invalidBlocks = [] }) {
+  constructor({ dataDir, headers }) {
     if (!dataDir) throw Error(`Missing dataDir`);
+    if (!headers) throw Error(`Missing headers param`);
+    this.headers = headers;
 
     this.env = new lmdb.Env();
     this.env.open({
@@ -15,9 +16,9 @@ class DbHeaders {
     this.dbi_headers = this.env.openDbi({
       name: "headers",
       create: true,
-      keyIsString: true,
+      keyIsBuffer: true,
     });
-    this.headers = new Headers({ invalidBlocks });
+
     this.loadHeaders();
   }
 
@@ -30,15 +31,15 @@ class DbHeaders {
     } catch (err) {}
   }
 
-  saveHeaders(headers) {
+  saveHeaders(headerArray) {
     return new Promise((resolve, reject) => {
-      if (headers.length === 0) return resolve();
+      if (headerArray.length === 0) return resolve();
       const operations = [];
-      headers.map((header) => {
+      headerArray.map((header) => {
         this.headers.addHeader({ header });
         operations.push([
           this.dbi_headers,
-          header.getHash().toString("hex"),
+          header.getHash(),
           header.toBuffer(),
         ]);
       });
@@ -50,10 +51,10 @@ class DbHeaders {
     });
   }
 
-  // saveHeaders(headers) {
+  // saveHeaders(headerArray) {
   //   let newHeaders = 0;
   //   const txn = this.env.beginTxn();
-  //   for (const header of headers) {
+  //   for (const header of headerArray) {
   //     this.headers.addHeader({ header });
   //     const key = header.getHash().toString("hex");
   //     const buf = txn.getBinary(this.dbi_headers, key);
@@ -69,8 +70,9 @@ class DbHeaders {
   // }
 
   getHeader(hash) {
+    if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
     const txn = this.env.beginTxn({ readOnly: true });
-    const buf = txn.getBinary(this.dbi_headers, hash.toString("hex"));
+    const buf = txn.getBinary(this.dbi_headers, hash);
     txn.commit();
     const header = bsv.Header.fromBuffer(buf);
     return header;
@@ -79,26 +81,17 @@ class DbHeaders {
   loadHeaders() {
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor = new lmdb.Cursor(txn, this.dbi_headers);
-    for (let key = cursor.goToFirst(); key !== null; key = cursor.goToNext()) {
+    for (
+      let hash = cursor.goToFirst();
+      hash !== null;
+      hash = cursor.goToNext()
+    ) {
       const buf = cursor.getCurrentBinary();
-      this.headers.addHeader({ buf, hash: key });
+      this.headers.addHeader({ buf, hash });
     }
     cursor.close();
     txn.commit();
     this.headers.process();
-  }
-
-  getHash(height) {
-    return this.headers.getHash(height);
-  }
-  getHeight(hash = false) {
-    return this.headers.getHeight(hash);
-  }
-  getTip() {
-    return this.headers.getTip();
-  }
-  getFromHeaderArray() {
-    return this.headers.getFromHeaderArray();
   }
 }
 

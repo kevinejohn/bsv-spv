@@ -39,8 +39,9 @@ console.log(
   )
 );
 console.log(spv.getTip());
+console.log(spv.getHeader({ height: 123000 }));
 ```
 
 ## Tests
 
-`npm run test`
+`npm test`
