@@ -32,9 +32,9 @@ await spv.syncHeaders(() => {
   );
 });
 
-console.log(spv.getHeight(123000));
+console.log(spv.getHash(123000));
 console.log(
-  spv.getHash(
+  spv.getHeight(
     "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
   )
 );
