@@ -49,6 +49,55 @@ console.log(
 );
 console.log(spv.getTip());
 console.log(spv.getHeader({ height: 123000 }));
+
+//////////////////////////////////////////
+// Download all new blocks and mempool txs
+//////////////////////////////////////////
+const fs = require("fs");
+const path = require("path");
+let writeStream;
+
+spv.peer.on(
+  "block_chunk",
+  ({ node, chunk, blockHash, finished, started, num }) => {
+    // Save blocks to disk
+    const dir = path.join(__dirname, `${blockHash.toString("hex")}.bin`); // Path of final block file
+    if (started) writeStream = fs.createWriteStream(`${dir}.tmp`);
+
+    writeStream.write(chunk);
+
+    if (finished) {
+      writeStream.end();
+      writeStream = null;
+      fs.renameSync(`${dir}.tmp`, dir);
+    }
+  }
+);
+
+spv.peer.on("transactions", ({ node, header, finished, transactions }) => {
+  // `header` if transaction is confirmed in a block. Otherwise it is a mempool tx
+  // `finished` is true if these are the last transactions in a block
+  for (const [index, transaction] of transactions) {
+    // index: is the transaction index number in the block if header exists
+    // transaction: is a bsv-minimal lib object
+    if (header) {
+      console.log(
+        `tx ${transaction
+          .getHash()
+          .toString("hex")} in index ${index} of block ${header
+          .getHash()
+          .toString("hex")}`
+      );
+    } else {
+      console.log(
+        `tx ${transaction.getHash().toString("hex")} seen in mempool`
+      );
+    }
+  }
+});
+
+spv.peer.listenForBlocks(); // Auto downloads new blocks seen
+spv.peer.listenForTxs(); // Auto download new mempool transactions
 ```
 
 ## Tests
