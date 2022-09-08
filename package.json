@@ -1,0 +1,22 @@
+{
+  "name": "bsv-spv",
+  "version": "0.0.0",
+  "description": "Stay in sync with latest bitcoin headers",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ./tests/index.js"
+  },
+  "author": "Kevin Johnson",
+  "license": "MIT",
+  "keywords": [
+    "bitcoin",
+    "spv",
+    "headers"
+  ],
+  "dependencies": {
+    "bsv-headers": "^0.1.1",
+    "bsv-minimal": "^0.5.1",
+    "bsv-p2p": "^0.1.1",
+    "node-lmdb": "^0.9.7"
+  }
+}
