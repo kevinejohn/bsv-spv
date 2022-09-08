@@ -1,6 +1,6 @@
 {
   "name": "bsv-spv",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Stay in sync with latest bitcoin headers",
   "main": "src/index.js",
   "scripts": {
