@@ -35,6 +35,7 @@ class DbHeaders {
     return new Promise((resolve, reject) => {
       if (headerArray.length === 0) return resolve();
       const operations = [];
+      const oldTip = this.headers.getTip();
       headerArray.map((header) => {
         this.headers.addHeader({ header });
         operations.push([
@@ -45,8 +46,13 @@ class DbHeaders {
       });
       this.env.batchWrite(operations, {}, (err, result) => {
         if (err) return reject(err);
-        this.headers.process();
-        resolve(result);
+        const lastTip = this.headers.process();
+        if (lastTip && lastTip.height < oldTip.height) {
+          // Re-org detected
+          resolve(lastTip);
+        } else {
+          resolve();
+        }
       });
     });
   }

@@ -17,12 +17,12 @@ class BsvSpv {
       const headers = await this.peer.getHeaders({ from });
       if (headers.length === 0) break;
       lastHash = headers[headers.length - 1].getHash();
-      await this.db.saveHeaders(headers);
-      if (typeof callback === "function") callback(headers.length);
+      const reorgTip = await this.db.saveHeaders(headers);
+      if (typeof callback === "function") callback({ reorgTip });
       if (!lastHash || lastHash.toString("hex") === from.toString("hex")) break;
       from = headers[headers.length - 1].getHash();
     } while (true);
-    if (typeof callback === "function") callback(0);
+    if (typeof callback === "function") callback({});
 
     if (!this.syncing) {
       this.syncing = true;

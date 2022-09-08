@@ -22,10 +22,19 @@ const dataDir = path.join(__dirname);
   await spv.connect();
   console.log(`Connected to ${ticker} ${node}!`);
   console.log(`Syncing headers...`);
-  await spv.syncHeaders(() => {
-    console.log(
-      `Synced ${spv.getHeight()} headers. Last hash: ${spv.getTip().hash}`
-    );
+  await spv.syncHeaders(({ reorgTip }) => {
+    if (reorgTip) {
+      const { height, hash } = reorgTip;
+      console.log(
+        `Re-org detected after block height ${height}! Synced ${spv.getHeight()} headers. Last hash: ${
+          spv.getTip().hash
+        }`
+      );
+    } else {
+      console.log(
+        `Synced ${spv.getHeight()} headers. Last hash: ${spv.getTip().hash}`
+      );
+    }
   });
 
   assert.equal(

@@ -26,10 +26,19 @@ spv.peer.on("disconnected", () => {
 });
 
 await spv.connect();
-await spv.syncHeaders(() => {
-  console.log(
-    `Synced ${spv.getHeight()} headers. Last hash: ${spv.getTip().hash}`
-  );
+await spv.syncHeaders(({ reorgTip }) => {
+  if (reorgTip) {
+    const { height, hash } = reorgTip;
+    console.log(
+      `Re-org detected after block height ${height}! Synced ${
+        spv.getTip().height
+      } headers. Last hash: ${spv.getTip().hash}`
+    );
+  } else {
+    console.log(
+      `Synced ${spv.getHeight()} headers. Last hash: ${spv.getTip().hash}`
+    );
+  }
 });
 
 console.log(spv.getHash(123000));
