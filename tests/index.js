@@ -97,7 +97,7 @@ const dataDir = path.join(__dirname);
     }
   });
 
-  spv.peer.listenForBlocks(); // Auto downloads new blocks seen
+  // spv.peer.listenForBlocks(); // Auto downloads new blocks seen
   // spv.peer.listenForTxs(); // Auto download new mempool transactions
 
   ////////////////////////////////
@@ -115,5 +115,5 @@ const dataDir = path.join(__dirname);
     }
   }
 
-  syncBlocks();
+  // syncBlocks();
 })();
