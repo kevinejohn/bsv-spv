@@ -99,4 +99,21 @@ const dataDir = path.join(__dirname);
 
   spv.peer.listenForBlocks(); // Auto downloads new blocks seen
   // spv.peer.listenForTxs(); // Auto download new mempool transactions
+
+  ////////////////////////////////
+  // Download all blocks
+  // Warning! It may take a while to download all blocks and will use the equivalent diskspace
+  ////////////////////////////////
+
+  async function syncBlocks() {
+    for (let height = spv.getHeight(); height > 0; height--) {
+      const hash = spv.getHash(height);
+      const dir = path.join(__dirname, `${hash.toString("hex")}.bin`);
+      if (!fs.existsSync(dir)) {
+        await spv.peer.getBlock(hash);
+      }
+    }
+  }
+
+  syncBlocks();
 })();
