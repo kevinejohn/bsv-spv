@@ -252,15 +252,22 @@ class BsvSpv extends EventEmitter {
     this.peer.listenForBlocks();
   }
 
-  async syncAllBlocks(forceCheck = false) {
+  async syncAllBlocks(opts = {}) {
+    let { endHeight, latestBlocks, checkAll = false } = opts;
     let blocksDled = 0;
     let height = this.headers.getHeight();
-    const endBlock =
-      this.pruneBlocks > 0 ? Math.max(0, height - this.pruneBlocks + 1) : 0;
-    for (height; height >= endBlock; height--) {
+    if (!(endHeight >= 0)) {
+      if (latestBlocks > 0) {
+        endHeight = height - latestBlocks;
+      } else if (this.pruneBlocks > 0) {
+        endHeight = height - this.pruneBlocks;
+      }
+    }
+    if (!(endHeight >= 0)) endHeight = 0;
+    for (height; height >= endHeight; height--) {
       try {
         const alreadyDled = await this.downloadBlock({ height });
-        if (alreadyDled && !forceCheck) break;
+        if (alreadyDled && !checkAll) break;
         if (!alreadyDled) blocksDled++;
       } catch (err) {
         console.error(
