@@ -101,30 +101,35 @@ class BsvSpv extends EventEmitter {
   }
 
   async syncHeaders() {
-    let from = this.headers.getFromHeaderArray();
-    do {
-      let lastHash = Array.isArray(from) ? from[0] : from;
-      await this.peer.connect();
-      const headers = await this.peer.getHeaders({ from });
-      if (headers.length === 0) break;
-      this.emit("new_headers", { headers });
-      lastHash = headers[headers.length - 1].getHash();
-      const reorgTip = await this.db.saveHeaders(headers);
-      if (reorgTip) {
-        // Chain re-org detected!
-        const { height, hash } = reorgTip;
-        this.emit("reorg_detected", { height, hash });
-      }
-      if (!lastHash || lastHash.toString("hex") === from.toString("hex")) break;
-      from = headers[headers.length - 1].getHash();
-    } while (true);
+    try {
+      let from = this.headers.getFromHeaderArray();
+      do {
+        let lastHash = Array.isArray(from) ? from[0] : from;
+        await this.peer.connect();
+        const headers = await this.peer.getHeaders({ from });
+        if (headers.length === 0) break;
+        this.emit("new_headers", { headers });
+        lastHash = headers[headers.length - 1].getHash();
+        const reorgTip = await this.db.saveHeaders(headers);
+        if (reorgTip) {
+          // Chain re-org detected!
+          const { height, hash } = reorgTip;
+          this.emit("reorg_detected", { height, hash });
+        }
+        if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
+          break;
+        from = headers[headers.length - 1].getHash();
+      } while (true);
 
-    if (!this.syncing) {
-      this.syncing = true;
-      this.peer.on("block_hashes", ({ hashes }) => {
-        this.emit("block_hashes", { hashes });
-        this.syncHeaders(callback);
-      });
+      if (!this.syncing) {
+        this.syncing = true;
+        this.peer.on("block_hashes", ({ hashes }) => {
+          this.emit("block_hashes", { hashes });
+          this.syncHeaders();
+        });
+      }
+    } catch (err) {
+      console.error(err);
     }
   }
 
