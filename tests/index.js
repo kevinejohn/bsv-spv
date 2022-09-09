@@ -43,7 +43,7 @@ process.on("uncaughtException", (err) => {
   });
   spv.on("block_hashes", ({ hashes }) => {
     console.log(
-      `New block announced: ${hashes.map((h) => h.toString("hex").join(", "))}`
+      `New block announced: ${hashes.map((h) => h.toString("hex")).join(", ")}`
     );
   });
   spv.on("new_headers", ({ headers }) => {
