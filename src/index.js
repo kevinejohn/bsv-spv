@@ -58,14 +58,13 @@ class BsvSpv extends EventEmitter {
                 blockHeight = this.headers.getHeight(hash);
               } catch (err) {}
               const dir = writeDir;
-              const emit = this.emit;
               writeStream.close((err) => {
                 try {
                   if (err) throw err;
                   if (!fs.existsSync(dir)) {
                     // Save block to disk
                     fs.renameSync(`${dir}.${process.pid}`, dir);
-                    emit("block_saved", {
+                    this.emit("block_saved", {
                       height: blockHeight,
                       hash,
                       size,
