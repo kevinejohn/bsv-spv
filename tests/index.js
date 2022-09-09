@@ -5,115 +5,118 @@ const assert = require("assert");
 const ticker = "BSV";
 const node = `18.192.253.59:8333`;
 const invalidBlocks = [];
-const dataDir = path.join(__dirname);
+const dataDir = path.join(__dirname, "data");
+const pruneBlocks = 3;
+
+process.on("unhandledRejection", (reason, p) => {
+  console.error(reason, "Unhandled Rejection at Promise", p);
+});
+process.on("uncaughtException", (err) => {
+  console.error(err, "Uncaught Exception thrown");
+  process.exit(1);
+});
 
 (async () => {
   let date = +new Date();
-  const spv = new BsvSpv({ ticker, node, dataDir, invalidBlocks });
+  const spv = new BsvSpv({ ticker, node, dataDir, pruneBlocks, invalidBlocks });
+  let { height, hash } = spv.getTip();
   console.log(
-    `Loaded ${spv.getHeight()} headers in ${
+    `Loaded headers in ${
       (+new Date() - date) / 1000
-    } seconds. Last hash: ${spv.getTip().hash}`
+    } seconds. Latest tip: ${height}, ${hash}`
   );
-  spv.peer.on("disconnected", () => {
-    console.log(`Node ${ticker} ${node} disconnected.`);
+
+  spv.on("disconnected", ({ node, disconnects }) => {
+    console.log(`Node ${node} disconnected ${disconnects} times`);
   });
-  console.log(`Connecting to ${ticker} node ${node}...`);
-  await spv.connect();
-  console.log(`Connected to ${ticker} ${node}!`);
-  console.log(`Syncing headers...`);
-  await spv.syncHeaders(({ reorgTip }) => {
-    if (reorgTip) {
-      const { height, hash } = reorgTip;
-      console.log(
-        `Re-org detected after block height ${height}! Synced ${spv.getHeight()} headers. Last hash: ${
-          spv.getTip().hash
-        }`
-      );
-    } else {
-      console.log(
-        `Synced ${spv.getHeight()} headers. Last hash: ${spv.getTip().hash}`
-      );
-    }
+  spv.on("connected", ({ node }) => {
+    console.log(`Node ${node} connected`);
   });
-
-  assert.equal(
-    spv.getHash(123000),
-    "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
-  );
-  assert.equal(
-    spv.getHeight(
-      "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
-    ),
-    122000
-  );
-
-  console.log(spv.getHeader({ height: 123000 }));
-
-  //////////////////////////////////////////
-  // Download all new blocks and mempool txs
-  //////////////////////////////////////////
-
-  const fs = require("fs");
-  const path = require("path");
-  let writeStream;
-
-  spv.peer.on(
-    "block_chunk",
-    ({ node, chunk, blockHash, finished, started, num }) => {
-      // Save blocks to disk
-      const dir = path.join(__dirname, `${blockHash.toString("hex")}.bin`); // Path of final block file
-      if (started) writeStream = fs.createWriteStream(`${dir}.tmp`);
-
-      writeStream.write(chunk);
-
-      if (finished) {
-        writeStream.end();
-        writeStream = null;
-        fs.renameSync(`${dir}.tmp`, dir);
-      }
-    }
-  );
-
-  spv.peer.on("transactions", ({ node, header, finished, transactions }) => {
-    // `header` if transaction is confirmed in a block. Otherwise it is a mempool tx
-    // `finished` is true if these are the last transactions in a block
-    for (const [index, transaction] of transactions) {
-      // index: is the transaction index number in the block if header exists
-      // transaction: is a bsv-minimal lib object
-      if (header) {
-        console.log(
-          `tx ${transaction
-            .getHash()
-            .toString("hex")} in index ${index} of block ${header
-            .getHash()
-            .toString("hex")}`
-        );
-      } else {
-        console.log(
-          `tx ${transaction.getHash().toString("hex")} seen in mempool`
-        );
-      }
-    }
+  spv.on("reorg_detected", ({ height, hash }) => {
+    console.log(`Re-org detected after block height ${height}, ${hash}!`);
+  });
+  spv.on("pruned_block", ({ height, hash }) => {
+    console.log(`Pruned block ${height}, ${hash}`);
+  });
+  spv.on("block_saved", ({ height, hash, size }) => {
+    console.log(`Saved block ${height}, ${hash}, ${size} bytes`);
+  });
+  spv.on("block_hashes", ({ hashes }) => {
+    console.log(
+      `New block announced: ${hashes.map((h) => h.toString("hex").join(", "))}`
+    );
+  });
+  spv.on("new_headers", ({ headers }) => {
+    const { height, hash } = spv.getTip();
+    console.log(
+      `Downloaded ${headers.length} new headers. Tip: ${height}, ${hash}`
+    );
   });
 
-  // spv.peer.listenForBlocks(); // Auto downloads new blocks seen
-  // spv.peer.listenForTxs(); // Auto download new mempool transactions
+  try {
+    console.log(`Connecting to ${ticker} node ${node}...`);
+    await spv.connect();
 
-  ////////////////////////////////
-  // Download all blocks
-  // Warning! It may take a while to download all blocks and will use the equivalent diskspace
-  ////////////////////////////////
+    console.log(`Syncing headers...`);
+    await spv.syncHeaders();
+    console.log(`Synced headers.`);
 
-  async function syncBlocks() {
-    for (let height = spv.getHeight(); height > 0; height--) {
-      const hash = spv.getHash(height);
-      const dir = path.join(__dirname, `${hash.toString("hex")}.bin`);
-      if (!fs.existsSync(dir)) {
-        await spv.peer.getBlock(hash);
+    assert.equal(
+      spv.getHash(123000),
+      "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
+    );
+    assert.equal(
+      spv.getHeight(
+        "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
+      ),
+      122000
+    );
+    assert.equal(spv.getHeader({ height: 123000 }).time, 1304983906);
+    assert.equal(
+      spv.getHeader({
+        hash: "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05",
+      }).time,
+      1304590900
+    );
+
+    // Will download and save all new blocks to disk
+    spv.onBlockTx(
+      ({ transactions, header, started, finished, height, size }) => {
+        for (const [index, transaction] of transactions) {
+          console.log(
+            `tx ${transaction
+              .getHash()
+              .toString("hex")} in index ${index} of block ${height}`
+          );
+        }
       }
-    }
+    );
+    console.log(`Listening for new blocks...`);
+
+    // spv.onMempoolTx(({ transaction }) => {
+    //   console.log(
+    //     `tx ${transaction.getHash().toString("hex")} seen in mempool`
+    //   );
+    // });
+    // console.log(`Listening for mempool txs...`);
+
+    // console.log(`Syncing ${pruneBlocks} latest blocks...`);
+    // await spv.syncAllBlocks();
+    // console.log(`Synced all ${pruneBlocks} blocks!`);
+
+    // height = 119990;
+    // await spv.downloadBlock({ height });
+    // await spv.readBlock(
+    //   { height },
+    //   ({ transaction, index, header, started, finished, size, height }) => {
+    //     if (finished) {
+    //       console.log(header, size);
+    //     }
+    //   }
+    // );
+
+    // await spv.warningPruneBlocks();
+  } catch (err) {
+    console.error(`Error`, err);
   }
-
-  // syncBlocks();
 })();
