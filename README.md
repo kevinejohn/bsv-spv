@@ -35,8 +35,22 @@ const dataDir = __dirname;
   spv.on("disconnected", ({ node, disconnects }) => {
     console.log(`Node ${node} disconnected ${disconnects} times`);
   });
-  spv.on("connected", ({ node }) => {
+  spv.on("connected", async ({ node }) => {
     console.log(`Node ${node} connected`);
+  });
+  spv.on("version", async ({ node, version }) => {
+    // Will be called on connected/reconnect and version negotiated
+    console.log(`Node ${node} version`, version);
+
+    console.log(`Syncing headers...`);
+    await spv.syncHeaders();
+    console.log(`Synced headers.`);
+
+    console.log(
+      `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
+    );
+    await spv.syncAllBlocks();
+    console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
   });
   spv.on("reorg_detected", ({ height, hash }) => {
     console.log(`Re-org detected after block height ${height}, ${hash}!`);
@@ -62,10 +76,6 @@ const dataDir = __dirname;
 
   console.log(`Connecting to ${ticker} node ${node}...`);
   await spv.connect();
-
-  console.log(`Syncing headers...`);
-  await spv.syncHeaders();
-  console.log(`Synced headers.`);
 
   assert.equal(
     spv.getHash(123000),
@@ -97,17 +107,17 @@ const dataDir = __dirname;
   });
   console.log(`Listening for new blocks...`);
 
+  await spv.warningPruneBlocks();
+
   spv.onMempoolTx(({ transaction }) => {
     console.log(`tx ${transaction.getHash().toString("hex")} seen in mempool`);
   });
   console.log(`Listening for mempool txs...`);
 
-  console.log(`Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`);
-  await spv.syncAllBlocks();
-  console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
-
+  // Download specific block example
   height = 119990;
-  await spv.downloadBlock({ height });
+  await spv.downloadBlock({ height }); // Transactions will come through `onBlockTx`. Returns true if block is already saved to disk
+  // Streams locally saved block from disk. No memory constraints
   await spv.readBlock(
     { height },
     ({ transaction, index, header, started, finished, size, height }) => {
@@ -116,8 +126,6 @@ const dataDir = __dirname;
       }
     }
   );
-
-  await spv.warningPruneBlocks();
 })();
 ```
 

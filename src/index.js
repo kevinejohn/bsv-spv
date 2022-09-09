@@ -143,6 +143,7 @@ class BsvSpv extends EventEmitter {
       this.emit("disconnected", params);
     });
     this.peer.on("connected", (params) => this.emit("connected", params));
+    this.peer.on("version", (params) => this.emit("version", params));
     await this.peer.connect();
   }
   getHeight(hash = false) {
