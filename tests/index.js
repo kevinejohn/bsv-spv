@@ -83,11 +83,11 @@ process.on("uncaughtException", (err) => {
     spv.onBlockTx(
       ({ transactions, header, started, finished, height, size }) => {
         for (const [index, transaction] of transactions) {
-          console.log(
-            `tx ${transaction
-              .getHash()
-              .toString("hex")} in index ${index} of block ${height}`
-          );
+          // console.log(
+          //   `tx ${transaction
+          //     .getHash()
+          //     .toString("hex")} in index ${index} of block ${height}`
+          // );
         }
       }
     );
@@ -100,9 +100,9 @@ process.on("uncaughtException", (err) => {
     // });
     // console.log(`Listening for mempool txs...`);
 
-    // console.log(`Syncing ${pruneBlocks} latest blocks...`);
-    // await spv.syncAllBlocks();
-    // console.log(`Synced all ${pruneBlocks} blocks!`);
+    console.log(`Syncing ${pruneBlocks} latest blocks...`);
+    await spv.syncAllBlocks();
+    console.log(`Synced all ${pruneBlocks} blocks!`);
 
     // height = 119990;
     // await spv.downloadBlock({ height });
@@ -115,7 +115,7 @@ process.on("uncaughtException", (err) => {
     //   }
     // );
 
-    // await spv.warningPruneBlocks();
+    await spv.warningPruneBlocks();
   } catch (err) {
     console.error(`Error`, err);
   }

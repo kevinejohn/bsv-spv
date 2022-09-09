@@ -46,9 +46,6 @@ class BsvSpv extends EventEmitter {
                 this.blocksDir,
                 `${blockHash.toString("hex")}.bin`
               );
-              try {
-                fs.unlinkSync(`${writeDir}.${process.pid}`);
-              } catch (err) {}
               writeStream = fs.createWriteStream(`${writeDir}.${process.pid}`);
             }
             writeStream.write(chunk);
@@ -61,16 +58,26 @@ class BsvSpv extends EventEmitter {
                 blockHeight = this.headers.getHeight(hash);
               } catch (err) {}
               const dir = writeDir;
+              const emit = this.emit;
               writeStream.close((err) => {
-                if (!err && !fs.existsSync(dir)) {
-                  // Save block to disk
-                  fs.renameSync(`${dir}.${process.pid}`, dir);
-                  this.emit("block_saved", { height: blockHeight, hash, size });
-                } else {
-                  // Block already saved. Delete copy
-                  try {
-                    fs.unlinkSync(`${dir}.${process.pid}`);
-                  } catch (err) {}
+                try {
+                  if (err) throw err;
+                  if (!fs.existsSync(dir)) {
+                    // Save block to disk
+                    fs.renameSync(`${dir}.${process.pid}`, dir);
+                    emit("block_saved", {
+                      height: blockHeight,
+                      hash,
+                      size,
+                    });
+                  } else {
+                    // Block already saved. Delete copy
+                    try {
+                      fs.unlinkSync(`${dir}.${process.pid}`);
+                    } catch (err) {}
+                  }
+                } catch (err) {
+                  console.error(err);
                 }
               });
               if (this.pruneBlocks > 0) {
