@@ -34,6 +34,7 @@ process.on("uncaughtException", (err) => {
   });
   spv.on("reorg_detected", ({ height, hash }) => {
     console.log(`Re-org detected after block height ${height}, ${hash}!`);
+    spv.syncAllBlocks(); // Re-sync blocks
   });
   spv.on("pruned_block", ({ height, hash }) => {
     console.log(`Pruned block ${height}, ${hash}`);
@@ -93,6 +94,8 @@ process.on("uncaughtException", (err) => {
     );
     console.log(`Listening for new blocks...`);
 
+    // await spv.warningPruneBlocks();
+
     // spv.onMempoolTx(({ transaction }) => {
     //   console.log(
     //     `tx ${transaction.getHash().toString("hex")} seen in mempool`
@@ -100,9 +103,11 @@ process.on("uncaughtException", (err) => {
     // });
     // console.log(`Listening for mempool txs...`);
 
-    // console.log(`Syncing ${pruneBlocks} latest blocks...`);
+    // console.log(
+    //   `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
+    // );
     // await spv.syncAllBlocks();
-    // console.log(`Synced all ${pruneBlocks} blocks!`);
+    // console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
 
     // height = 119990;
     // await spv.downloadBlock({ height });
@@ -114,8 +119,6 @@ process.on("uncaughtException", (err) => {
     //     }
     //   }
     // );
-
-    // await spv.warningPruneBlocks();
   } catch (err) {
     console.error(`Error`, err);
   }

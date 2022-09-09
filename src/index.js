@@ -14,12 +14,14 @@ class BsvSpv extends EventEmitter {
     saveBlocks = true,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
+    COMMAND_TIMEOUT = 1000 * 60 * 10, // 10 minutes
   }) {
     super();
     if (!dataDir) throw Error(`Missing dataDir`);
     this.saveBlocks = saveBlocks;
     this.pruneBlocks = pruneBlocks;
     this.ticker = ticker;
+    this.COMMAND_TIMEOUT = COMMAND_TIMEOUT;
     this.peer = new P2P({ node, ticker });
     this.headers = new Headers({ invalidBlocks });
     this.headerDir = path.join(dataDir, "headers");
@@ -71,13 +73,15 @@ class BsvSpv extends EventEmitter {
                     });
                   } else {
                     // Block already saved. Delete copy
-                    try {
-                      fs.unlinkSync(`${dir}.${process.pid}`);
-                    } catch (err) {}
+                    throw Error(`Block already saved`);
                   }
                 } catch (err) {
-                  console.error(err);
+                  // console.error(err);
+                  try {
+                    fs.unlinkSync(`${dir}.${process.pid}`);
+                  } catch (err) {}
                 }
+                this.emit(`block_ready_${hash}`);
               });
               if (this.pruneBlocks > 0) {
                 try {
@@ -107,7 +111,6 @@ class BsvSpv extends EventEmitter {
         await this.peer.connect();
         const headers = await this.peer.getHeaders({ from });
         if (headers.length === 0) break;
-        this.emit("new_headers", { headers });
         lastHash = headers[headers.length - 1].getHash();
         const reorgTip = await this.db.saveHeaders(headers);
         if (reorgTip) {
@@ -115,6 +118,7 @@ class BsvSpv extends EventEmitter {
           const { height, hash } = reorgTip;
           this.emit("reorg_detected", { height, hash });
         }
+        this.emit("new_headers", { headers });
         if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
           break;
         from = headers[headers.length - 1].getHash();
@@ -135,7 +139,9 @@ class BsvSpv extends EventEmitter {
   async connect() {
     if (this.connecting) return;
     this.connecting = true;
-    this.peer.on("disconnected", (params) => this.emit("disconnected", params));
+    this.peer.on("disconnected", (params) => {
+      this.emit("disconnected", params);
+    });
     this.peer.on("connected", (params) => this.emit("connected", params));
     await this.peer.connect();
   }
@@ -158,7 +164,30 @@ class BsvSpv extends EventEmitter {
     const dir = path.join(this.blocksDir, `${hash}.bin`);
     if (!fs.existsSync(dir)) {
       await this.peer.connect(); // Wait until connected
-      await this.peer.getBlock(hash);
+
+      const event = `block_ready_${hash}`;
+      let listener, timeout;
+      try {
+        const promise = new Promise((resolve, reject) => {
+          listener = () => {
+            clearTimeout(timeout);
+            resolve();
+          };
+          this.once(event, listener);
+          timeout = setTimeout(
+            () => reject(Error(`Timeout`)),
+            this.COMMAND_TIMEOUT
+          );
+        });
+        await this.peer.getBlock(hash);
+        await promise; // Wait until block is fully downloaded and ready
+      } catch (err) {
+        clearTimeout(timeout);
+        this.removeListener(event, listener);
+        throw err;
+      }
+    } else {
+      return true;
     }
   }
   readBlock({ height, hash }, callback) {
@@ -176,7 +205,7 @@ class BsvSpv extends EventEmitter {
         stream.on("data", async (data) => {
           try {
             const result = block.addBufferChunk(data);
-            // const { finished, started, size, transactions, header } = result;
+            // const { transactions, header, started, finished, height, size } = result;
             stream.pause();
             await callback({ ...result, height });
             stream.resume();
@@ -222,25 +251,30 @@ class BsvSpv extends EventEmitter {
     this.peer.listenForBlocks();
   }
 
-  async syncAllBlocks() {
+  async syncAllBlocks(forceCheck = false) {
+    let blocksDled = 0;
     let height = this.headers.getHeight();
     const endBlock =
       this.pruneBlocks > 0 ? Math.max(0, height - this.pruneBlocks + 1) : 0;
     for (height; height >= endBlock; height--) {
       try {
-        await this.downloadBlock({ height });
+        const alreadyDled = await this.downloadBlock({ height });
+        if (alreadyDled && !forceCheck) break;
+        if (!alreadyDled) blocksDled++;
       } catch (err) {
         console.error(
           `syncAllBlocks error: ${err.message}. Retrying in 3 seconds...`
         );
         await new Promise((r) => setTimeout(r, 3000));
-        await this.syncAllBlocks(); // May hit max recursive loop
+        height++; // Retry height
       }
     }
+    return blocksDled;
   }
 
   async warningPruneBlocks() {
-    if (!(this.pruneBlocks > 0)) return;
+    let prunedCount = 0;
+    if (!(this.pruneBlocks > 0)) return prunedCount;
     const files = fs.readdirSync(this.blocksDir);
     const pruneHeight = this.headers.getHeight() - this.pruneBlocks;
     for (const file of files) {
@@ -252,8 +286,10 @@ class BsvSpv extends EventEmitter {
       } catch (err) {
         fs.unlinkSync(path.join(this.blocksDir, file));
         this.emit("pruned_block", { height, hash });
+        prunedCount++;
       }
     }
+    return prunedCount;
   }
 }
 

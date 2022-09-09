@@ -18,8 +18,8 @@ const BsvSpv = require("bsv-spv");
 
 const ticker = "BSV"; // BTC, BCH, XEC, BSV
 const node = `seed.satoshisvision.network:8333`; // Set to your favorite node IP address
-const pruneBlocks = 3; // Number of newest blocks you want saved to local disk
-const invalidBlocks = [];
+const pruneBlocks = 3; // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
+const invalidBlocks = []; // Set if you want to force a specific fork (see examples below)
 const dataDir = __dirname;
 
 (async () => {
@@ -40,6 +40,7 @@ const dataDir = __dirname;
   });
   spv.on("reorg_detected", ({ height, hash }) => {
     console.log(`Re-org detected after block height ${height}, ${hash}!`);
+    spv.syncAllBlocks(); // Re-sync blocks
   });
   spv.on("pruned_block", ({ height, hash }) => {
     console.log(`Pruned block ${height}, ${hash}`);
@@ -101,9 +102,9 @@ const dataDir = __dirname;
   });
   console.log(`Listening for mempool txs...`);
 
-  console.log(`Syncing ${pruneBlocks} latest blocks...`);
+  console.log(`Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`);
   await spv.syncAllBlocks();
-  console.log(`Synced all ${pruneBlocks} blocks!`);
+  console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
 
   height = 119990;
   await spv.downloadBlock({ height });
@@ -118,6 +119,39 @@ const dataDir = __dirname;
 
   await spv.warningPruneBlocks();
 })();
+```
+
+### Forcing specific forks with headers
+
+Set `invalidBlocks` to the desired fork you wish to use. It will invalidate any other chain listed.
+
+```js
+let invalidBlocks;
+
+// Use BSV only
+invalidBlocks = [
+  "00000000000000000019f112ec0a9982926f1258cdcc558dd7c3b7e5dc7fa148", // BTC fork 478559
+  "0000000000000000004626ff6e3b936941d341c5932ece4357eeccac44e6d56c", // BCH fork 556767
+];
+
+// Use BTC only
+invalidBlocks = [
+  "000000000000000000651ef99cb9fcbe0dadde1d424bd9f15ff20136191a5eec", // BCH fork 478559
+];
+
+// Use BCH only
+invalidBlocks = [
+  "00000000000000000019f112ec0a9982926f1258cdcc558dd7c3b7e5dc7fa148", // BTC fork 478559
+  "000000000000000001d956714215d96ffc00e0afda4cd0a96c96f8d802b1662b", // BSV fork 556767
+  "000000000000000004284c9d8b2c8ff731efeaec6be50729bdc9bd07f910757d", // XEC fork 661648
+];
+
+// Use XEC only
+invalidBlocks = [
+  "00000000000000000019f112ec0a9982926f1258cdcc558dd7c3b7e5dc7fa148", // BTC fork 478559
+  "000000000000000001d956714215d96ffc00e0afda4cd0a96c96f8d802b1662b", // BSV fork 556767
+  "0000000000000000029e471c41818d24b8b74c911071c4ef0b4a0509f9b5a8ce", // BCH fork 661648
+];
 ```
 
 ## Tests
