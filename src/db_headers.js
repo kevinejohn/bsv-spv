@@ -44,9 +44,9 @@ class DbHeaders {
           header.toBuffer(),
         ]);
       });
+      const lastTip = this.headers.process();
       this.env.batchWrite(operations, {}, (err, result) => {
         if (err) return reject(err);
-        const lastTip = this.headers.process();
         if (lastTip && lastTip.height < oldTip.height) {
           // Re-org detected
           resolve(lastTip);
