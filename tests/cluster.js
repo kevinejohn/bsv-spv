@@ -35,6 +35,9 @@ if (cluster.isWorker) {
         invalidBlocks,
       } = obj;
 
+      if (mempool) console.log(`Forked mempool worker: ${node}`);
+      if (blocks) console.log(`Forked blocks worker: ${node}`);
+
       try {
         let date = +new Date();
         spv = new BsvSpv({
@@ -69,15 +72,17 @@ if (cluster.isWorker) {
             console.log(
               `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
             );
-            await spv.syncBlocks();
+            await spv.syncAllBlocks();
             console.log(
               `Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`
             );
+
+            await spv.warningPruneBlocks();
           }
         });
         spv.on("reorg_detected", ({ height, hash }) => {
           console.log(`Re-org detected after block height ${height}, ${hash}!`);
-          if (blocks) spv.syncBlocks(); // Re-sync blocks
+          if (blocks) spv.syncAllBlocks(); // Re-sync blocks
         });
         spv.on("pruned_block", ({ height, hash }) => {
           console.log(`Pruned block ${height}, ${hash}`);
@@ -105,18 +110,16 @@ if (cluster.isWorker) {
         if (blocks) {
           spv.onBlockTx(
             ({ transactions, header, started, finished, height, size }) => {
-              for (const [index, transaction] of transactions) {
-                // console.log(
-                //   `tx ${transaction
-                //     .getHash()
-                //     .toString("hex")} in index ${index} of block ${height}`
-                // );
-              }
+              // for (const [index, transaction] of transactions) {
+              //   console.log(
+              //     `tx ${transaction
+              //       .getHash()
+              //       .toString("hex")} in index ${index} of block ${height}`
+              //   );
+              // }
             }
           );
           console.log(`${node} Listening for new blocks...`);
-
-          await spv.warningPruneBlocks();
         }
 
         if (mempool) {
@@ -125,7 +128,7 @@ if (cluster.isWorker) {
             //   `tx ${transaction.getHash().toString("hex")} seen in mempool`
             // );
           });
-          console.log(`Listening for mempool txs...`);
+          console.log(`${node} Listening for mempool txs...`);
         }
       } catch (err) {
         console.error(err);
@@ -136,38 +139,31 @@ if (cluster.isWorker) {
 } else if (cluster.isPrimary) {
   const workers = {};
 
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker exited`, worker);
+  });
+
   for (const node of nodes) {
+    const opts = {
+      command: "init",
+      ticker,
+      dataDir,
+      node,
+      pruneBlocks,
+      invalidBlocks,
+    };
+
     if (blocks) {
       const worker = cluster.fork();
-      const opts = {
-        command: "init",
-        ticker,
-        dataDir,
-        node,
-        blocks,
-        pruneBlocks,
-        invalidBlocks,
-      };
-      worker.send(JSON.stringify(opts));
       worker.BsvSpvOpts = opts;
+      worker.send(JSON.stringify({ ...opts, blocks }));
       workers[`blocks-${node}`] = worker;
-      console.log(`Forked worker: blocks-${node}`);
     }
     if (mempool) {
       const worker = cluster.fork();
-      const opts = {
-        command: "init",
-        ticker,
-        dataDir,
-        node,
-        mempool,
-        pruneBlocks,
-        invalidBlocks,
-      };
-      worker.send(JSON.stringify(opts));
       worker.BsvSpvOpts = opts;
+      worker.send(JSON.stringify({ ...opts, mempool }));
       workers[`mempool-${node}`] = worker;
-      console.log(`Forked worker: mempool-${node}`);
     }
   }
 }

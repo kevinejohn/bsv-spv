@@ -14,12 +14,14 @@ class BsvSpv extends EventEmitter {
     saveBlocks = true,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
+    syncBlocks = 0, // Number of newest blocks syncAllBlocks will sync. 0 for syncing to genesis
     COMMAND_TIMEOUT = 1000 * 60 * 10, // 10 minutes
   }) {
     super();
     if (!dataDir) throw Error(`Missing dataDir`);
     this.saveBlocks = saveBlocks;
     this.pruneBlocks = pruneBlocks;
+    this.syncBlocks = syncBlocks;
     this.ticker = ticker;
     this.COMMAND_TIMEOUT = COMMAND_TIMEOUT;
     this.peer = new P2P({ node, ticker });
@@ -253,14 +255,16 @@ class BsvSpv extends EventEmitter {
   }
 
   async syncAllBlocks(opts = {}) {
-    let { endHeight, latestBlocks, checkAll = false } = opts;
+    let { endHeight, syncBlocks, checkAll = false } = opts;
     let blocksDled = 0;
     let height = this.headers.getHeight();
     if (!(endHeight >= 0)) {
-      if (latestBlocks > 0) {
-        endHeight = height - latestBlocks;
+      if (syncBlocks > 0) {
+        endHeight = height - syncBlocks;
       } else if (this.pruneBlocks > 0) {
         endHeight = height - this.pruneBlocks;
+      } else if (this.syncBlocks > 0) {
+        endHeight = height - this.syncBlocks;
       }
     }
     if (!(endHeight >= 0)) endHeight = 0;
