@@ -1,15 +1,17 @@
 const lmdb = require("node-lmdb");
 const bsv = require("bsv-minimal");
+const fs = require("fs");
 
 class DbHeaders {
-  constructor({ dataDir, headers }) {
-    if (!dataDir) throw Error(`Missing dataDir`);
+  constructor({ headersDir, headers }) {
+    if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
+    fs.mkdirSync(headersDir, { recursive: true });
     this.headers = headers;
 
     this.env = new lmdb.Env();
     this.env.open({
-      path: dataDir,
+      path: headersDir,
       mapSize: 1 * 1024 * 1024 * 1024,
       maxDbs: 1,
     });
