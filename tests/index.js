@@ -65,6 +65,9 @@ process.on("uncaughtException", (err) => {
     const { height, hash } = spv.getTip();
     console.log(`${headers.length} new headers. Tip: ${height}, ${hash}`);
   });
+  spv.on("headers_saved", ({ hashes }) => {
+    console.log(`${hashes.length} new headers saved to disk`);
+  });
 
   // Block events
   spv.on("block_reorg", ({ height, hash }) => {

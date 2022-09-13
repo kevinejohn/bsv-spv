@@ -101,14 +101,19 @@ class BsvSpv extends EventEmitter {
           const headers = await this.peer.getHeaders({ from });
           if (headers.length === 0) break;
           lastHash = headers[headers.length - 1].getHash();
-          const { headers: newHeaders, reorgTip } =
-            await this.db_headers.saveHeaders(headers);
-          if (reorgTip) {
+          const prevTip = this.headers.getTip();
+          headers.map((header) => this.headers.addHeader({ header }));
+          const lastTip = this.headers.process();
+          const { hashes } = await this.db_headers.saveHeaders(headers);
+          if (lastTip && lastTip.height < prevTip.height) {
             // Chain re-org detected!
-            const { height, hash } = reorgTip;
+            const { height, hash } = lastTip;
             this.emit("block_reorg", { height, hash });
           }
-          this.emit("headers_new", { headers: newHeaders });
+          if (hashes.length > 0) this.emit("headers_saved", { hashes });
+          if (prevTip.hash !== this.headers.getTip().hash) {
+            this.emit("headers_new", { hashes, headers });
+          }
           if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
             break;
           from = headers[headers.length - 1].getHash();

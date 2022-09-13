@@ -40,9 +40,7 @@ class DbHeaders {
       const hashes = [];
       if (headerArray.length === 0) return resolve({ hashes });
       const operations = [];
-      const oldTip = this.headers.getTip();
       headerArray.map((header) => {
-        this.headers.addHeader({ header });
         operations.push([
           this.dbi_headers,
           header.getHash(),
@@ -50,18 +48,12 @@ class DbHeaders {
           null,
         ]);
       });
-      const lastTip = this.headers.process();
       this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
         headerArray.map(
           (header, i) => results[i] === 0 && hashes.push(header.getHash())
         );
-        if (lastTip && lastTip.height < oldTip.height) {
-          // Re-org detected
-          resolve({ hashes, reorgTip: lastTip });
-        } else {
-          resolve({ hashes });
-        }
+        resolve({ hashes });
       });
     });
   }
