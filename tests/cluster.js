@@ -78,6 +78,7 @@ if (cluster.isWorker) {
             );
 
             await spv.warningPruneBlocks();
+            await spv.pruneMempool();
           }
         });
         spv.on("reorg_detected", ({ height, hash }) => {
@@ -108,25 +109,40 @@ if (cluster.isWorker) {
         await spv.connect();
 
         if (blocks) {
-          spv.onBlockTx(
-            ({ transactions, header, started, finished, height, size }) => {
-              // for (const [index, transaction] of transactions) {
-              //   console.log(
-              //     `tx ${transaction
-              //       .getHash()
-              //       .toString("hex")} in index ${index} of block ${height}`
-              //   );
-              // }
-            }
-          );
+          spv.onBlockTx({
+            pruneMempool: true,
+            // onTxs: ({
+            //   transactions,
+            //   header,
+            //   started,
+            //   finished,
+            //   height,
+            //   size,
+            // }) => {
+            //   for (const [index, transaction] of transactions) {
+            //     console.log(
+            //       `tx ${transaction
+            //         .getHash()
+            //         .toString("hex")} in index ${index} of block ${height}`
+            //     );
+            //   }
+            // },
+          });
           console.log(`${node} Listening for new blocks...`);
         }
 
         if (mempool) {
-          spv.onMempoolTx(({ transaction }) => {
-            // console.log(
-            //   `tx ${transaction.getHash().toString("hex")} seen in mempool`
-            // );
+          spv.onMempoolTx({
+            onTxSave: ({ txHashes }) => {
+              console.log(`${txHashes.length} mempool txs saved to disk`);
+            },
+            // saveInterval: 200, // time in ms
+            // filterTxs: true,
+            // onTx: ({ transaction }) => {
+            //   console.log(
+            //     `tx ${transaction.getHash().toString("hex")} seen in mempool`
+            //   );
+            // },
           });
           console.log(`${node} Listening for mempool txs...`);
         }

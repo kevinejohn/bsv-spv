@@ -3,7 +3,7 @@ const bsv = require("bsv-minimal");
 const fs = require("fs");
 
 class DbHeaders {
-  constructor({ headersDir, headers }) {
+  constructor({ headersDir, headers, readOnly = false }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
     fs.mkdirSync(headersDir, { recursive: true });
@@ -14,10 +14,12 @@ class DbHeaders {
       path: headersDir,
       mapSize: 1 * 1024 * 1024 * 1024,
       maxDbs: 1,
+      maxReaders: 64,
+      readOnly,
     });
     this.dbi_headers = this.env.openDbi({
       name: "headers",
-      create: true,
+      create: !readOnly,
       keyIsBuffer: true,
     });
 
@@ -35,7 +37,8 @@ class DbHeaders {
 
   saveHeaders(headerArray) {
     return new Promise((resolve, reject) => {
-      if (headerArray.length === 0) return resolve();
+      const hashes = [];
+      if (headerArray.length === 0) return resolve({ hashes });
       const operations = [];
       const oldTip = this.headers.getTip();
       headerArray.map((header) => {
@@ -44,16 +47,20 @@ class DbHeaders {
           this.dbi_headers,
           header.getHash(),
           header.toBuffer(),
+          null,
         ]);
       });
       const lastTip = this.headers.process();
-      this.env.batchWrite(operations, {}, (err, result) => {
+      this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
+        headerArray.map(
+          (header, i) => results[i] === 0 && hashes.push(header.getHash())
+        );
         if (lastTip && lastTip.height < oldTip.height) {
           // Re-org detected
-          resolve(lastTip);
+          resolve({ hashes, reorgTip: lastTip });
         } else {
-          resolve();
+          resolve({ hashes });
         }
       });
     });

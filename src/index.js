@@ -3,6 +3,7 @@ const Headers = require("bsv-headers");
 const EventEmitter = require("events");
 const DbHeaders = require("./db_headers");
 const DbBlocks = require("./db_blocks");
+const DbMempool = require("./db_mempool");
 const path = require("path");
 
 class BsvSpv extends EventEmitter {
@@ -10,28 +11,33 @@ class BsvSpv extends EventEmitter {
     ticker,
     node,
     dataDir,
+    forceUserAgent,
     saveBlocks = true,
+    saveMempool = true,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
-    syncBlocks = 0, // Number of newest blocks syncAllBlocks will sync. 0 for syncing to genesis
-    COMMAND_TIMEOUT = 1000 * 60 * 10, // 10 minutes
+    blockHeight, // Number. Lowest block height syncAllBlocks will sync to
+    COMMAND_TIMEOUT = 1000 * 60 * 10, // Download block timeout. 10 minutes default
   }) {
     super();
     if (!dataDir) throw Error(`Missing dataDir`);
     this.saveBlocks = saveBlocks;
+    this.saveMempool = saveMempool;
     this.pruneBlocks = pruneBlocks;
-    this.syncBlocks = syncBlocks;
+    this.blockHeight = blockHeight;
     this.ticker = ticker;
+    this.forceUserAgent = forceUserAgent;
     this.COMMAND_TIMEOUT = COMMAND_TIMEOUT;
     this.peer = new P2P({ node, ticker });
     this.headers = new Headers({ invalidBlocks });
+    dataDir = path.join(dataDir, ticker);
     const headersDir = path.join(dataDir, "headers");
     const blocksDir = path.join(dataDir, "blocks");
+    const mempoolDir = path.join(dataDir, "mempool");
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({ headersDir, headers: this.headers });
+    this.db_mempool = new DbMempool({ mempoolDir });
     if (saveBlocks) {
-      let writeStream;
-      let writeDir;
       this.peer.on(
         "block_chunk",
         async ({
@@ -86,35 +92,43 @@ class BsvSpv extends EventEmitter {
   }
 
   async syncHeaders() {
-    try {
-      let from = this.headers.getFromHeaderArray();
-      do {
-        let lastHash = Array.isArray(from) ? from[0] : from;
-        await this.peer.connect();
-        const headers = await this.peer.getHeaders({ from });
-        if (headers.length === 0) break;
-        lastHash = headers[headers.length - 1].getHash();
-        const reorgTip = await this.db_headers.saveHeaders(headers);
-        if (reorgTip) {
-          // Chain re-org detected!
-          const { height, hash } = reorgTip;
-          this.emit("reorg_detected", { height, hash });
-        }
-        this.emit("new_headers", { headers });
-        if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
-          break;
-        from = headers[headers.length - 1].getHash();
-      } while (true);
+    while (true) {
+      try {
+        let from = this.headers.getFromHeaderArray();
+        do {
+          let lastHash = Array.isArray(from) ? from[0] : from;
+          await this.peer.connect();
+          const headers = await this.peer.getHeaders({ from });
+          if (headers.length === 0) break;
+          lastHash = headers[headers.length - 1].getHash();
+          const { headers: newHeaders, reorgTip } =
+            await this.db_headers.saveHeaders(headers);
+          if (reorgTip) {
+            // Chain re-org detected!
+            const { height, hash } = reorgTip;
+            this.emit("block_reorg", { height, hash });
+          }
+          this.emit("headers_new", { headers: newHeaders });
+          if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
+            break;
+          from = headers[headers.length - 1].getHash();
+        } while (true);
 
-      if (!this.syncing) {
-        this.syncing = true;
-        this.peer.on("block_hashes", ({ hashes }) => {
-          this.emit("block_hashes", { hashes });
-          this.syncHeaders();
-        });
+        if (!this.syncing) {
+          this.syncing = true;
+          this.peer.on("block_hashes", ({ hashes }) => {
+            this.emit("block_seen", { hashes });
+            this.syncHeaders();
+          });
+        }
+        break;
+      } catch (err) {
+        const RETRY = 3;
+        console.error(
+          `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`
+        );
+        await new Promise((r) => setTimeout(r, RETRY * 1000));
       }
-    } catch (err) {
-      console.error(err);
     }
   }
 
@@ -125,8 +139,25 @@ class BsvSpv extends EventEmitter {
       this.emit("disconnected", params);
     });
     this.peer.on("connected", (params) => this.emit("connected", params));
-    this.peer.on("version", (params) => this.emit("version", params));
+    this.peer.on("version", ({ node, version }) => {
+      if (typeof this.forceUserAgent === "string") {
+        const { user_agent } = version;
+        if (
+          !user_agent.toLowerCase().includes(this.forceUserAgent.toLowerCase())
+        ) {
+          this.emit("version_invalid", { user_agent, version, node });
+          return this.disconnect();
+        }
+      }
+      this.emit("version", { version, node });
+    });
     await this.peer.connect();
+  }
+  disconnect() {
+    this.connecting = false;
+    this.peer.disconnect();
+    clearInterval(this.mempoolInterval);
+    this.mempoolTxCache = [];
   }
   getHeight(hash = false) {
     return this.headers.getHeight(hash);
@@ -141,9 +172,14 @@ class BsvSpv extends EventEmitter {
     if (!hash) hash = this.headers.getHash(height);
     return this.db_headers.getHeader(hash);
   }
-  async downloadBlock({ height, hash }) {
-    if (!hash) hash = this.headers.getHash(height);
-    hash = hash.toString("hex");
+  async downloadBlock(heightOrHash) {
+    let height, hash;
+    if (typeof heightOrHash === "number" && heightOrHash >= 0) {
+      height = heightOrHash;
+      hash = this.headers.getHash(height);
+    } else {
+      hash = heightOrHash.toString("hex");
+    }
     if (!this.db_blocks.blockExists(hash)) {
       await this.peer.connect(); // Wait until connected
 
@@ -168,39 +204,81 @@ class BsvSpv extends EventEmitter {
         this.removeListener(event, listener);
         throw err;
       }
-    } else {
       return true;
     }
+    return false;
   }
-  async readBlock({ height, hash }, callback) {
-    if (!hash) hash = this.headers.getHash(height);
+  async readBlock(heightOrHash, callback) {
+    let height, hash;
+    if (typeof heightOrHash === "number" && heightOrHash >= 0) {
+      height = heightOrHash;
+      hash = this.headers.getHash(height);
+    } else {
+      hash = heightOrHash.toString("hex");
+      height = this.headers.getHeight(hash);
+    }
     height = this.headers.getHeight(hash);
     await this.db_blocks.streamBlock({ hash, height }, callback);
   }
 
-  onMempoolTx(callback, filterTxs = true) {
+  onMempoolTx(opts = {}) {
+    const { saveInterval = 200 } = opts;
+    if (this.saveMempool) {
+      this.mempoolTxCache = [];
+      this.mempoolInterval = setInterval(async () => {
+        if (this.mempoolTxCache.length > 0) {
+          const txs = this.mempoolTxCache;
+          this.mempoolTxCache = [];
+          const { hashes } = await this.db_mempool.saveTxs(txs);
+          this.emit(`mempool_txs_saved`, { hashes });
+        }
+      }, saveInterval); // Batch mempool txs
+    }
     this.peer.on("transactions", ({ header, transactions }) => {
       if (header) return;
-      for (const [index, transaction] of transactions) {
-        try {
-          callback({ transaction });
-        } catch (err) {
-          console.error(err);
-        }
+      for (const [, transaction] of transactions) {
+        this.saveMempool && this.mempoolTxCache.push(transaction);
+        this.emit(`mempool_tx`, { transaction });
       }
     });
-    this.peer.listenForTxs(filterTxs);
+    this.peer.listenForTxs(async (txHashes) => {
+      if (this.saveMempool) {
+        // Only fetch txs we haven't already requested
+        const { hashes } = await this.db_mempool.saveTimes(txHashes);
+        this.emit(`mempool_txs_seen`, { hashes });
+        return hashes;
+      } else {
+        this.emit(`mempool_txs_seen`, { hashes: txHashes });
+        return txHashes;
+      }
+    });
   }
 
-  onBlockTx(callback) {
+  onBlockTx(opts = {}) {
+    const { pruneMempool = true } = opts;
     this.peer.on(
       "transactions",
-      ({ header, started, finished, size, height, transactions }) => {
+      async ({ header, started, finished, size, height, transactions }) => {
         if (!header) return;
-        try {
-          callback({ header, started, finished, size, height, transactions });
-        } catch (err) {
-          console.error(err);
+        this.emit(`block_txs`, {
+          header,
+          started,
+          finished,
+          size,
+          height,
+          transactions,
+        });
+        if (pruneMempool) {
+          const txHashes = transactions.map(([, tx]) => tx.getHash());
+          const { hashes } = await this.db_mempool.delTxs(txHashes);
+          if (hashes.length > 0)
+            this.emit(`mempool_pruned`, {
+              hashes,
+              height,
+              header,
+              started,
+              finished,
+            });
         }
       }
     );
@@ -208,29 +286,34 @@ class BsvSpv extends EventEmitter {
   }
 
   async syncAllBlocks(opts = {}) {
-    let { endHeight, syncBlocks, checkAll = false } = opts;
-    let blocksDled = 0;
+    const { checkAll = false } = opts;
     let height = this.headers.getHeight();
-    if (!(endHeight >= 0)) {
-      if (syncBlocks > 0) {
-        endHeight = height - syncBlocks;
-      } else if (this.pruneBlocks > 0) {
-        endHeight = height - this.pruneBlocks;
-      } else if (this.syncBlocks > 0) {
-        endHeight = height - this.syncBlocks;
-      }
+    if (typeof this.blockHeight !== "number") {
+      this.blockHeight = height + 1;
+    } else if (this.blockHeight < 0) {
+      this.blockHeight += height;
     }
-    if (!(endHeight >= 0)) endHeight = 0;
+    const endHeight = Math.max(
+      0,
+      this.blockHeight,
+      this.pruneBlocks > 0 ? height - this.pruneBlocks : 0
+    );
+    let blocksDled = 0;
     for (height; height >= endHeight; height--) {
       try {
-        const alreadyDled = await this.downloadBlock({ height });
-        if (alreadyDled && !checkAll) break;
-        if (!alreadyDled) blocksDled++;
+        if (await this.downloadBlock(height)) {
+          // Block downloaded
+          blocksDled++;
+        } else {
+          // Block is already downloaded
+          if (!checkAll) break;
+        }
       } catch (err) {
+        const RETRY = 3;
         console.error(
-          `syncAllBlocks error: ${err.message}. Retrying in 3 seconds...`
+          `syncAllBlocks error: ${err.message}. Retrying in ${RETRY} seconds...`
         );
-        await new Promise((r) => setTimeout(r, 3000));
+        await new Promise((r) => setTimeout(r, RETRY * 1000));
         height++; // Retry height
       }
     }
@@ -250,11 +333,17 @@ class BsvSpv extends EventEmitter {
         if (height <= pruneHeight) throw Error(`Prune`);
       } catch (err) {
         this.db_blocks.delBlock(file);
-        this.emit("pruned_block", { height, hash });
+        this.emit("block_pruned", { height, hash });
         prunedCount++;
       }
     }
     return prunedCount;
+  }
+
+  async pruneMempool(olderThan) {
+    const { hashes } = await this.db_mempool.pruneTxs(olderThan);
+    if (hashes.length > 0) this.emit(`mempool_pruned`, { hashes });
+    return { hashes };
   }
 }
 
