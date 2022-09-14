@@ -51,14 +51,12 @@ const dataDir = __dirname;
     console.log(`Node ${node} version`, version);
 
     console.log(`Syncing headers...`);
-    await spv.syncHeaders();
-    console.log(`Synced headers.`);
+    const newHeaders = await spv.syncHeaders();
+    console.log(`Synced ${newHeaders} new headers.`);
 
-    console.log(
-      `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
-    );
-    await spv.syncBlocks();
-    console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
+    console.log(`Syncing latest blocks...`);
+    const newBlocks = await spv.syncBlocks();
+    console.log(`Synced ${newBlocks} new blocks.`);
   });
   spv.on("version_invalid", ({ user_agent }) => {
     console.log(
@@ -68,6 +66,13 @@ const dataDir = __dirname;
   spv.on("headers_new", ({ headers }) => {
     const { height, hash } = spv.getTip();
     console.log(`${headers.length} new headers. Tip: ${height}, ${hash}`);
+  });
+  spv.on("headers_saved", ({ hashes }) => {
+    console.log(`${hashes.length} new headers saved to disk`);
+  });
+
+  spv.peer.on("error_socket", (err) => {
+    console.log(`${node} peer socket error`, err);
   });
 
   // Block events
@@ -87,7 +92,7 @@ const dataDir = __dirname;
     );
   });
   spv.on(
-    `block_txs`,
+    "block_txs",
     ({ transactions, header, started, finished, height, size }) => {
       // for (const [index, transaction] of transactions) {
       //   console.log(
@@ -101,22 +106,25 @@ const dataDir = __dirname;
 
   // Mempool events
   spv.on("mempool_pruned", ({ hashes, header, height }) => {
-    console.log(
-      `Pruned ${hashes.length} mempool txs ${
-        header ? `after seen in block ${height}` : ""
-      }`
-    );
+    // console.log(
+    //   `Pruned ${hashes.length} mempool txs ${
+    //     header ? `after seen in block ${height}` : ""
+    //   }`
+    // );
   });
-  spv.on(`mempool_tx`, ({ transaction }) => {
+  spv.on("mempool_tx", ({ transaction }) => {
     // console.log(
     //   `tx ${transaction.getHash().toString("hex")} downloaded from mempool`
     // );
   });
-  spv.on(`mempool_txs_seen`, ({ hashes }) => {
+  spv.on("mempool_txs_seen", ({ hashes }) => {
     // console.log(`${hashes.length} txs seen in mempool`);
   });
-  spv.on(`mempool_txs_saved`, ({ hashes }) => {
+  spv.on("mempool_txs_saved", ({ hashes }) => {
     // console.log(`${hashes.length} new txs saved from mempool`);
+  });
+  spv.on("node_peers", ({ nodes }) => {
+    console.log(`Node ${node} has ${nodes.length} peers`);
   });
 
   await spv.warningPruneBlocks();
@@ -127,39 +135,45 @@ const dataDir = __dirname;
   spv.onMempoolTx(); // Download mempool txs
   console.log(`Listening for mempool txs...`);
 
+  spv.once("version", () => {
+    // Run only once
+    console.log(`Getting node peers...`);
+    spv.getNodePeers();
+  });
+
   console.log(`Connecting to ${ticker} node ${node}...`);
   await spv.connect();
 
-  assert.equal(
-    spv.getHash(123000),
-    "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
-  );
-  assert.equal(
-    spv.getHeight(
-      "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
-    ),
-    122000
-  );
-  assert.equal(spv.getHeader({ height: 123000 }).time, 1304983906);
-  assert.equal(
-    spv.getHeader({
-      hash: "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05",
-    }).time,
-    1304590900
-  );
+  // assert.equal(
+  //   spv.getHash(123000),
+  //   "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
+  // );
+  // assert.equal(
+  //   spv.getHeight(
+  //     "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
+  //   ),
+  //   122000
+  // );
+  // assert.equal(spv.getHeader({ height: 123000 }).time, 1304983906);
+  // assert.equal(
+  //   spv.getHeader({
+  //     hash: "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05",
+  //   }).time,
+  //   1304590900
+  // );
 
-  // Download specific block example
-  height = 119990;
-  await spv.downloadBlock(height); // Transactions will come through `onBlockTx`. Returns false if block is already saved to disk
-  // Streams locally saved block from disk. No memory constraints
-  await spv.readBlock(
-    height,
-    ({ transaction, index, header, started, finished, size, height }) => {
-      if (finished) {
-        console.log(header, size);
-      }
-    }
-  );
+  // // Download specific block example
+  // height = 119990;
+  // await spv.downloadBlock(height); // Transactions will come through `onBlockTx`. Returns false if block is already saved to disk
+  // // Streams locally saved block from disk. No memory constraints
+  // await spv.readBlock(
+  //   height,
+  //   ({ transaction, index, header, started, finished, size, height }) => {
+  //     if (finished) {
+  //       console.log(header, size);
+  //     }
+  //   }
+  // );
 })();
 ```
 
