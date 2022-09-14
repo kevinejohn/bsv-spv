@@ -41,7 +41,8 @@ class DbMempool {
 
   saveTxs(txsArray) {
     return new Promise((resolve, reject) => {
-      if (txsArray.length === 0) return resolve({ hashes: [] });
+      const hashes = [];
+      if (txsArray.length === 0) return resolve({ hashes });
       const operations = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
@@ -54,7 +55,6 @@ class DbMempool {
       });
       this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
-        const hashes = [];
         txsArray.map(
           (tx, i) => results[i * 2] === 0 && hashes.push(tx.getHash())
         );
@@ -105,7 +105,7 @@ class DbMempool {
     let tx, time;
     const txn = this.env.beginTxn({ readOnly: true });
     const bufTx = txn.getBinary(this.dbi_txs, hash);
-    if (!bufTx) throw Error(`Tx not found`);
+    if (!bufTx) throw Error(`Not found`);
     tx = bsv.Transaction.fromBuffer(bufTx);
     if (getTime) {
       const buf = txn.getBinary(this.dbi_tx_times, hash);

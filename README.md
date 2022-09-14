@@ -57,7 +57,7 @@ const dataDir = __dirname;
     console.log(
       `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
     );
-    await spv.syncAllBlocks();
+    await spv.syncBlocks();
     console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
   });
   spv.on("version_invalid", ({ user_agent }) => {
@@ -73,7 +73,7 @@ const dataDir = __dirname;
   // Block events
   spv.on("block_reorg", ({ height, hash }) => {
     console.log(`Re-org detected after block height ${height}, ${hash}!`);
-    spv.syncAllBlocks(); // Re-sync blocks
+    spv.syncBlocks(); // Re-sync blocks
   });
   spv.on("block_pruned", ({ height, hash }) => {
     console.log(`Pruned block ${height}, ${hash}`);

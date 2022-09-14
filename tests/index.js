@@ -47,14 +47,12 @@ process.on("uncaughtException", (err) => {
     console.log(`Node ${node} version`, version);
 
     console.log(`Syncing headers...`);
-    await spv.syncHeaders();
-    console.log(`Synced headers.`);
+    const newHeaders = await spv.syncHeaders();
+    console.log(`Synced ${newHeaders} new headers.`);
 
-    console.log(
-      `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
-    );
-    await spv.syncAllBlocks();
-    console.log(`Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`);
+    console.log(`Syncing latest blocks...`);
+    const newBlocks = await spv.syncBlocks();
+    console.log(`Synced ${newBlocks} new blocks.`);
   });
   spv.on("version_invalid", ({ user_agent }) => {
     console.log(
@@ -69,10 +67,14 @@ process.on("uncaughtException", (err) => {
     console.log(`${hashes.length} new headers saved to disk`);
   });
 
+  spv.peer.on("error_socket", (err) => {
+    console.log(`${node} peer socket error`, err);
+  });
+
   // Block events
   spv.on("block_reorg", ({ height, hash }) => {
     console.log(`Re-org detected after block height ${height}, ${hash}!`);
-    spv.syncAllBlocks(); // Re-sync blocks
+    spv.syncBlocks(); // Re-sync blocks
   });
   spv.on("block_pruned", ({ height, hash }) => {
     console.log(`Pruned block ${height}, ${hash}`);
@@ -86,7 +88,7 @@ process.on("uncaughtException", (err) => {
     );
   });
   spv.on(
-    `block_txs`,
+    "block_txs",
     ({ transactions, header, started, finished, height, size }) => {
       // for (const [index, transaction] of transactions) {
       //   console.log(
@@ -100,22 +102,25 @@ process.on("uncaughtException", (err) => {
 
   // Mempool events
   spv.on("mempool_pruned", ({ hashes, header, height }) => {
-    console.log(
-      `Pruned ${hashes.length} mempool txs ${
-        header ? `after seen in block ${height}` : ""
-      }`
-    );
+    // console.log(
+    //   `Pruned ${hashes.length} mempool txs ${
+    //     header ? `after seen in block ${height}` : ""
+    //   }`
+    // );
   });
-  spv.on(`mempool_tx`, ({ transaction }) => {
+  spv.on("mempool_tx", ({ transaction }) => {
     // console.log(
     //   `tx ${transaction.getHash().toString("hex")} downloaded from mempool`
     // );
   });
-  spv.on(`mempool_txs_seen`, ({ hashes }) => {
+  spv.on("mempool_txs_seen", ({ hashes }) => {
     // console.log(`${hashes.length} txs seen in mempool`);
   });
-  spv.on(`mempool_txs_saved`, ({ hashes }) => {
+  spv.on("mempool_txs_saved", ({ hashes }) => {
     // console.log(`${hashes.length} new txs saved from mempool`);
+  });
+  spv.on("node_peers", ({ nodes }) => {
+    console.log(`Node ${node} has ${nodes.length} peers`);
   });
 
   await spv.warningPruneBlocks();
@@ -125,6 +130,12 @@ process.on("uncaughtException", (err) => {
   await spv.pruneMempool(); // Delete old mempool txs if they exist
   spv.onMempoolTx(); // Download mempool txs
   console.log(`Listening for mempool txs...`);
+
+  spv.once("version", () => {
+    // Run only once
+    console.log(`Getting node peers...`);
+    spv.getNodePeers();
+  });
 
   console.log(`Connecting to ${ticker} node ${node}...`);
   await spv.connect();

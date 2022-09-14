@@ -72,7 +72,7 @@ if (cluster.isWorker) {
             console.log(
               `Syncing ${pruneBlocks > 0 ? pruneBlocks : ""} latest blocks...`
             );
-            await spv.syncAllBlocks();
+            await spv.syncBlocks();
             console.log(
               `Synced all ${pruneBlocks > 0 ? pruneBlocks : ""} blocks!`
             );
@@ -83,7 +83,7 @@ if (cluster.isWorker) {
         });
         spv.on("reorg_detected", ({ height, hash }) => {
           console.log(`Re-org detected after block height ${height}, ${hash}!`);
-          if (blocks) spv.syncAllBlocks(); // Re-sync blocks
+          if (blocks) spv.syncBlocks(); // Re-sync blocks
         });
         spv.on("pruned_block", ({ height, hash }) => {
           console.log(`Pruned block ${height}, ${hash}`);

@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const bsv = require("bsv-minimal");
 
 class DbBlocks {
   constructor({ blocksDir }) {
@@ -99,6 +100,31 @@ class DbBlocks {
   blockExists(hash) {
     const dir = path.join(this.blocksDir, `${hash}.bin`);
     return fs.existsSync(dir);
+  }
+
+  getTx({ txHash, block, pos, len }) {
+    return new Promise((resolve, reject) => {
+      const dir = path.join(this.blocksDir, `${block.toString("hex")}.bin`);
+      fs.open(dir, "r", function (err, fd) {
+        if (err) return reject(err);
+        fs.read(fd, Buffer.alloc(len), 0, len, pos, (err, bytesRead, buf) => {
+          try {
+            if (err) throw err;
+            if (bytesRead !== len) throw Error(`Could not read full file`);
+            const tx = bsv.Transaction.fromBuffer(buf);
+            if (
+              txHash &&
+              txHash.toString("hex") !== tx.getHash().toString("hex")
+            ) {
+              throw Error(`Invalid txid`);
+            }
+            resolve({ tx });
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+    });
   }
 }
 
