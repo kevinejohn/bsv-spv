@@ -1,13 +1,13 @@
-const BsvSpv = require("../src");
+const { BsvSpv } = require("../src");
 const path = require("path");
 const assert = require("assert");
 
-const ticker = "BSV";
+const ticker = "BSV"; // BTC, BCH, XEC, BSV
+const node = `18.192.253.59:8333`; // Set to your favorite IP address
+const pruneBlocks = 10; // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
+const invalidBlocks = []; // Set if you want to force a specific fork (see examples below)
 const forceUserAgent = `Bitcoin SV`;
-const node = `18.192.253.59:8333`;
-const invalidBlocks = [];
 const dataDir = path.join(__dirname, "data");
-const pruneBlocks = 10;
 const blockHeight = -1; // Sync to block height
 
 process.on("unhandledRejection", (reason, p) => {
@@ -119,11 +119,13 @@ process.on("uncaughtException", (err) => {
   spv.on("mempool_txs_saved", ({ hashes }) => {
     // console.log(`${hashes.length} new txs saved from mempool`);
   });
-  spv.on("node_peers", ({ nodes }) => {
-    console.log(`Node ${node} has ${nodes.length} peers`);
+  spv.on("node_peers", ({ addrs, nodes }) => {
+    console.log(
+      `Node ${node} sent us ${nodes.length} new peers (${addrs.length} total)`
+    );
   });
 
-  await spv.warningPruneBlocks();
+  await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
   spv.onBlockTx(); // Download blocks
   console.log(`Listening for new blocks...`);
 
@@ -132,7 +134,7 @@ process.on("uncaughtException", (err) => {
   console.log(`Listening for mempool txs...`);
 
   spv.once("version", () => {
-    // Run only once
+    // Run once on connect
     console.log(`Getting node peers...`);
     spv.getNodePeers();
   });

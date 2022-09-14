@@ -2,4 +2,3 @@ node_modules
 tests
 *.mdb
 *.bin
-tests/data

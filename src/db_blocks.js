@@ -58,6 +58,7 @@ class DbBlocks {
   streamBlock({ hash, height }, callback) {
     return new Promise((resolve, reject) => {
       try {
+        const startDate = +new Date();
         if (typeof callback !== "function") throw Error(`Missing callback`);
         hash = hash.toString("hex");
         hash = hash.split(".").length > 1 ? hash : `${hash}.bin`;
@@ -71,7 +72,7 @@ class DbBlocks {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
             stream.pause();
-            await callback({ ...result, height });
+            await callback({ ...result, height, startDate });
             stream.resume();
           } catch (err) {
             stream.destroy();

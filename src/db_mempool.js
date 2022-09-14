@@ -3,7 +3,7 @@ const bsv = require("bsv-minimal");
 const fs = require("fs");
 
 class DbMempool {
-  constructor({ mempoolDir, readOnly = false }) {
+  constructor({ mempoolDir, readOnly = true }) {
     if (!mempoolDir) throw Error(`Missing mempoolDir`);
     fs.mkdirSync(mempoolDir, { recursive: true });
 
@@ -100,7 +100,7 @@ class DbMempool {
     });
   }
 
-  getTx(hash, getTime = false) {
+  getTx(hash, getTime = true) {
     if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
     let tx, time;
     const txn = this.env.beginTxn({ readOnly: true });

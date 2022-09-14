@@ -14,13 +14,15 @@ npm i bsv-spv
 
 ```js
 const assert = require("assert");
-const BsvSpv = require("bsv-spv");
+const { BsvSpv } = require("bsv-spv");
 
 const ticker = "BSV"; // BTC, BCH, XEC, BSV
 const node = `seed.satoshisvision.network:8333`; // Set to your favorite node IP address
 const pruneBlocks = 3; // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
 const invalidBlocks = []; // Set if you want to force a specific fork (see examples below)
-const dataDir = __dirname;
+const forceUserAgent = `Bitcoin SV`;
+const dataDir = path.join(__dirname, "data");
+const blockHeight = -1; // Sync to block height
 
 (async () => {
   let date = +new Date();
@@ -144,36 +146,36 @@ const dataDir = __dirname;
   console.log(`Connecting to ${ticker} node ${node}...`);
   await spv.connect();
 
-  // assert.equal(
-  //   spv.getHash(123000),
-  //   "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
-  // );
-  // assert.equal(
-  //   spv.getHeight(
-  //     "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
-  //   ),
-  //   122000
-  // );
-  // assert.equal(spv.getHeader({ height: 123000 }).time, 1304983906);
-  // assert.equal(
-  //   spv.getHeader({
-  //     hash: "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05",
-  //   }).time,
-  //   1304590900
-  // );
+  assert.equal(
+    spv.getHash(123000),
+    "00000000000069b73594b10aaa38beaeadc6d3f28cab8d76c4a6ac182694fd41"
+  );
+  assert.equal(
+    spv.getHeight(
+      "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05"
+    ),
+    122000
+  );
+  assert.equal(spv.getHeader({ height: 123000 }).time, 1304983906);
+  assert.equal(
+    spv.getHeader({
+      hash: "0000000000002fe5f29af38282ac1c8f4ea2bf8a0855946150130419491b6c05",
+    }).time,
+    1304590900
+  );
 
-  // // Download specific block example
-  // height = 119990;
-  // await spv.downloadBlock(height); // Transactions will come through `onBlockTx`. Returns false if block is already saved to disk
-  // // Streams locally saved block from disk. No memory constraints
-  // await spv.readBlock(
-  //   height,
-  //   ({ transaction, index, header, started, finished, size, height }) => {
-  //     if (finished) {
-  //       console.log(header, size);
-  //     }
-  //   }
-  // );
+  // Download specific block example
+  height = 119990;
+  await spv.downloadBlock(height); // Transactions will come through `onBlockTx`. Returns false if block is already saved to disk
+  // Streams locally saved block from disk. No memory constraints
+  await spv.readBlock(
+    height,
+    ({ transaction, index, header, started, finished, size, height }) => {
+      if (finished) {
+        console.log(header, size);
+      }
+    }
+  );
 })();
 ```
 

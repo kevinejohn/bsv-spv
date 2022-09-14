@@ -3,7 +3,7 @@ const bsv = require("bsv-minimal");
 const fs = require("fs");
 
 class DbHeaders {
-  constructor({ headersDir, headers, readOnly = false }) {
+  constructor({ headersDir, headers, readOnly = true }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
     fs.mkdirSync(headersDir, { recursive: true });

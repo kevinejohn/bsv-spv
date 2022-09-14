@@ -5,7 +5,7 @@ const fs = require("fs");
 class DbNodes {
   constructor({
     nodesDir,
-    readOnly = false,
+    readOnly = true,
     blacklistTime = (+new Date() - 1000 * 60 * 60 * 4) / 1000, // 4 hours blacklisted
   }) {
     if (!nodesDir) throw Error(`Missing nodesDir`);
