@@ -16,7 +16,7 @@
   "dependencies": {
     "bsv-headers": "^0.1.1",
     "bsv-minimal": "^0.5.1",
-    "bsv-p2p": "^0.2.1",
+    "bsv-p2p": "^0.2.2",
     "node-lmdb": "^0.9.7"
   }
 }
