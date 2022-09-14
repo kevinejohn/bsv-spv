@@ -86,16 +86,13 @@ class Listener extends EventEmitter {
     });
   }
 
-  readBlock(heightOrHash, callback) {
-    let height, hash;
-    if (typeof heightOrHash === "number" && heightOrHash >= 0) {
-      height = heightOrHash;
-      hash = this.headers.getHash(height);
-    } else {
-      hash = heightOrHash.toString("hex");
-      height = this.headers.getHeight(hash);
+  readBlock({ hash, height }, callback) {
+    if (!hash) hash = this.headers.getHash(height);
+    if (typeof height !== "number") {
+      try {
+        height = this.headers.getHeight(hash);
+      } catch (err) {}
     }
-    height = this.headers.getHeight(hash);
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
   getMempoolTx(hash) {

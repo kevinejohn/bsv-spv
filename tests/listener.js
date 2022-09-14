@@ -23,7 +23,7 @@ listener.on("block_reorg", ({ height, hash }) => {
 listener.on("block_saved", ({ height, hash }) => {
   console.log(`New block saved ${height}, ${hash}`);
   listener.readBlock(
-    hash,
+    { hash, height },
     ({ header, started, finished, size, height, transactions, startDate }) => {
       if (started) {
         console.log(

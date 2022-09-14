@@ -169,7 +169,7 @@ const blockHeight = -1; // Sync to block height
   await spv.downloadBlock(height); // Transactions will come through `onBlockTx`. Returns false if block is already saved to disk
   // Streams locally saved block from disk. No memory constraints
   await spv.readBlock(
-    height,
+    { height },
     ({ transaction, index, header, started, finished, size, height }) => {
       if (finished) {
         console.log(header, size);

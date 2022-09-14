@@ -72,7 +72,9 @@ class DbBlocks {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
             stream.pause();
-            await callback({ ...result, height, startDate });
+            const obj = { ...result, startDate };
+            if (height >= 0) obj.height = height;
+            await callback(obj);
             stream.resume();
           } catch (err) {
             stream.destroy();
