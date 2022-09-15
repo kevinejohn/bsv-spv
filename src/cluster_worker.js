@@ -40,10 +40,10 @@ class Worker extends EventEmitter {
         console.log(`${id} Synced ${newBlocks} new blocks.`);
       }
     });
-    spv.once("version", () => {
-      console.log(`${id} Getting node peers...`);
-      spv.getNodePeers();
-    });
+    // spv.once("version", () => {
+    //   console.log(`${id} Getting node peers...`);
+    //   spv.getNodePeers();
+    // });
     spv.on("version_invalid", ({ user_agent, node }) => {
       console.error(
         `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${this.params.forceUserAgent}"`
@@ -124,6 +124,9 @@ class Worker extends EventEmitter {
           .join(", ")}`
       );
     });
+    spv.on("block_downloading", ({ hash, height }) => {
+      console.log(`${id} Downloading block: ${height}, ${hash}...`);
+    });
 
     if (mempool) {
       // Mempool events
@@ -189,7 +192,14 @@ class Worker extends EventEmitter {
     }
 
     console.log(`${id} Connecting to node...`);
-    await spv.connect();
+    const options = {
+      version: 70016, // for extmsg
+      services: Buffer.from("0000000000000000", "hex"),
+      // user_agent: '',
+      start_height: height,
+      relay: mempool ? Buffer.from([1]) : Buffer.from([0]),
+    };
+    await spv.connect(options);
 
     if (mempool) {
       await spv.pruneMempool(); // Delete old mempool txs if they exist

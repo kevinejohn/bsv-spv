@@ -50,6 +50,7 @@ class BsvSpv extends EventEmitter {
       this.peer.on(
         "block_chunk",
         async ({
+          header,
           chunk,
           blockHash,
           finished,
@@ -58,7 +59,10 @@ class BsvSpv extends EventEmitter {
           height: blockHeight,
         }) => {
           try {
-            if (started) startDate = +new Date();
+            if (started) {
+              startDate = +new Date();
+              await this.addHeaders({ headers: [header] });
+            }
             const success = await this.db_blocks.writeBlockChunk({
               chunk,
               blockHash,
@@ -102,6 +106,29 @@ class BsvSpv extends EventEmitter {
     }
   }
 
+  async addHeaders({ headers }) {
+    const newHeaders = 0;
+    const prevTip = this.headers.getTip();
+    headers.map((header) => this.headers.addHeader({ header }));
+    const lastTip = this.headers.process();
+    const newTip = this.headers.getTip();
+    const { hashes } = await this.db_headers.saveHeaders(headers);
+    if (hashes.length > 0) this.emit("headers_saved", { hashes });
+    if (lastTip && lastTip.height < prevTip.height) {
+      // Chain re-org detected!
+      const { height, hash } = lastTip;
+      this.emit("block_reorg", { height, hash });
+      newHeaders += newTip.height - lastTip.height;
+      this.emit("headers_new", { headers });
+    } else {
+      newHeaders += newTip.height - prevTip.height;
+      if (newTip.height - prevTip.height > 0) {
+        this.emit("headers_new", { headers });
+      }
+    }
+    return newHeaders;
+  }
+
   async syncHeaders() {
     let newHeaders = 0;
     while (true) {
@@ -113,40 +140,11 @@ class BsvSpv extends EventEmitter {
           const headers = await this.peer.getHeaders({ from });
           if (headers.length === 0) break;
           lastHash = headers[headers.length - 1].getHash();
-          const prevTip = this.headers.getTip();
-          headers.map((header) => this.headers.addHeader({ header }));
-          const lastTip = this.headers.process();
-          const newTip = this.headers.getTip();
-          const { hashes } = await this.db_headers.saveHeaders(headers);
-          if (hashes.length > 0) this.emit("headers_saved", { hashes });
-          if (lastTip && lastTip.height < prevTip.height) {
-            // Chain re-org detected!
-            const { height, hash } = lastTip;
-            this.emit("block_reorg", { height, hash });
-            newHeaders += newTip.height - lastTip.height;
-            this.emit("headers_new", { headers });
-          } else {
-            newHeaders += newTip.height - prevTip.height;
-            if (newTip.height - prevTip.height > 0) {
-              this.emit("headers_new", { headers });
-            }
-          }
+          newHeaders += await this.addHeaders({ headers });
           if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
             break;
           from = headers[headers.length - 1].getHash();
         } while (true);
-
-        if (!this.syncing) {
-          this.syncing = true;
-          this.peer.on("block_hashes", async ({ hashes }) => {
-            try {
-              this.emit("block_seen", { hashes });
-              await this.syncHeaders();
-            } catch (err) {
-              console.error(err);
-            }
-          });
-        }
         break;
       } catch (err) {
         const RETRY = 3;
@@ -159,11 +157,14 @@ class BsvSpv extends EventEmitter {
     return newHeaders;
   }
 
-  async connect() {
+  async connect(options) {
     if (this.connecting) return;
     this.connecting = true;
     this.peer.on("disconnected", (params) => {
       this.emit("disconnected", params);
+    });
+    this.peer.on("error_message", (params) => {
+      this.emit("peer_error", params);
     });
     this.peer.on("connected", (params) => this.emit("connected", params));
     this.peer.on("version", ({ node, version }) => {
@@ -186,7 +187,15 @@ class BsvSpv extends EventEmitter {
         console.error(err);
       }
     });
-    await this.peer.connect();
+    this.peer.on("block_hashes", async ({ hashes }) => {
+      try {
+        this.emit("block_seen", { hashes });
+        await this.syncHeaders();
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    await this.peer.connect(options);
   }
   disconnect() {
     this.connecting = false;
@@ -254,6 +263,7 @@ class BsvSpv extends EventEmitter {
             this.COMMAND_TIMEOUT
           );
         });
+        this.emit(`block_downloading`, { hash, height });
         await this.peer.getBlock(hash);
         await promise; // Wait until block is fully downloaded and ready
       } catch (err) {

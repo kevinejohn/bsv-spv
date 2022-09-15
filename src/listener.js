@@ -37,14 +37,27 @@ class Listener extends EventEmitter {
   }
 
   async reconnect() {
+    if (!this.reconnectPromise) {
+      this.reconnectPromise = await new Promise((resolve, reject) => {
+        this.disconnect();
+        setTimeout(() => {
+          this.connect();
+          resolve();
+          delete this.reconnectPromise;
+        }, this.reconnectTime * 1000);
+      });
+    }
+    return this.reconnectPromise;
+  }
+  disconnect() {
     try {
       this.client.destroy();
     } catch (err) {}
-    await new Promise((r) => setTimeout(r, 1000 * this.reconnectTime));
-    return this.connect();
+    this.client = null;
   }
 
   connect() {
+    if (this.client) return;
     const { host, port, reconnectTime } = this;
 
     const client = new Net.Socket();
@@ -73,15 +86,15 @@ class Listener extends EventEmitter {
     });
 
     client.on("close", () => {
-      console.error(`Disconnected! Reconnecting in ${reconnectTime} second...`);
+      console.error(`Disconnected! Attempting in ${reconnectTime} second...`);
       this.reconnect();
     });
 
     client.on("error", (err) => {
-      console.error(
-        `Socket error! Reconnecting in ${reconnectTime} seconds...`,
-        err
-      );
+      // console.error(
+      //   `Socket error! Reconnecting in ${reconnectTime} seconds...`,
+      //   err
+      // );
       this.reconnect();
     });
   }

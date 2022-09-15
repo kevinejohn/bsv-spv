@@ -6,7 +6,7 @@ class DbNodes {
   constructor({
     nodesDir,
     readOnly = true,
-    blacklistTime = (+new Date() - 1000 * 60 * 60 * 4) / 1000, // 4 hours blacklisted
+    blacklistTime = (+new Date() - 1000 * 60 * 60 * 24) / 1000, // 24 hour blacklist
   }) {
     if (!nodesDir) throw Error(`Missing nodesDir`);
     fs.mkdirSync(nodesDir, { recursive: true });
@@ -91,7 +91,6 @@ class DbNodes {
   }
 
   isBlacklisted(node) {
-    // Default blacklist timeout is 4 hours
     const txn = this.env.beginTxn({ readOnly: false });
     const date = txn.getNumber(this.dbi_blacklisted, node);
     let blacklisted = false;

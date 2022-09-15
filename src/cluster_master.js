@@ -17,7 +17,8 @@ class Master {
     });
 
     for (const node of config.nodes) {
-      let worker = cluster.fork();
+      let worker;
+      worker = cluster.fork();
       worker.on("message", (data) => this.onMessage(data));
       worker.send(
         JSON.stringify({ ...config, node, command: "init", blocks: true })
