@@ -1,25 +1,24 @@
 const BsvSpv = require("./spv");
-const EventEmitter = require("events");
 
-class Worker extends EventEmitter {
-  constructor(params) {
-    super();
-    this.params = params;
-    this.node = params.node;
+class Worker {
+  constructor() {
+    process.on("message", (msg) => {
+      const obj = JSON.parse(msg);
+      if (obj.command === "init") this.start(obj);
+    });
   }
 
-  async start({ mempool, blocks }) {
+  async start(params) {
+    const { node, mempool, blocks, forceUserAgent } = params;
     const REFRESH = 10; // console.log status every X seconds
     let interval;
     let txsSeen = 0;
     let txsSaved = 0;
 
-    const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${
-      this.node
-    }`;
+    const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${node}`;
 
     let date = +new Date();
-    const spv = new BsvSpv(this.params);
+    const spv = new BsvSpv(params);
     this.spv = spv;
 
     let { height, hash } = spv.getTip();
@@ -49,15 +48,14 @@ class Worker extends EventEmitter {
     });
     spv.on("version_invalid", ({ user_agent, node }) => {
       console.error(
-        `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${this.params.forceUserAgent}"`
+        `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${forceUserAgent}"`
       );
     });
     spv.on("disconnected", ({ node, disconnects }) => {
       console.error(`${id} disconnected ${disconnects} times`);
       clearInterval(interval);
 
-      this.emit(
-        `message`,
+      process.send(
         JSON.stringify({
           command: `disconnected`,
           data: { node, disconnects, mempool: true },
@@ -67,8 +65,7 @@ class Worker extends EventEmitter {
     spv.on("connected", async ({ node }) => {
       console.log(`${id} connected`);
 
-      this.emit(
-        `message`,
+      process.send(
         JSON.stringify({
           command: `connected`,
           data: { node, mempool: true },
@@ -99,33 +96,38 @@ class Worker extends EventEmitter {
     });
     spv.on("headers_saved", ({ hashes }) => {
       console.log(`${id} ${hashes.length} new headers saved to disk`);
-      this.emit(
-        `message`,
+      process.send(
         JSON.stringify({
           command: `headers_saved`,
           data: { hashes: hashes.map((h) => h.toString("hex")) },
         })
       );
     });
-    spv.on("block_reorg", ({ height, hash }) => {
+    spv.on("block_reorg", async ({ height, hash }) => {
       console.log(
         `${id} Re-org detected after block height ${height}, ${hash}!`
       );
-      this.emit(
-        `message`,
+      process.send(
         JSON.stringify({
           command: `block_reorg`,
           data: { hash, height },
         })
       );
-      if (blocks) spv.syncBlocks(); // Re-sync blocks
+      if (blocks) {
+        await spv.syncHeaders();
+        await spv.syncBlocks();
+      }
     });
-    spv.on("block_seen", ({ hashes }) => {
+    spv.on("block_seen", async ({ hashes }) => {
       console.log(
         `${id} New block seen: ${hashes
           .map((h) => h.toString("hex"))
           .join(", ")}`
       );
+      if (blocks) {
+        await spv.syncHeaders();
+        await spv.syncBlocks();
+      }
     });
     spv.on("block_downloading", ({ hash, height }) => {
       console.log(`${id} Downloading block: ${height}, ${hash}...`);
@@ -150,8 +152,7 @@ class Worker extends EventEmitter {
       spv.on("mempool_txs_saved", ({ hashes }) => {
         // console.log(`${id} ${hashes.length} new txs saved from mempool`);
         txsSaved += hashes.length;
-        this.emit(
-          `message`,
+        process.send(
           JSON.stringify({
             command: `mempool_txs_saved`,
             data: { hashes: hashes.map((h) => h.toString("hex")) },
@@ -172,8 +173,7 @@ class Worker extends EventEmitter {
             (+new Date() - startDate) / 1000
           } seconds.`
         );
-        this.emit(
-          `message`,
+        process.send(
           JSON.stringify({
             command: `block_saved`,
             data: { hash, height },
@@ -211,7 +211,7 @@ class Worker extends EventEmitter {
     }
     if (blocks) {
       await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
-      spv.onBlockTx(); // Download new blocks
+      // spv.onBlockTx(); // Download new blocks
       console.log(`${id} Listening for new blocks...`);
     }
   }

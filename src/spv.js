@@ -61,7 +61,7 @@ class BsvSpv extends EventEmitter {
           try {
             if (started) {
               startDate = +new Date();
-              await this.addHeaders({ headers: [header] });
+              this.addHeaders({ headers: [header] });
             }
             const success = await this.db_blocks.writeBlockChunk({
               chunk,
@@ -107,7 +107,7 @@ class BsvSpv extends EventEmitter {
   }
 
   async addHeaders({ headers }) {
-    const newHeaders = 0;
+    let newHeaders = 0;
     const prevTip = this.headers.getTip();
     headers.map((header) => this.headers.addHeader({ header }));
     const lastTip = this.headers.process();
@@ -129,32 +129,41 @@ class BsvSpv extends EventEmitter {
     return newHeaders;
   }
 
-  async syncHeaders() {
-    let newHeaders = 0;
-    while (true) {
-      try {
-        let from = this.headers.getFromHeaderArray();
-        do {
-          let lastHash = Array.isArray(from) ? from[0] : from;
-          await this.peer.connect();
-          const headers = await this.peer.getHeaders({ from });
-          if (headers.length === 0) break;
-          lastHash = headers[headers.length - 1].getHash();
-          newHeaders += await this.addHeaders({ headers });
-          if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
+  syncHeaders() {
+    if (!this.promiseSyncHeaders) {
+      this.promiseSyncHeaders = new Promise(async (resolve, reject) => {
+        let newHeaders = 0;
+        while (true) {
+          try {
+            let from = this.headers.getFromHeaderArray();
+            do {
+              let lastHash = Array.isArray(from) ? from[0] : from;
+              await this.peer.connect();
+              const headers = await this.peer.getHeaders({ from });
+              if (headers.length === 0) break;
+              lastHash = headers[headers.length - 1].getHash();
+              newHeaders += await this.addHeaders({ headers });
+              if (
+                !lastHash ||
+                lastHash.toString("hex") === from.toString("hex")
+              )
+                break;
+              from = headers[headers.length - 1].getHash();
+            } while (true);
             break;
-          from = headers[headers.length - 1].getHash();
-        } while (true);
-        break;
-      } catch (err) {
-        const RETRY = 3;
-        console.error(
-          `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`
-        );
-        await new Promise((r) => setTimeout(r, RETRY * 1000));
-      }
+          } catch (err) {
+            const RETRY = 3;
+            console.error(
+              `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`
+            );
+            await new Promise((r) => setTimeout(r, RETRY * 1000));
+          }
+        }
+        resolve(newHeaders);
+        delete this.promiseSyncHeaders;
+      });
     }
-    return newHeaders;
+    return this.promiseSyncHeaders;
   }
 
   async connect(options) {

@@ -49,6 +49,7 @@ class DbBlocks {
           }
           resolve(false);
         });
+        this.writeStream = null;
       } else {
         resolve();
       }

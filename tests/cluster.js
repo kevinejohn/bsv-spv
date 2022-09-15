@@ -14,12 +14,7 @@ const config = {
 };
 
 if (cluster.isWorker) {
-  process.on("message", async (msg) => {
-    const obj = JSON.parse(msg);
-    const worker = new Worker(obj);
-    worker.on("message", (data) => process.send(data));
-    await worker.start(obj);
-  });
+  const worker = new Worker();
 } else if (cluster.isPrimary) {
   const master = new Master(config);
   master.startServer();
