@@ -40,10 +40,13 @@ class Worker extends EventEmitter {
         console.log(`${id} Synced ${newBlocks} new blocks.`);
       }
     });
-    // spv.once("version", () => {
-    //   console.log(`${id} Getting node peers...`);
-    //   spv.getNodePeers();
-    // });
+    spv.once("version", () => {
+      const seenNodes = spv.db_nodes.getSeenNodes();
+      if (seenNodes.length === 0) {
+        console.log(`${id} Getting node peers...`);
+        spv.getNodePeers();
+      }
+    });
     spv.on("version_invalid", ({ user_agent, node }) => {
       console.error(
         `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${this.params.forceUserAgent}"`
