@@ -1,6 +1,14 @@
 const cluster = require("cluster");
 const Net = require("net");
 
+process.on("unhandledRejection", (reason, p) => {
+  console.error(reason, "Master Unhandled Rejection at Promise", p);
+});
+process.on("uncaughtException", (err) => {
+  console.error(err, "Master Uncaught Exception thrown");
+  process.exit(1);
+});
+
 class Master {
   constructor(config) {
     const { port = 8080, host = "localhost" } = config;

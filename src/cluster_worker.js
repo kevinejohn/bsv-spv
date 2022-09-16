@@ -1,5 +1,13 @@
 const BsvSpv = require("./spv");
 
+process.on("unhandledRejection", (reason, p) => {
+  console.error(reason, "Worker Unhandled Rejection at Promise", p);
+});
+process.on("uncaughtException", (err) => {
+  console.error(err, "Worker Uncaught Exception thrown");
+  process.exit(1);
+});
+
 class Worker {
   constructor() {
     process.on("message", (msg) => {
