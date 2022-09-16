@@ -11,10 +11,7 @@ process.on("uncaughtException", (err) => {
 
 class Master {
   constructor(config) {
-    const { port = 8080, host = "localhost" } = config;
     this.config = config;
-    this.port = port;
-    this.host = host;
     this.sockets = {};
     this.workers = {};
 
@@ -42,8 +39,8 @@ class Master {
     }
   }
 
-  startServer() {
-    const { port, host } = this;
+  startServer(opts = {}) {
+    const { port = 8080, host = "localhost" } = opts;
     const server = new Net.Server();
     this.server = server;
 

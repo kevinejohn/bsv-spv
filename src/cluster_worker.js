@@ -204,7 +204,7 @@ class Worker {
 
     console.log(`${id} Connecting to node...`);
     const options = {
-      version: 70016, // for extmsg
+      version: 70016, // >= 70016 for extmsg
       services: Buffer.from("0000000000000000", "hex"),
       // user_agent: '',
       start_height: height,

@@ -19,6 +19,7 @@ class BsvSpv extends EventEmitter {
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
     blockHeight, // Number. Lowest block height syncBlocks will sync to
     COMMAND_TIMEOUT = 1000 * 60 * 10, // Download block timeout. 10 minutes default
+    MEMPOOL_PRUNE_AFTER,
   }) {
     super();
     if (!dataDir) throw Error(`Missing dataDir`);
@@ -43,7 +44,11 @@ class BsvSpv extends EventEmitter {
       headers: this.headers,
       readOnly: false,
     });
-    this.db_mempool = new DbMempool({ mempoolDir, readOnly: false });
+    this.db_mempool = new DbMempool({
+      mempoolDir,
+      pruneAfter: MEMPOOL_PRUNE_AFTER,
+      readOnly: false,
+    });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
     if (saveBlocks) {
       let startDate;

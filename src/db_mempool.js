@@ -3,9 +3,14 @@ const bsv = require("bsv-minimal");
 const fs = require("fs");
 
 class DbMempool {
-  constructor({ mempoolDir, readOnly = true }) {
+  constructor({
+    mempoolDir,
+    pruneAfter = 1000 * 60 * 60 * 12, // After 12 hours
+    readOnly = true,
+  }) {
     if (!mempoolDir) throw Error(`Missing mempoolDir`);
     fs.mkdirSync(mempoolDir, { recursive: true });
+    this.pruneAfter = pruneAfter;
 
     this.env = new lmdb.Env();
     this.env.open({
@@ -143,7 +148,7 @@ class DbMempool {
   }
 
   pruneTxs(olderThan) {
-    if (!(olderThan >= 0)) olderThan = +new Date() - 1000 * 60 * 60 * 12; // 12 hours ago
+    if (!(olderThan >= 0)) olderThan = +new Date() - this.pruneAfter;
     const hashes = this.getTxHashes({ olderThan });
     if (hashes.length > 0) {
       return this.delTxs(hashes);
