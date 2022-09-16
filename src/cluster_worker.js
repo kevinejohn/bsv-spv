@@ -184,7 +184,7 @@ class Worker {
         process.send(
           JSON.stringify({
             command: `block_saved`,
-            data: { hash, height },
+            data: { hash, height, size, txCount },
           })
         );
       });
