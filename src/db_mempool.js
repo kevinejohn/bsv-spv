@@ -147,6 +147,25 @@ class DbMempool {
     return txHashes;
   }
 
+  getTxs() {
+    const txn = this.env.beginTxn({ readOnly: true });
+    const cursor = new lmdb.Cursor(txn, this.dbi_txs);
+    const txs = {};
+    let size = 0;
+    for (
+      let hash = cursor.goToFirst();
+      hash !== null;
+      hash = cursor.goToNext()
+    ) {
+      const buf = cursor.getCurrentBinary();
+      size += buf.length;
+      txs[hash] = bsv.Transaction.fromBuffer(buf);
+    }
+    cursor.close();
+    txn.commit();
+    return { txs, size };
+  }
+
   pruneTxs(olderThan) {
     if (!(olderThan >= 0)) olderThan = +new Date() - this.pruneAfter;
     const hashes = this.getTxHashes({ olderThan });

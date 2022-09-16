@@ -310,7 +310,7 @@ class BsvSpv extends EventEmitter {
           const txs = this.mempoolTxCache;
           this.mempoolTxCache = [];
           const { hashes } = await this.db_mempool.saveTxs(txs);
-          this.emit(`mempool_txs_saved`, { hashes });
+          if (hashes.length > 0) this.emit(`mempool_txs_saved`, { hashes });
         }
       }, saveInterval); // Batch mempool txs
     }
@@ -327,13 +327,12 @@ class BsvSpv extends EventEmitter {
     });
     this.peer.listenForTxs(async (txHashes) => {
       try {
+        this.emit(`mempool_txs_seen`, { hashes: txHashes });
         if (this.saveMempool) {
           // Only fetch txs we haven't already requested
           const { hashes } = await this.db_mempool.saveTimes(txHashes);
-          this.emit(`mempool_txs_seen`, { hashes });
           return hashes;
         } else {
-          this.emit(`mempool_txs_seen`, { hashes: txHashes });
           return txHashes;
         }
       } catch (err) {

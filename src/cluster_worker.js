@@ -11,8 +11,13 @@ process.on("uncaughtException", (err) => {
 class Worker {
   constructor() {
     process.on("message", (msg) => {
-      const obj = JSON.parse(msg);
-      if (obj.command === "init") this.start(obj);
+      try {
+        const obj = JSON.parse(msg);
+        if (obj.command === "init")
+          this.start(obj).catch((err) => console.error(err));
+      } catch (err) {
+        console.error(err);
+      }
     });
   }
 
@@ -140,24 +145,26 @@ class Worker {
     spv.on("block_downloading", ({ hash, height }) => {
       console.log(`${id} Downloading block: ${height}, ${hash}...`);
     });
+    spv.on(
+      "mempool_pruned",
+      ({ hashes, header, height, finished, txCount }) => {
+        if (!header) {
+          console.log(`${id} Pruned ${hashes.length} mempool txs`);
+        } else if (header && finished) {
+          console.log(
+            `${id} Pruned ${txCount} mempool txs included in block ${height}`
+          );
+        }
+      }
+    );
 
     if (mempool) {
       // Mempool events
-      spv.on(
-        "mempool_pruned",
-        ({ hashes, header, height, finished, txCount }) => {
-          if (!header) {
-            console.log(`${id} Pruned ${hashes.length} mempool txs`);
-          } else if (header && finished) {
-            console.log(`${id} Pruned ${txCount} from block ${height}`);
-          }
-        }
-      );
-      spv.on("mempool_tx", ({ transaction }) => {
-        // console.log(
-        //   `${id} tx ${transaction.getHash().toString("hex")} downloaded from mempool`
-        // );
-      });
+      // spv.on("mempool_tx", ({ transaction }) => {
+      //   console.log(
+      //     `${id} tx ${transaction.getHash().toString("hex")} downloaded from mempool`
+      //   );
+      // });
       spv.on("mempool_txs_seen", ({ hashes }) => {
         // console.log(`${id} ${hashes.length} txs seen in mempool`);
         txsSeen += hashes.length;
