@@ -54,11 +54,14 @@ class Listener extends EventEmitter {
       this.client.destroy();
     } catch (err) {}
     this.client = null;
+    clearInterval(this.interval);
   }
 
   connect() {
     if (this.client) return;
     const { host, port, reconnectTime } = this;
+
+    let txsSeen = 0;
 
     const client = new Net.Socket();
     this.client = client;
@@ -78,6 +81,8 @@ class Listener extends EventEmitter {
             this.headers.addHeader({ header });
           }
           this.headers.process();
+        } else if (command === "mempool_txs_saved") {
+          txsSeen += data.hashes.length;
         }
         this.emit(command, data);
       } catch (err) {
@@ -97,6 +102,12 @@ class Listener extends EventEmitter {
       // );
       this.reconnect();
     });
+
+    const REFRESH = 10; // 10 seconds
+    this.interval = setInterval(() => {
+      console.log(`Seen ${txsSeen} mempool txs in ${REFRESH} seconds`);
+      txsSeen = 0;
+    }, REFRESH * 1000);
   }
 
   readBlock({ hash, height }, callback) {
