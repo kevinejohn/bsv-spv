@@ -12,6 +12,7 @@ const config = {
   dataDir: path.join(__dirname, "data"),
   pruneBlocks: 0, // 0 for no block pruning
   blockHeight: -1, // Sync to block height
+  MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // 2 hours
 };
 
 if (cluster.isWorker) {

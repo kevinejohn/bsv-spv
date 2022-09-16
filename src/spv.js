@@ -343,11 +343,19 @@ class BsvSpv extends EventEmitter {
   }
 
   onBlockTx(opts = {}) {
-    const { pruneMempool = true } = opts;
+    const { disableAutoDl = false, pruneMempool = true } = opts;
     let startDate;
     this.peer.on(
       "transactions",
-      async ({ header, started, finished, size, height, transactions }) => {
+      async ({
+        header,
+        started,
+        finished,
+        size,
+        height,
+        transactions,
+        txCount,
+      }) => {
         if (!header) return;
         if (started) startDate = +new Date();
         this.emit(`block_txs`, {
@@ -358,22 +366,25 @@ class BsvSpv extends EventEmitter {
           height,
           transactions,
           startDate,
+          txCount,
         });
         if (pruneMempool) {
           const txHashes = transactions.map(([, tx]) => tx.getHash());
           const { hashes } = await this.db_mempool.delTxs(txHashes);
-          if (hashes.length > 0)
+          if (hashes.length > 0 || finished)
             this.emit(`mempool_pruned`, {
               hashes,
               height,
               header,
               started,
               finished,
+              size,
+              txCount,
             });
         }
       }
     );
-    this.peer.listenForBlocks();
+    if (!disableAutoDl) this.peer.listenForBlocks();
   }
 
   async syncBlocks(opts = {}) {

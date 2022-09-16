@@ -143,11 +143,16 @@ class Worker {
 
     if (mempool) {
       // Mempool events
-      spv.on("mempool_pruned", ({ hashes, header, height }) => {
-        if (!header) {
-          console.log(`${id} Pruned ${hashes.length} mempool txs`);
+      spv.on(
+        "mempool_pruned",
+        ({ hashes, header, height, finished, txCount }) => {
+          if (!header) {
+            console.log(`${id} Pruned ${hashes.length} mempool txs`);
+          } else if (header && finished) {
+            console.log(`${id} Pruned ${txCount} from block ${height}`);
+          }
         }
-      });
+      );
       spv.on("mempool_tx", ({ transaction }) => {
         // console.log(
         //   `${id} tx ${transaction.getHash().toString("hex")} downloaded from mempool`
@@ -219,7 +224,7 @@ class Worker {
     }
     if (blocks) {
       await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
-      // spv.onBlockTx(); // Download new blocks
+      spv.onBlockTx({ disableAutoDl: true }); // Prune mempool txs on block downloads
       console.log(`${id} Listening for new blocks...`);
     }
   }

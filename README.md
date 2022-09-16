@@ -14,8 +14,9 @@ npm i bsv-spv
 
 ```js
 const { Master, Worker } = require("bsv-spv");
+const cluster = require("cluster");
 
-const port = 8080;
+const port = 8080; // Server that new blocks nad mempool txs are announced on
 
 const config = {
   ticker: "BSV", // BTC, BCH, XEC, BSV
@@ -24,7 +25,7 @@ const config = {
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)
   dataDir: __dirname, // Directory to store files
   pruneBlocks: 0, // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
-  blockHeight: -1, // Sync to block height
+  blockHeight: -1, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
 };
 
 if (cluster.isWorker) {
@@ -40,9 +41,9 @@ if (cluster.isWorker) {
 ```js
 const { Listener } = require("bsv-spv");
 
-const ticker = "BSV";
-const dataDir = __dirname;
-const port = 8080;
+const ticker = "BSV"; // Must use same ticker as above
+const dataDir = __dirname; // Must use same dataDir as above
+const port = 8080; // Must use the same port as above
 const listener = new Listener({ ticker, port, dataDir });
 
 listener.on("headers_saved", ({ hashes }) => {
