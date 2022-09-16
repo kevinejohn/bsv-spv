@@ -91,6 +91,14 @@ class BsvSpv extends EventEmitter {
                   startDate,
                   txCount,
                 });
+              } else {
+                this.emit("block_already_saved", {
+                  height: blockHeight,
+                  hash,
+                  size,
+                  startDate,
+                  txCount,
+                });
               }
               this.emit(`block_ready_${hash}`);
 

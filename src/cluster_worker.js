@@ -22,7 +22,8 @@ class Worker {
   }
 
   async start(params) {
-    const { node, mempool, blocks, forceUserAgent } = params;
+    const { node, mempool, blocks, forceUserAgent, MEMPOOL_PRUNE_AFTER } =
+      params;
     const REFRESH = 10; // console.log status every X seconds
     let interval;
     let txsSeen = 0;
@@ -200,6 +201,18 @@ class Worker {
           })
         );
       });
+      spv.on(
+        "block_already_saved",
+        ({ height, hash, size, txCount, startDate }) => {
+          console.log(
+            `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
+              size
+            ).toLocaleString("en-US")} bytes in ${
+              (+new Date() - startDate) / 1000
+            } seconds. Block was already saved.`
+          );
+        }
+      );
       // spv.on(
       //   "block_txs",
       //   ({ transactions, header, started, finished, height, size }) => {
@@ -228,6 +241,12 @@ class Worker {
       await spv.pruneMempool(); // Delete old mempool txs if they exist
       spv.onMempoolTx(); // Download mempool txs
       console.log(`${id} Listening for mempool txs...`);
+
+      if (MEMPOOL_PRUNE_AFTER > 0) {
+        setInterval(() => {
+          spv.pruneMempool().catch((err) => console.error(err));
+        }, MEMPOOL_PRUNE_AFTER);
+      }
     }
     if (blocks) {
       await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
