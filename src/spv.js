@@ -62,6 +62,7 @@ class BsvSpv extends EventEmitter {
           started,
           size,
           height: blockHeight,
+          txCount,
         }) => {
           try {
             if (started) {
@@ -88,6 +89,7 @@ class BsvSpv extends EventEmitter {
                   hash,
                   size,
                   startDate,
+                  txCount,
                 });
               }
               this.emit(`block_ready_${hash}`);

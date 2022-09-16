@@ -20,7 +20,7 @@ listener.on("mempool_txs_saved", ({ hashes }) => {
 listener.on("block_reorg", ({ height, hash }) => {
   console.log(`Block re-org after height ${height}, ${hash}!`);
 });
-listener.on("block_saved", ({ height, hash }) => {
+listener.on("block_saved", ({ height, hash, txCount }) => {
   console.log(`New block saved ${height}, ${hash}`);
   listener.readBlock(
     { hash, height },
@@ -37,7 +37,11 @@ listener.on("block_saved", ({ height, hash }) => {
       }
       if (finished) {
         console.log(
-          `Streamed block ${height} ${header.getHash().toString("hex")} in ${
+          `Streamed block ${height} ${header
+            .getHash()
+            .toString("hex")}, ${transactions}, ${txCount} txs, ${Number(
+            size
+          ).toLocaleString("en-US")} bytes in ${
             (+new Date() - startDate) / 1000
           } seconds.`
         );
