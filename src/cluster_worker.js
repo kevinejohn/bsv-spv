@@ -170,10 +170,10 @@ class Worker {
     }
 
     if (blocks) {
-      spv.on("block_pruned", ({ height, hash, txCount }) => {
+      spv.on("block_pruned", ({ height, hash }) => {
         console.log(`${id} Pruned block ${height}, ${hash}`);
       });
-      spv.on("block_saved", ({ height, hash, size, startDate }) => {
+      spv.on("block_saved", ({ height, hash, size, txCount, startDate }) => {
         console.log(
           `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
             size
