@@ -48,11 +48,9 @@ listener.on("block_saved", ({ height, hash }) => {
         console.log(
           `Streamed block ${height} ${header
             .getHash()
-            .toString("hex")}, ${transactions}, ${txCount} txs, ${Number(
-            size
-          ).toLocaleString("en-US")} bytes in ${
-            (+new Date() - startDate) / 1000
-          } seconds.`
+            .toString("hex")}, ${txCount} txs, ${Number(size).toLocaleString(
+            "en-US"
+          )} bytes in ${(+new Date() - startDate) / 1000} seconds.`
         );
       }
     }
