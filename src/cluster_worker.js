@@ -1,4 +1,5 @@
 const BsvSpv = require("./spv");
+const Helpers = require("./helpers");
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Worker Unhandled Rejection at Promise", p);
@@ -28,6 +29,7 @@ class Worker {
     let interval;
     let txsSeen = 0;
     let txsSaved = 0;
+    let txsSize = 0;
 
     const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${node}`;
 
@@ -90,10 +92,13 @@ class Worker {
       if (mempool) {
         interval = setInterval(() => {
           console.log(
-            `${id} seen: ${txsSeen}, saved: ${txsSaved} txs in ${REFRESH} seconds`
+            `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatBytes(
+              txsSize / REFRESH
+            )}/s`
           );
           txsSeen = 0;
           txsSaved = 0;
+          txsSize = 0;
         }, REFRESH * 1000);
       }
     });
@@ -170,13 +175,14 @@ class Worker {
         // console.log(`${id} ${hashes.length} txs seen in mempool`);
         txsSeen += hashes.length;
       });
-      spv.on("mempool_txs_saved", ({ hashes }) => {
+      spv.on("mempool_txs_saved", ({ hashes, size }) => {
         // console.log(`${id} ${hashes.length} new txs saved from mempool`);
         txsSaved += hashes.length;
+        txsSize += size;
         process.send(
           JSON.stringify({
             command: `mempool_txs_saved`,
-            data: { hashes: hashes.map((h) => h.toString("hex")) },
+            data: { hashes: hashes.map((h) => h.toString("hex")), size },
           })
         );
       });
@@ -187,12 +193,17 @@ class Worker {
         console.log(`${id} Pruned block ${height}, ${hash}`);
       });
       spv.on("block_saved", ({ height, hash, size, txCount, startDate }) => {
+        const seconds = (+new Date() - startDate) / 1000;
         console.log(
           `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
             size
-          ).toLocaleString("en-US")} bytes in ${
-            (+new Date() - startDate) / 1000
-          } seconds.`
+          ).toLocaleString(
+            "en-US"
+          )} bytes in ${seconds} seconds. ${Helpers.formatBytes(
+            size / seconds
+          )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
+            1
+          )} Mbps.`
         );
         process.send(
           JSON.stringify({
@@ -204,12 +215,17 @@ class Worker {
       spv.on(
         "block_already_saved",
         ({ height, hash, size, txCount, startDate }) => {
+          const seconds = (+new Date() - startDate) / 1000;
           console.log(
             `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
               size
-            ).toLocaleString("en-US")} bytes in ${
-              (+new Date() - startDate) / 1000
-            } seconds. Block was already saved.`
+            ).toLocaleString(
+              "en-US"
+            )} bytes in ${seconds} seconds. ${Helpers.formatBytes(
+              size / seconds
+            )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
+              1
+            )} Mbps. Block already saved.`
           );
         }
       );

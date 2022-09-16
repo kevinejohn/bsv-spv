@@ -242,15 +242,18 @@ class BsvSpv extends EventEmitter {
   }
   getNodePeers() {
     // Get list of connected peers
-    this.peer.on("addr", async ({ addrs }) => {
-      try {
-        const { nodes } = await this.db_nodes.saveSeenNodes(addrs);
-        this.emit("node_peers", { addrs, nodes });
-      } catch (err) {
-        console.error(err);
-      }
+    return new Promise(async (resolve, reject) => {
+      this.peer.once("addr", async ({ addrs }) => {
+        try {
+          const { nodes } = await this.db_nodes.saveSeenNodes(addrs);
+          this.emit("node_peers", { addrs, nodes });
+        } catch (err) {
+          console.error(err);
+        }
+        resolve({ addrs });
+      });
+      this.peer.getAddr();
     });
-    this.peer.getAddr();
   }
 
   getMempoolTx(txHash, getTime = true) {
@@ -317,8 +320,9 @@ class BsvSpv extends EventEmitter {
         if (this.mempoolTxCache.length > 0) {
           const txs = this.mempoolTxCache;
           this.mempoolTxCache = [];
-          const { hashes } = await this.db_mempool.saveTxs(txs);
-          if (hashes.length > 0) this.emit(`mempool_txs_saved`, { hashes });
+          const { hashes, size } = await this.db_mempool.saveTxs(txs);
+          if (hashes.length > 0)
+            this.emit(`mempool_txs_saved`, { hashes, size });
         }
       }, saveInterval); // Batch mempool txs
     }

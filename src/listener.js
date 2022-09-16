@@ -5,6 +5,7 @@ const DbHeaders = require("./db_headers");
 const Headers = require("bsv-headers");
 const Net = require("net");
 const path = require("path");
+const Helpers = require("./helpers");
 
 class Listener extends EventEmitter {
   constructor({ dataDir, ticker, host = "localhost", port = 8080 }) {
@@ -62,6 +63,7 @@ class Listener extends EventEmitter {
     const { host, port, reconnectTime } = this;
 
     let txsSeen = 0;
+    let txsSize = 0;
 
     const client = new Net.Socket();
     this.client = client;
@@ -83,6 +85,7 @@ class Listener extends EventEmitter {
           this.headers.process();
         } else if (command === "mempool_txs_saved") {
           txsSeen += data.hashes.length;
+          txsSize += data.size;
         }
         this.emit(command, data);
       } catch (err) {
@@ -105,8 +108,13 @@ class Listener extends EventEmitter {
 
     const REFRESH = 10; // 10 seconds
     this.interval = setInterval(() => {
-      console.log(`Seen ${txsSeen} mempool txs in ${REFRESH} seconds`);
+      console.log(
+        `Seen ${txsSeen} mempool txs in ${REFRESH} seconds. ${Helpers.formatBytes(
+          txsSize
+        )}`
+      );
       txsSeen = 0;
+      txsSize = 0;
     }, REFRESH * 1000);
   }
 

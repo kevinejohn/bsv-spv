@@ -47,7 +47,8 @@ class DbMempool {
   saveTxs(txsArray) {
     return new Promise((resolve, reject) => {
       const hashes = [];
-      if (txsArray.length === 0) return resolve({ hashes });
+      let size = 0;
+      if (txsArray.length === 0) return resolve({ hashes, size });
       const operations = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
@@ -55,6 +56,7 @@ class DbMempool {
       const time = bw.toBuffer();
       txsArray.map((tx) => {
         const hash = tx.getHash();
+        size += tx.toBuffer().length;
         operations.push([this.dbi_txs, hash, tx.toBuffer(), null]);
         operations.push([this.dbi_tx_times, hash, time, null]);
       });
@@ -63,7 +65,7 @@ class DbMempool {
         txsArray.map(
           (tx, i) => results[i * 2] === 0 && hashes.push(tx.getHash())
         );
-        resolve({ hashes });
+        resolve({ hashes, size });
       });
     });
   }
