@@ -25,12 +25,12 @@ class Server extends Listener {
       let { pos, len, block, height } = req.query;
       try {
         if (!txid.match(/^[a-f0-9]{64}$/)) throw Error(`Invalid txid`);
+        res.setHeader("x-ticker", `${this.ticker}`);
 
         try {
           if (!pos) {
             const { tx, time } = this.db_mempool.getTx(txid, true);
             const size = tx.toBuffer().length;
-            res.setHeader("x-ticker", `${this.ticker}`);
             res.setHeader("x-mempool-time", `${time}`);
             res.send(tx.toBuffer());
             console.log(
@@ -56,7 +56,6 @@ class Server extends Listener {
               len,
             });
             const size = tx.toBuffer().length;
-            res.setHeader("x-ticker", `${this.ticker}`);
             res.setHeader("x-block-hash", `${block}`);
             res.setHeader("x-block-pos", `${pos}`);
             res.setHeader("x-block-len", `${len}`);
@@ -65,8 +64,8 @@ class Server extends Listener {
               res.setHeader("x-block-height", `${height}`);
             } catch (err) {}
             try {
-              const header = this.db_headers.getHeader(block);
-              res.setHeader("x-block-time", `${header.time}`);
+              const time = this.db_headers.getHeader(block).time;
+              res.setHeader("x-block-time", `${time}`);
             } catch (err) {}
             res.send(tx.toBuffer());
             console.log(
