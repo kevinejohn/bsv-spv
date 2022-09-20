@@ -16,6 +16,7 @@ class Listener extends EventEmitter {
     ticker,
     host = "localhost",
     port = 8080,
+    disableInterval = false,
   }) {
     super();
     if (!name) throw Error(`Missing plugin name`);
@@ -25,6 +26,7 @@ class Listener extends EventEmitter {
     this.ticker = ticker;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
+    this.disableInterval = disableInterval;
     const startDate = +new Date();
 
     console.log(`Loading headers from disk....`);
@@ -134,16 +136,18 @@ class Listener extends EventEmitter {
       this.reconnect();
     });
 
-    const REFRESH = 10; // 10 seconds
-    this.interval = setInterval(() => {
-      console.log(
-        `Seen ${txsSeen} mempool txs in ${REFRESH} seconds. ${Helpers.formatBytes(
-          txsSize
-        )}`
-      );
-      txsSeen = 0;
-      txsSize = 0;
-    }, REFRESH * 1000);
+    if (!this.disableInterval) {
+      const REFRESH = 10; // 10 seconds
+      this.interval = setInterval(() => {
+        console.log(
+          `Seen ${txsSeen} mempool txs in ${REFRESH} seconds. ${Helpers.formatBytes(
+            txsSize
+          )}`
+        );
+        txsSeen = 0;
+        txsSize = 0;
+      }, REFRESH * 1000);
+    }
   }
 
   syncBlocks(callback) {

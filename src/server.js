@@ -11,8 +11,9 @@ class Server extends Listener {
     port,
     dataDir,
     MAX_FILE_SIZE = 1024 * 1024 * 500, // 500MB
+    disableInterval = true,
   }) {
-    super({ name, ticker, host, port, dataDir });
+    super({ name, ticker, host, port, dataDir, disableInterval });
     this.MAX_FILE_SIZE = MAX_FILE_SIZE;
 
     const app = express();

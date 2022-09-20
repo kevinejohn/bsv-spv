@@ -90,8 +90,27 @@ listener.on("block_saved", async ({ height, hash }) => {
   await listener.syncBlocks(onBlock);
 });
 
-listener.connect();
 listener.syncBlocks(onBlock);
+listener.connect();
+```
+
+### Serve txs from express server
+
+```js
+const { Server } = require("bsv-spv");
+
+const name = "test-server";
+const ticker = "BSV";
+const dataDir = __dirname;
+const server = new Server({ name, ticker, dataDir });
+server.connect();
+server.listen();
+
+// Get tx from block
+// wget 'http://localhost:8081/txid/11bcd81b9c0d9082799e83b29617c1d3e2d663ef4351754c40c5efa0f33e2e91?block=00000000000000000a62b5c6a75e5c24f8bdb1f21501ee5651a09d11ecaaadca&len=173&pos=81'
+
+// Get tx from mempool
+// wget 'http://localhost:8081/txid/11bcd81b9c0d9082799e83b29617c1d3e2d663ef4351754c40c5efa0f33e2e91'
 ```
 
 ### Forcing specific forks with headers
