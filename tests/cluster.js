@@ -13,8 +13,10 @@ const config = {
   dataDir: path.join(__dirname, "data"),
   pruneBlocks: 0, // 0 for no block pruning
   blockHeight: -1, // Sync to block height
+  // mempool: false, // Disable mempool
+  // blocks: false, // Disable blocks
   MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // 2 hours
-  // DEBUG_LOG: true,
+  // DEBUG_LOG: true, // p2p network console.logs
 };
 
 if (cluster.isWorker) {

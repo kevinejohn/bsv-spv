@@ -151,6 +151,7 @@ class Listener extends EventEmitter {
         try {
           let processed = 0;
           let skipped = 0;
+          let blockSize = 0;
           const date = +new Date();
           let tip = this.headers.getTip();
           for (let height = this.blockHeight; height <= tip.height; height++) {
@@ -192,6 +193,7 @@ class Listener extends EventEmitter {
                     timer,
                   });
                   processed++;
+                  blockSize += size;
                   console.log(
                     `Streamed block ${height} ${header
                       .getHash()
@@ -204,20 +206,22 @@ class Listener extends EventEmitter {
                 }
               });
             } catch (err) {
-              console.error(err);
+              // console.error(err);
               // Block not saved
               skipped++;
             }
             tip = this.headers.getTip();
           }
           console.log(
-            `Synced ${processed} blocks in ${
+            `Synced ${processed} blocks (${Helpers.formatBytes(
+              blockSize
+            )}) in ${
               (+new Date() - date) / 1000
             } seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
               tip.height
             } blocks processed.`
           );
-          resolve({ skipped, processed });
+          resolve({ skipped, processed, blockSize });
         } catch (err) {
           reject(err);
         }

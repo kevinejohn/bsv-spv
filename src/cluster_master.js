@@ -21,21 +21,26 @@ class Master {
       );
     });
 
+    const { blocks = true, mempool = true } = config;
+
     for (const node of config.nodes) {
       let worker;
-      worker = cluster.fork();
-      worker.on("message", (data) => this.onMessage(data));
-      worker.send(
-        JSON.stringify({ ...config, node, command: "init", blocks: true })
-      );
-      this.workers[`blocks-${node}`] = worker;
-
-      worker = cluster.fork();
-      worker.on("message", (data) => this.onMessage(data));
-      worker.send(
-        JSON.stringify({ ...config, node, command: "init", mempool: true })
-      );
-      this.workers[`mempool-${node}`] = worker;
+      if (blocks) {
+        worker = cluster.fork();
+        worker.on("message", (data) => this.onMessage(data));
+        worker.send(
+          JSON.stringify({ ...config, node, command: "init", blocks })
+        );
+        this.workers[`blocks-${node}`] = worker;
+      }
+      if (mempool) {
+        worker = cluster.fork();
+        worker.on("message", (data) => this.onMessage(data));
+        worker.send(
+          JSON.stringify({ ...config, node, command: "init", mempool })
+        );
+        this.workers[`mempool-${node}`] = worker;
+      }
     }
   }
 

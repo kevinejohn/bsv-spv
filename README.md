@@ -28,6 +28,8 @@ const config = {
   pruneBlocks: 0, // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
   blockHeight: -1, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
   MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // Prune mempool txs after 2 hours
+  // mempool: false, // Disable mempool
+  // blocks: false, // Disable blocks
 };
 
 if (cluster.isWorker) {
