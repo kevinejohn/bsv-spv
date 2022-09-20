@@ -181,15 +181,10 @@ class Listener extends EventEmitter {
                 //       .toString("hex")}...`
                 //   );
                 // }
-                try {
-                  const result = await callback(params);
-                  if (result) {
-                    if (result.matches > 0) matches += result.matches;
-                    if (result.errors > 0) errors += result.errors;
-                  }
-                } catch (err) {
-                  console.error(`syncBlocks callback error`, err);
-                  errors++; // TODO: Change this?
+                const result = await callback(params);
+                if (result) {
+                  if (result.matches > 0) matches += result.matches;
+                  if (result.errors > 0) errors += result.errors;
                 }
                 if (params.finished) {
                   const { header, size, txCount, startDate } = params;
