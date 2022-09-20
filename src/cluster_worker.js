@@ -23,8 +23,14 @@ class Worker {
   }
 
   async start(params) {
-    const { node, mempool, blocks, forceUserAgent, MEMPOOL_PRUNE_AFTER } =
-      params;
+    const {
+      node,
+      mempool,
+      blocks,
+      user_agent,
+      forceUserAgent,
+      MEMPOOL_PRUNE_AFTER,
+    } = params;
     const REFRESH = 10; // console.log status every X seconds
     let interval;
     let txsSeen = 0;
@@ -247,7 +253,7 @@ class Worker {
     const options = {
       version: 70016, // >= 70016 for extmsg
       services: Buffer.from("0000000000000000", "hex"),
-      // user_agent: '',
+      user_agent,
       start_height: height,
       relay: mempool ? Buffer.from([1]) : Buffer.from([0]),
     };

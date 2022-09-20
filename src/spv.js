@@ -15,11 +15,13 @@ class BsvSpv extends EventEmitter {
     forceUserAgent,
     saveBlocks = true,
     saveMempool = true,
+    autoReconnect = true,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
     blockHeight, // Number. Lowest block height syncBlocks will sync to
     COMMAND_TIMEOUT = 1000 * 60 * 10, // Download block timeout. 10 minutes default
     MEMPOOL_PRUNE_AFTER,
+    DEBUG_LOG = false,
   }) {
     super();
     if (!dataDir) throw Error(`Missing dataDir`);
@@ -31,7 +33,7 @@ class BsvSpv extends EventEmitter {
     this.node = node;
     this.forceUserAgent = forceUserAgent;
     this.COMMAND_TIMEOUT = COMMAND_TIMEOUT;
-    this.peer = new P2P({ node, ticker });
+    this.peer = new P2P({ node, ticker, autoReconnect, DEBUG_LOG });
     this.headers = new Headers({ invalidBlocks });
     dataDir = path.join(dataDir, ticker);
     const headersDir = path.join(dataDir, "headers");

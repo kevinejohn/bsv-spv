@@ -93,8 +93,10 @@ class DbHeaders {
       hash !== null;
       hash = cursor.goToNext()
     ) {
-      const buf = cursor.getCurrentBinary();
-      this.headers.addHeader({ buf, hash });
+      if (!this.headers.headers[hash.toString("hex")]) {
+        const buf = cursor.getCurrentBinary();
+        this.headers.addHeader({ buf, hash });
+      }
     }
     cursor.close();
     txn.commit();
