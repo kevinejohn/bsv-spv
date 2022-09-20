@@ -75,9 +75,14 @@ class Master {
   }
 
   onMessage(data) {
-    const keys = Object.keys(this.sockets);
-    // console.log(`Master sending to ${keys.length} sockets: ${data}`);
-    keys.map((key) => this.sockets[key].write(data));
+    if (typeof data !== "string") return;
+    try {
+      for (const key in this.sockets) {
+        this.sockets[key].write(data);
+      }
+    } catch (err) {
+      console.log(`Could not send message`, err, typeof data, data);
+    }
   }
 }
 

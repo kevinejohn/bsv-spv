@@ -80,7 +80,7 @@ class Worker {
       process.send(
         JSON.stringify({
           command: `disconnected`,
-          data: { node, disconnects, mempool: true },
+          data: { node, disconnects },
         })
       );
     });
@@ -90,7 +90,7 @@ class Worker {
       process.send(
         JSON.stringify({
           command: `connected`,
-          data: { node, mempool: true },
+          data: { node },
         })
       );
 

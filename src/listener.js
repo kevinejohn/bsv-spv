@@ -14,15 +14,11 @@ class Listener extends EventEmitter {
     blockHeight = 0, // Number. Block height you want to start reading from
     dataDir,
     ticker,
-    host = "localhost",
-    port = 8080,
     disableInterval = false,
   }) {
     super();
     if (!name) throw Error(`Missing plugin name`);
     if (!ticker) throw Error(`Missing ticker!`);
-    this.host = host;
-    this.port = port;
     this.ticker = ticker;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
@@ -76,9 +72,9 @@ class Listener extends EventEmitter {
     clearInterval(this.interval);
   }
 
-  connect() {
+  connect(opts = {}) {
     if (this.client) return;
-    const { host, port, reconnectTime } = this;
+    const { host = "localhost", port = 8080 } = opts;
 
     let txsSeen = 0;
     let txsSize = 0;
@@ -124,13 +120,15 @@ class Listener extends EventEmitter {
     });
 
     client.on("close", () => {
-      console.error(`Disconnected! Attempting in ${reconnectTime} second...`);
+      console.error(
+        `Disconnected! Reconnecting to ${host}:${port} ${this.reconnectTime} in seconds...`
+      );
       this.reconnect();
     });
 
     client.on("error", (err) => {
       // console.error(
-      //   `Socket error! Reconnecting in ${reconnectTime} seconds...`,
+      //   `Socket error! Reconnecting in ${this.reconnectTime} seconds...`,
       //   err
       // );
       this.reconnect();
