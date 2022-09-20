@@ -157,18 +157,15 @@ class Worker {
     spv.on("block_downloading", ({ hash, height }) => {
       console.log(`${id} Downloading block: ${height}, ${hash}...`);
     });
-    spv.on(
-      "mempool_pruned",
-      ({ hashes, header, height, finished, txCount }) => {
-        if (!header) {
-          console.log(`${id} Pruned ${hashes.length} mempool txs`);
-        } else if (header && finished) {
-          console.log(
-            `${id} Pruned ${txCount} mempool txs included in block ${height}`
-          );
-        }
+    spv.on("mempool_pruned", ({ txids, header, height, finished, txCount }) => {
+      if (!header) {
+        console.log(`${id} Pruned ${txids.length} mempool txs`);
+      } else if (header && finished) {
+        console.log(
+          `${id} Pruned ${txCount} mempool txs included in block ${height}`
+        );
       }
-    );
+    });
 
     if (mempool) {
       // Mempool events
@@ -177,18 +174,18 @@ class Worker {
       //     `${id} tx ${transaction.getHash().toString("hex")} downloaded from mempool`
       //   );
       // });
-      spv.on("mempool_txs_seen", ({ hashes }) => {
-        // console.log(`${id} ${hashes.length} txs seen in mempool`);
-        txsSeen += hashes.length;
+      spv.on("mempool_txs_seen", ({ txids }) => {
+        // console.log(`${id} ${txids.length} txs seen in mempool`);
+        txsSeen += txids.length;
       });
-      spv.on("mempool_txs_saved", ({ hashes, size }) => {
-        // console.log(`${id} ${hashes.length} new txs saved from mempool`);
-        txsSaved += hashes.length;
+      spv.on("mempool_txs_saved", ({ txids, size }) => {
+        // console.log(`${id} ${txids.length} new txs saved from mempool`);
+        txsSaved += txids.length;
         txsSize += size;
         process.send(
           JSON.stringify({
             command: `mempool_txs_saved`,
-            data: { hashes: hashes.map((h) => h.toString("hex")), size },
+            data: { txids: txids.map((h) => h.toString("hex")), size },
           })
         );
       });

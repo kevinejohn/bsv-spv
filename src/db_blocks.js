@@ -106,7 +106,7 @@ class DbBlocks {
     return fs.existsSync(dir);
   }
 
-  getTx({ txHash, block, pos, len }) {
+  getTx({ txid, block, pos, len }) {
     return new Promise((resolve, reject) => {
       const dir = path.join(this.blocksDir, `${block.toString("hex")}.bin`);
       fs.open(dir, "r", function (err, fd) {
@@ -116,10 +116,7 @@ class DbBlocks {
             if (err) throw err;
             if (bytesRead !== len) throw Error(`Could not read full file`);
             const tx = bsv.Transaction.fromBuffer(buf);
-            if (
-              txHash &&
-              txHash.toString("hex") !== tx.getHash().toString("hex")
-            ) {
+            if (txid && txid.toString("hex") !== tx.getHash().toString("hex")) {
               throw Error(`Invalid txid`);
             }
             resolve({ tx });

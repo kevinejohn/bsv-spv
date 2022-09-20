@@ -22,6 +22,7 @@ class Listener extends EventEmitter {
     if (!ticker) throw Error(`Missing ticker!`);
     this.host = host;
     this.port = port;
+    this.ticker = ticker;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
     const startDate = +new Date();
@@ -102,14 +103,14 @@ class Listener extends EventEmitter {
           const tip = this.headers.getTip();
           console.log(`New headers loaded. Tip ${tip.height}, ${tip.hash}`);
         } else if (command === "mempool_txs_saved") {
-          txsSeen += data.hashes.length;
+          txsSeen += data.txids.length;
           txsSize += data.size;
         } else if (command === "block_reorg") {
           const { height, hash } = data;
           console.warn(`Block re-org after height ${height}, ${hash}!`);
           const from = height + 1;
           const to = this.headers.getHeight();
-          delBlocks(from, to);
+          this.delBlocks(from, to);
         } else if ("block_saved") {
           const { height, hash } = data;
           console.log(`New block saved ${height}, ${hash}`);
@@ -244,9 +245,9 @@ class Listener extends EventEmitter {
     }
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
-  getMempoolTxs(txHashes, getTime) {
-    if (!Array.isArray(txHashes)) txHashes = [txHashes];
-    return this.db_mempool.getTxs(txHashes, getTime);
+  getMempoolTxs(txids, getTime) {
+    if (!Array.isArray(txids)) txids = [txids];
+    return this.db_mempool.getTxs(txids, getTime);
   }
 }
 

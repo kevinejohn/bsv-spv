@@ -6,7 +6,7 @@ const port = 8080;
 
 const config = {
   ticker: "BSV",
-  nodes: [`18.192.253.59:8333`],
+  nodes: [`18.192.253.59:8333`, `95.217.197.54:8333`],
   forceUserAgent: `Bitcoin SV`,
   // user_agent: 'Bitcoin SV',
   invalidBlocks: [],

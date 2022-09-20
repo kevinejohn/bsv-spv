@@ -25,10 +25,10 @@ const onBlock = ({
   // }
 };
 
-const onMempool = ({ hashes }) => {
-  const { txs, size } = listener.getMempoolTxs(hashes);
+const onMempool = ({ txids }) => {
+  const { txs, size } = listener.getMempoolTxs(txids);
   console.log(
-    `${hashes.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
+    `${txids.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
   );
   for (const tx of txs) {
     console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
@@ -36,8 +36,8 @@ const onMempool = ({ hashes }) => {
 };
 
 listener.on("headers_saved", ({ hashes }) => {});
-listener.on("mempool_txs_saved", ({ hashes }) => {
-  // onMempool({ hashes });
+listener.on("mempool_txs_saved", ({ txids }) => {
+  // onMempool({ txids });
 });
 listener.on("block_reorg", async ({ height, hash }) => {
   // Re-org after height

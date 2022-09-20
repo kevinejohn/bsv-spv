@@ -6,6 +6,7 @@ const DbNodes = require("./db_nodes");
 const Worker = require("./cluster_worker");
 const Master = require("./cluster_master");
 const Listener = require("./listener");
+const Server = require("./server");
 
 module.exports = {
   BsvSpv,
@@ -16,4 +17,5 @@ module.exports = {
   Worker,
   Master,
   Listener,
+  Server,
 };

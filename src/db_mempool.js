@@ -46,109 +46,109 @@ class DbMempool {
 
   saveTxs(txsArray) {
     return new Promise((resolve, reject) => {
-      const hashes = [];
+      const txids = [];
       let size = 0;
-      if (txsArray.length === 0) return resolve({ hashes, size });
+      if (txsArray.length === 0) return resolve({ txids, size });
       const operations = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
       bw.writeUInt32LE(date);
       const time = bw.toBuffer();
       txsArray.map((tx) => {
-        const hash = tx.getHash();
+        const txid = tx.getHash();
         size += tx.toBuffer().length;
-        operations.push([this.dbi_txs, hash, tx.toBuffer(), null]);
-        operations.push([this.dbi_tx_times, hash, time, null]);
+        operations.push([this.dbi_txs, txid, tx.toBuffer(), null]);
+        operations.push([this.dbi_tx_times, txid, time, null]);
       });
       this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
         txsArray.map(
-          (tx, i) => results[i * 2] === 0 && hashes.push(tx.getHash())
+          (tx, i) => results[i * 2] === 0 && txids.push(tx.getHash())
         );
-        resolve({ hashes, size });
+        resolve({ txids, size });
       });
     });
   }
 
-  saveTimes(txHashes) {
+  saveTimes(txidArr) {
     return new Promise((resolve, reject) => {
-      const hashes = [];
-      if (txHashes.length === 0) return resolve({ hashes });
+      const txids = [];
+      if (txidArr.length === 0) return resolve({ txids });
       const operations = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
       bw.writeUInt32LE(date);
       const time = bw.toBuffer();
-      txHashes.map((hash) => {
-        operations.push([this.dbi_tx_times, hash, time, null]);
+      txidArr.map((txid) => {
+        operations.push([this.dbi_tx_times, txid, time, null]);
       });
       this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
-        txHashes.map((hash, i) => results[i] === 0 && hashes.push(hash));
-        resolve({ hashes });
+        txidArr.map((txid, i) => results[i] === 0 && txids.push(txid));
+        resolve({ txids });
       });
     });
   }
 
-  delTxs(txHashes) {
+  delTxs(txidArr) {
     return new Promise((resolve, reject) => {
-      const hashes = [];
-      if (txHashes.length === 0) return resolve({ hashes });
+      const txids = [];
+      if (txidArr.length === 0) return resolve({ txids });
       const operations = [];
-      txHashes.map((hash) => {
-        operations.push([this.dbi_txs, hash]);
-        operations.push([this.dbi_tx_times, hash]);
+      txidArr.map((txid) => {
+        operations.push([this.dbi_txs, txid]);
+        operations.push([this.dbi_tx_times, txid]);
       });
       this.env.batchWrite(operations, {}, (err, results) => {
         if (err) return reject(err);
-        txHashes.map((hash, i) => results[i * 2] === 0 && hashes.push(hash));
-        resolve({ hashes });
+        txidArr.map((txid, i) => results[i * 2] === 0 && txids.push(txid));
+        resolve({ txids });
       });
     });
   }
 
-  getTxHashes(opts = {}) {
+  getTxids(opts = {}) {
     const { olderThan, newerThan } = opts;
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor = new lmdb.Cursor(txn, this.dbi_tx_times);
-    const txHashes = [];
+    const txids = [];
     for (
-      let hash = cursor.goToFirst();
-      hash !== null;
-      hash = cursor.goToNext()
+      let txid = cursor.goToFirst();
+      txid !== null;
+      txid = cursor.goToNext()
     ) {
       if (olderThan >= 0 || newerThan >= 0) {
         const buf = cursor.getCurrentBinary();
         const br = new bsv.utils.BufferReader(buf);
         const time = br.readUInt32LE() * 1000;
         if (olderThan > time || newerThan < time) {
-          txHashes.push(hash);
+          txids.push(txid);
         }
       } else {
-        txHashes.push(hash);
+        txids.push(txid);
       }
     }
     cursor.close();
     txn.commit();
-    return txHashes;
+    return txids;
   }
 
-  getTx(hash, getTime = true) {
-    const { txs, size, times } = this.getTxs([hash], getTime);
+  getTx(txid, getTime = true) {
+    const { txs, size, times } = this.getTxs([txid], getTime);
     const tx = txs[0];
     if (!tx) throw Error(`Not found`);
     const time = times[0];
     return { tx, time, size };
   }
-  getTxs(txHashes = false, getTime = false) {
+  getTxs(txids = false, getTime = false) {
     const txs = [];
     const times = [];
     let size = 0;
     const txn = this.env.beginTxn({ readOnly: true });
-    if (txHashes) {
-      for (let hash of txHashes) {
-        if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
-        const buf = txn.getBinary(this.dbi_txs, hash);
+    if (txids) {
+      for (let txid of txids) {
+        if (!Buffer.isBuffer(txid)) txid = Buffer.from(txid, "hex");
+        const buf = txn.getBinary(this.dbi_txs, txid);
         if (buf) {
           const tx = bsv.Transaction.fromBuffer(buf);
           txs.push(tx);
@@ -158,9 +158,9 @@ class DbMempool {
     } else {
       const cursor = new lmdb.Cursor(txn, this.dbi_txs);
       for (
-        let hash = cursor.goToFirst();
-        hash !== null;
-        hash = cursor.goToNext()
+        let txid = cursor.goToFirst();
+        txid !== null;
+        txid = cursor.goToNext()
       ) {
         const buf = cursor.getCurrentBinary();
         const tx = bsv.Transaction.fromBuffer(buf);
@@ -170,8 +170,8 @@ class DbMempool {
       cursor.close();
     }
     if (getTime) {
-      for (const hash in txs) {
-        const buf = txn.getBinary(this.dbi_tx_times, Buffer.from(hash, "hex"));
+      for (const tx of txs) {
+        const buf = txn.getBinary(this.dbi_tx_times, tx.getHash());
         if (buf) {
           const br = new bsv.utils.BufferReader(buf);
           const time = br.readUInt32LE() * 1000;
@@ -187,11 +187,11 @@ class DbMempool {
 
   pruneTxs(olderThan) {
     if (!(olderThan >= 0)) olderThan = +new Date() - this.pruneAfter;
-    const hashes = this.getTxHashes({ olderThan });
-    if (hashes.length > 0) {
-      return this.delTxs(hashes);
+    const txids = this.getTxids({ olderThan });
+    if (txids.length > 0) {
+      return this.delTxs(txids);
     } else {
-      return { hashes };
+      return { txids };
     }
   }
 }

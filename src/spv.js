@@ -258,12 +258,12 @@ class BsvSpv extends EventEmitter {
     });
   }
 
-  getMempoolTx(txHash, getTime = true) {
-    const { tx, time } = this.db_mempool.getTx(txHash, getTime);
+  getMempoolTx(txids, getTime = true) {
+    const { tx, time } = this.db_mempool.getTx(txids, getTime);
     return { tx, time };
   }
-  async getBlockTx({ txHash, block, pos, len }) {
-    const { tx } = await this.db_blocks.getTx({ txHash, block, pos, len });
+  async getBlockTx({ txid, block, pos, len }) {
+    const { tx } = await this.db_blocks.getTx({ txid, block, pos, len });
     return { tx };
   }
 
@@ -322,9 +322,8 @@ class BsvSpv extends EventEmitter {
         if (this.mempoolTxCache.length > 0) {
           const txs = this.mempoolTxCache;
           this.mempoolTxCache = [];
-          const { hashes, size } = await this.db_mempool.saveTxs(txs);
-          if (hashes.length > 0)
-            this.emit(`mempool_txs_saved`, { hashes, size });
+          const { txids, size } = await this.db_mempool.saveTxs(txs);
+          if (txids.length > 0) this.emit(`mempool_txs_saved`, { txids, size });
         }
       }, saveInterval); // Batch mempool txs
     }
@@ -339,15 +338,15 @@ class BsvSpv extends EventEmitter {
         console.error(err);
       }
     });
-    this.peer.listenForTxs(async (txHashes) => {
+    this.peer.listenForTxs(async (txids) => {
       try {
-        this.emit(`mempool_txs_seen`, { hashes: txHashes });
+        this.emit(`mempool_txs_seen`, { txids });
         if (this.saveMempool) {
           // Only fetch txs we haven't already requested
-          const { hashes } = await this.db_mempool.saveTimes(txHashes);
-          return hashes;
+          const result = await this.db_mempool.saveTimes(txids);
+          return result.txids;
         } else {
-          return txHashes;
+          return txids;
         }
       } catch (err) {
         console.error(err);
@@ -382,11 +381,11 @@ class BsvSpv extends EventEmitter {
           txCount,
         });
         if (pruneMempool) {
-          const txHashes = transactions.map(([, tx]) => tx.getHash());
-          const { hashes } = await this.db_mempool.delTxs(txHashes);
-          if (hashes.length > 0 || finished)
+          const txidArr = transactions.map(([, tx]) => tx.getHash());
+          const { txids } = await this.db_mempool.delTxs(txidArr);
+          if (txids.length > 0 || finished)
             this.emit(`mempool_pruned`, {
-              hashes,
+              txids,
               height,
               header,
               started,
@@ -456,9 +455,9 @@ class BsvSpv extends EventEmitter {
   }
 
   async pruneMempool(olderThan) {
-    const { hashes } = await this.db_mempool.pruneTxs(olderThan);
-    if (hashes.length > 0) this.emit(`mempool_pruned`, { hashes });
-    return { hashes };
+    const { txids } = await this.db_mempool.pruneTxs(olderThan);
+    if (txids.length > 0) this.emit(`mempool_pruned`, { txids });
+    return { txids };
   }
 }
 
