@@ -38,6 +38,7 @@ class Worker {
     let txsSize = 0;
 
     const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${node}`;
+    console.log(`${id} Loading headers from disk...`);
 
     let date = +new Date();
     const spv = new BsvSpv(params);
@@ -157,10 +158,10 @@ class Worker {
     spv.on("block_downloading", ({ hash, height }) => {
       console.log(`${id} Downloading block: ${height}, ${hash}...`);
     });
-    spv.on("mempool_pruned", ({ txids, header, height, finished, txCount }) => {
+    spv.on("mempool_pruned", ({ header, height, finished, txCount }) => {
       if (!header) {
-        console.log(`${id} Pruned ${txids.length} mempool txs`);
-      } else if (header && finished) {
+        console.log(`${id} Pruned ${txCount} mempool txs`);
+      } else {
         console.log(
           `${id} Pruned ${txCount} mempool txs included in block ${height}`
         );

@@ -356,7 +356,7 @@ class BsvSpv extends EventEmitter {
 
   onBlockTx(opts = {}) {
     const { disableAutoDl = false, pruneMempool = true } = opts;
-    let startDate;
+    let startDate, prunedTxs;
     this.peer.on(
       "transactions",
       async ({
@@ -369,7 +369,10 @@ class BsvSpv extends EventEmitter {
         txCount,
       }) => {
         if (!header) return;
-        if (started) startDate = +new Date();
+        if (started) {
+          startDate = +new Date();
+          prunedTxs = 0;
+        }
         this.emit(`block_txs`, {
           header,
           started,
@@ -382,8 +385,10 @@ class BsvSpv extends EventEmitter {
         });
         if (pruneMempool) {
           const txidArr = transactions.map(([, tx]) => tx.getHash());
+          txCount = prunedTxs;
           const { txids } = await this.db_mempool.delTxs(txidArr);
-          if (txids.length > 0 || finished)
+          txCount += txids.length;
+          if (txCount > 0 && finished) {
             this.emit(`mempool_pruned`, {
               txids,
               height,
@@ -393,6 +398,7 @@ class BsvSpv extends EventEmitter {
               size,
               txCount,
             });
+          }
         }
       }
     );
@@ -456,7 +462,8 @@ class BsvSpv extends EventEmitter {
 
   async pruneMempool(olderThan) {
     const { txids } = await this.db_mempool.pruneTxs(olderThan);
-    if (txids.length > 0) this.emit(`mempool_pruned`, { txids });
+    if (txids.length > 0)
+      this.emit(`mempool_pruned`, { txids, txCount: txids.length });
     return { txids };
   }
 }
