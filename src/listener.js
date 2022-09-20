@@ -51,30 +51,34 @@ class Listener extends EventEmitter {
     );
   }
 
-  async reconnect() {
-    if (!this.reconnectPromise) {
-      this.reconnectPromise = await new Promise((resolve, reject) => {
-        this.disconnect();
-        setTimeout(() => {
-          this.connect();
-          resolve();
-          delete this.reconnectPromise;
-        }, this.reconnectTime * 1000);
-      });
-    }
-    return this.reconnectPromise;
+  reconnect() {
+    this.disconnect();
+    this.reconnectTimeout = setTimeout(
+      () => this.connect(),
+      this.reconnectTime * 1000
+    );
   }
   disconnect() {
     try {
       this.client.destroy();
+      console.log(
+        `Disconnected from ${this.host}:${this.port}${
+          this.reconnectTime > 0
+            ? `. Reconnecting in ${this.reconnectTime} seconds...`
+            : ""
+        }`
+      );
     } catch (err) {}
     this.client = null;
     clearInterval(this.interval);
+    clearTimeout(this.reconnectTimeout);
   }
 
   connect(opts = {}) {
     if (this.client) return;
     const { host = "localhost", port = 8080 } = opts;
+    this.host = host;
+    this.port = port;
 
     let txsSeen = 0;
     let txsSize = 0;
@@ -120,9 +124,9 @@ class Listener extends EventEmitter {
     });
 
     client.on("close", () => {
-      console.error(
-        `Disconnected! Reconnecting to ${host}:${port} ${this.reconnectTime} in seconds...`
-      );
+      // console.error(
+      //   `Disconnected! Reconnecting to ${host}:${port} ${this.reconnectTime} in seconds...`
+      // );
       this.reconnect();
     });
 
