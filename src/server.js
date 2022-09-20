@@ -22,22 +22,14 @@ class Server extends Listener {
 
     app.get("/txid/:txid", async (req, res) => {
       const { txid } = req.params;
-      let { pos, len, block } = req.query;
+      let { pos, len, block, height } = req.query;
       try {
         if (!txid.match(/^[a-f0-9]{64}$/)) throw Error(`Invalid txid`);
-        if (block && !block.match(/^[a-f0-9]{64}$/))
-          throw Error(`Invalid block`);
-        if (len) len = parseInt(len);
-        if (pos) pos = parseInt(pos);
-        if (len && !(len > 0 && len <= this.MAX_FILE_SIZE))
-          throw Error(`Invalid len`);
-        if (pos && !(pos > 0)) throw Error(`Invalid pos`);
 
         try {
-          let size, height;
-          if (!block) {
+          if (!pos) {
             const { tx, time } = this.db_mempool.getTx(txid, true);
-            size = tx.toBuffer().length;
+            const size = tx.toBuffer().length;
             res.setHeader("x-ticker", `${this.ticker}`);
             res.setHeader("x-mempool-time", `${time}`);
             res.send(tx.toBuffer());
@@ -47,13 +39,23 @@ class Server extends Listener {
               )} from mempool`
             );
           } else {
+            height = parseInt(height);
+            len = parseInt(len);
+            pos = parseInt(pos);
+            if (!(len > 0 && len <= this.MAX_FILE_SIZE))
+              throw Error(`Invalid len`);
+            if (!(pos > 0)) throw Error(`Invalid pos`);
+            if (block && !block.match(/^[a-f0-9]{64}$/))
+              throw Error(`Invalid block`);
+            if (!block) block = this.headers.getHash(height);
+
             const { tx } = await this.db_blocks.getTx({
               txid,
               block,
               pos,
               len,
             });
-            size = tx.toBuffer().length;
+            const size = tx.toBuffer().length;
             res.setHeader("x-ticker", `${this.ticker}`);
             res.setHeader("x-block-hash", `${block}`);
             res.setHeader("x-block-pos", `${pos}`);
@@ -77,7 +79,11 @@ class Server extends Listener {
           throw Error(`Tx not found`);
         }
       } catch (err) {
-        console.error(`${req.ip} /txid/${txid} error: ${err.message}`);
+        console.error(
+          `${req.ip} /txid/${txid} error: ${err.message} ${
+            pos ? `in block ${height} ${block}, ${pos}, ${len}` : "mempool"
+          }`
+        );
         res.status(404).send(err.message);
       }
     });
