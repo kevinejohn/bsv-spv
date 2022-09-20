@@ -19,6 +19,7 @@ class Listener extends EventEmitter {
     super();
     if (!name) throw Error(`Missing plugin name`);
     if (!ticker) throw Error(`Missing ticker!`);
+    if (!dataDir) throw Error(`Missing dataDir`);
     this.ticker = ticker;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
@@ -181,10 +182,14 @@ class Listener extends EventEmitter {
                 //   );
                 // }
                 try {
-                  const match = await callback(params);
-                  if (match > 0) matches += match;
+                  const result = await callback(params);
+                  if (result) {
+                    if (result.matches > 0) matches += result.matches;
+                    if (result.errors > 0) errors += result.errors;
+                  }
                 } catch (err) {
-                  errors++;
+                  console.error(`syncBlocks callback error`, err);
+                  errors++; // TODO: Change this?
                 }
                 if (params.finished) {
                   const { header, size, txCount, startDate } = params;
