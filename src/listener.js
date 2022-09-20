@@ -106,9 +106,13 @@ class Listener extends EventEmitter {
           txsSize += data.size;
         } else if (command === "block_reorg") {
           const { height, hash } = data;
+          console.warn(`Block re-org after height ${height}, ${hash}!`);
           const from = height + 1;
           const to = this.headers.getHeight();
           delBlocks(from, to);
+        } else if ("block_saved") {
+          const { height, hash } = data;
+          console.log(`New block saved ${height}, ${hash}`);
         }
         this.emit(command, data);
       } catch (err) {
@@ -141,75 +145,86 @@ class Listener extends EventEmitter {
     }, REFRESH * 1000);
   }
 
-  async syncBlocks(callback) {
-    let processed = 0;
-    let skipped = 0;
-    const date = +new Date();
-    const tip = this.headers.getTip();
-    for (let height = this.blockHeight; height <= tip.height; height++) {
-      if (
-        this.db_plugin.isProcessed(height) &&
-        this.headers.getHash(height) ===
-          this.db_plugin.getHash(height).toString("hex")
-      )
-        continue;
-      try {
-        let errors = 0;
-        let matches = 0;
+  syncBlocks(callback) {
+    if (!this.promiseSyncBlock) {
+      this.promiseSyncBlock = new Promise(async (resolve, reject) => {
+        try {
+          let processed = 0;
+          let skipped = 0;
+          const date = +new Date();
+          let tip = this.headers.getTip();
+          for (let height = this.blockHeight; height <= tip.height; height++) {
+            if (
+              this.db_plugin.isProcessed(height) &&
+              this.headers.getHash(height) ===
+                this.db_plugin.getHash(height).toString("hex")
+            )
+              continue;
+            try {
+              let errors = 0;
+              let matches = 0;
 
-        await this.readBlock({ height }, async (params) => {
-          if (params.started) {
-            console.log(
-              `Streaming block ${height}, ${params.header
-                .getHash()
-                .toString("hex")}...`
-            );
+              await this.readBlock({ height }, async (params) => {
+                if (params.started) {
+                  console.log(
+                    `Streaming block ${height}, ${params.header
+                      .getHash()
+                      .toString("hex")}...`
+                  );
+                }
+                try {
+                  const match = await callback(params);
+                  if (match > 0) matches += match;
+                } catch (err) {
+                  errors++;
+                }
+                if (params.finished) {
+                  const { header, size, txCount, startDate } = params;
+                  const blockHash = header.getHash().toString("hex");
+                  const timer = +new Date() - startDate;
+                  this.db_plugin.markBlockProcessed({
+                    blockHash,
+                    height,
+                    matches,
+                    errors,
+                    size,
+                    txCount,
+                    timer,
+                  });
+                  processed++;
+                  console.log(
+                    `Streamed block ${height} ${header
+                      .getHash()
+                      .toString("hex")}, ${txCount} txs, ${Number(
+                      size
+                    ).toLocaleString("en-US")} bytes in ${
+                      (+new Date() - startDate) / 1000
+                    } seconds.`
+                  );
+                }
+              });
+            } catch (err) {
+              console.error(err);
+              // Block not saved
+              skipped++;
+            }
+            tip = this.headers.getTip();
           }
-          try {
-            const match = await callback(params);
-            if (match > 0) matches += match;
-          } catch (err) {
-            errors++;
-          }
-          if (params.finished) {
-            const { header, size, txCount, startDate } = params;
-            const blockHash = header.getHash().toString("hex");
-            const timer = +new Date() - startDate;
-            this.db_plugin.markBlockProcessed({
-              blockHash,
-              height,
-              matches,
-              errors,
-              size,
-              txCount,
-              timer,
-            });
-            processed++;
-            console.log(
-              `Streamed block ${height} ${header
-                .getHash()
-                .toString("hex")}, ${txCount} txs, ${Number(
-                size
-              ).toLocaleString("en-US")} bytes in ${
-                (+new Date() - startDate) / 1000
-              } seconds.`
-            );
-          }
-        });
-      } catch (err) {
-        console.error(err);
-        // Block not saved
-        skipped++;
-      }
+          console.log(
+            `Synced ${processed} blocks in ${
+              (+new Date() - date) / 1000
+            } seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
+              tip.height
+            } blocks processed.`
+          );
+          resolve({ skipped, processed });
+        } catch (err) {
+          reject(err);
+        }
+        delete this.promiseSyncBlock;
+      });
     }
-    console.log(
-      `Synced ${processed} blocks in ${
-        (+new Date() - date) / 1000
-      } seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
-        tip.height
-      } blocks processed.`
-    );
-    return { skipped, processed };
+    return this.promiseSyncBlock;
   }
   getBlockInfo({ height, hash }) {
     if (!hash) hash = this.headers.getHash(height);
@@ -225,8 +240,9 @@ class Listener extends EventEmitter {
     }
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
-  getMempoolTx(hash) {
-    return this.db_mempool.getTx(hash);
+  getMempoolTxs(txHashes, getTime) {
+    if (!Array.isArray(txHashes)) txHashes = [txHashes];
+    return this.db_mempool.getTxs(txHashes, getTime);
   }
 }
 

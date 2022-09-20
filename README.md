@@ -22,10 +22,12 @@ const config = {
   ticker: "BSV", // BTC, BCH, XEC, BSV
   nodes: [`seed.satoshisvision.network:8333`], // Set to your favorite node IP addresses
   forceUserAgent: `Bitcoin SV`, // Disconnects with nodes that do not string match with user agent
+  // user_agent: 'Bitcoin SV',
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)
   dataDir: __dirname, // Directory to store files
   pruneBlocks: 0, // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
   blockHeight: -1, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
+  MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // Prune mempool txs after 2 hours
 };
 
 if (cluster.isWorker) {
@@ -65,25 +67,29 @@ const onBlock = ({
   // }
 };
 
+const onMempool = ({ hashes }) => {
+  const { txs, size } = listener.getMempoolTxs(hashes);
+  console.log(
+    `${hashes.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
+  );
+  for (const tx of txs) {
+    console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
+  }
+};
+
 listener.on("headers_saved", ({ hashes }) => {});
 listener.on("mempool_txs_saved", ({ hashes }) => {
-  // console.log(`${hashes.length} new mempool txs`);
-  // for (const hash of hashes) {
-  //   const { tx, time } = listener.getMempoolTx(hash);
-  //   console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
-  // }
+  // onMempool({ hashes });
 });
 listener.on("block_reorg", async ({ height, hash }) => {
-  console.log(`Block re-org after height ${height}, ${hash}!`);
-  await listener.syncBlocks(onBlock);
+  // Re-org after height
 });
 listener.on("block_saved", async ({ height, hash }) => {
-  console.log(`New block saved ${height}, ${hash}`);
   await listener.syncBlocks(onBlock);
 });
 
-listener.syncBlocks();
 listener.connect();
+listener.syncBlocks(onBlock);
 ```
 
 ### Forcing specific forks with headers
@@ -121,4 +127,10 @@ invalidBlocks = [
 
 ## Tests
 
-`npm test`
+```js
+node ./tests/cluster.js
+```
+
+```js
+node ./tests/listener.js
+```

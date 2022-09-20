@@ -107,22 +107,6 @@ class DbMempool {
     });
   }
 
-  getTx(hash, getTime = true) {
-    if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
-    let tx, time;
-    const txn = this.env.beginTxn({ readOnly: true });
-    const bufTx = txn.getBinary(this.dbi_txs, hash);
-    if (!bufTx) throw Error(`Not found`);
-    tx = bsv.Transaction.fromBuffer(bufTx);
-    if (getTime) {
-      const buf = txn.getBinary(this.dbi_tx_times, hash);
-      const br = new bsv.utils.BufferReader(buf);
-      time = br.readUInt32LE() * 1000;
-    }
-    txn.commit();
-    return { tx, time };
-  }
-
   getTxHashes(opts = {}) {
     const { olderThan, newerThan } = opts;
     const txn = this.env.beginTxn({ readOnly: true });
@@ -149,23 +133,56 @@ class DbMempool {
     return txHashes;
   }
 
-  getTxs() {
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_txs);
-    const txs = {};
+  getTx(hash, getTime = true) {
+    const { txs, size, times } = this.getTxs([hash], getTime);
+    const tx = txs[0];
+    if (!tx) throw Error(`Not found`);
+    const time = times[0];
+    return { tx, time, size };
+  }
+  getTxs(txHashes = false, getTime = false) {
+    const txs = [];
+    const times = [];
     let size = 0;
-    for (
-      let hash = cursor.goToFirst();
-      hash !== null;
-      hash = cursor.goToNext()
-    ) {
-      const buf = cursor.getCurrentBinary();
-      size += buf.length;
-      txs[hash] = bsv.Transaction.fromBuffer(buf);
+    const txn = this.env.beginTxn({ readOnly: true });
+    if (txHashes) {
+      for (let hash of txHashes) {
+        if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
+        const buf = txn.getBinary(this.dbi_txs, hash);
+        if (buf) {
+          const tx = bsv.Transaction.fromBuffer(buf);
+          txs.push(tx);
+          size += buf.length;
+        }
+      }
+    } else {
+      const cursor = new lmdb.Cursor(txn, this.dbi_txs);
+      for (
+        let hash = cursor.goToFirst();
+        hash !== null;
+        hash = cursor.goToNext()
+      ) {
+        const buf = cursor.getCurrentBinary();
+        const tx = bsv.Transaction.fromBuffer(buf);
+        txs.push(tx);
+        size += buf.length;
+      }
+      cursor.close();
     }
-    cursor.close();
+    if (getTime) {
+      for (const hash in txs) {
+        const buf = txn.getBinary(this.dbi_tx_times, Buffer.from(hash, "hex"));
+        if (buf) {
+          const br = new bsv.utils.BufferReader(buf);
+          const time = br.readUInt32LE() * 1000;
+          times.push(time);
+        } else {
+          times.push(null);
+        }
+      }
+    }
     txn.commit();
-    return { txs, size };
+    return { txs, size, times };
   }
 
   pruneTxs(olderThan) {

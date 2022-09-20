@@ -25,22 +25,26 @@ const onBlock = ({
   // }
 };
 
+const onMempool = ({ hashes }) => {
+  const { txs, size } = listener.getMempoolTxs(hashes);
+  console.log(
+    `${hashes.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
+  );
+  for (const tx of txs) {
+    console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
+  }
+};
+
 listener.on("headers_saved", ({ hashes }) => {});
 listener.on("mempool_txs_saved", ({ hashes }) => {
-  // console.log(`${hashes.length} new mempool txs`);
-  // for (const hash of hashes) {
-  //   const { tx, time } = listener.getMempoolTx(hash);
-  //   console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
-  // }
+  // onMempool({ hashes });
 });
 listener.on("block_reorg", async ({ height, hash }) => {
-  console.log(`Block re-org after height ${height}, ${hash}!`);
-  await listener.syncBlocks(onBlock);
+  // Re-org after height
 });
 listener.on("block_saved", async ({ height, hash }) => {
-  console.log(`New block saved ${height}, ${hash}`);
   await listener.syncBlocks(onBlock);
 });
 
-listener.syncBlocks();
 listener.connect();
+listener.syncBlocks(onBlock);
