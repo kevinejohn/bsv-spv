@@ -171,7 +171,7 @@ class Worker {
       // Mempool events
       // spv.on("mempool_tx", ({ transaction }) => {
       //   console.log(
-      //     `${id} tx ${transaction.getHash().toString("hex")} downloaded from mempool`
+      //     `${id} tx ${transaction.getTxid()} downloaded from mempool`
       //   );
       // });
       spv.on("mempool_txs_seen", ({ txids }) => {

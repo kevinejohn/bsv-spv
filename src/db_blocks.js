@@ -116,7 +116,7 @@ class DbBlocks {
             if (err) throw err;
             if (bytesRead !== len) throw Error(`Could not read full file`);
             const tx = bsv.Transaction.fromBuffer(buf);
-            if (txid && txid.toString("hex") !== tx.getHash().toString("hex")) {
+            if (txid && txid.toString("hex") !== tx.getTxid()) {
               throw Error(`Invalid txid`);
             }
             resolve({ tx });

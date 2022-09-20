@@ -18,9 +18,9 @@ const onBlock = ({
   transactions,
   startDate,
 }) => {
-  // for (const [index, tx] of transactions) {
+  // for (const [index, tx, pos, len] of transactions) {
   //   console.log(
-  //     `#${index} tx ${tx.getHash().toString("hex")} in block ${height}`
+  //     `#${index} tx ${tx.getTxid()} in block ${height}`
   //   );
   // }
 };
@@ -31,7 +31,7 @@ const onMempool = ({ txids }) => {
     `${txids.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
   );
   for (const tx of txs) {
-    console.log(`Mempool tx ${tx.getHash().toString("hex")}`);
+    console.log(`Mempool tx ${tx.getTxid()}`);
   }
 };
 

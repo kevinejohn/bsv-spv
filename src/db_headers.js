@@ -63,7 +63,7 @@ class DbHeaders {
   //   const txn = this.env.beginTxn();
   //   for (const header of headerArray) {
   //     this.headers.addHeader({ header });
-  //     const key = header.getHash().toString("hex");
+  //     const key = header.getHash('hex')
   //     const buf = txn.getBinary(this.dbi_headers, key);
   //     if (!buf) {
   //       newHeaders++;

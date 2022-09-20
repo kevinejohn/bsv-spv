@@ -186,7 +186,7 @@ class Listener extends EventEmitter {
                 }
                 if (params.finished) {
                   const { header, size, txCount, startDate } = params;
-                  const blockHash = header.getHash().toString("hex");
+                  const blockHash = header.getHash("hex");
                   const timer = +new Date() - startDate;
                   this.db_plugin.markBlockProcessed({
                     blockHash,
