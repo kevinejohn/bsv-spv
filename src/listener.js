@@ -169,13 +169,13 @@ class Listener extends EventEmitter {
               let matches = 0;
 
               await this.readBlock({ height }, async (params) => {
-                if (params.started) {
-                  console.log(
-                    `Streaming block ${height}, ${params.header
-                      .getHash()
-                      .toString("hex")}...`
-                  );
-                }
+                // if (params.started) {
+                //   console.log(
+                //     `Streaming block ${height}, ${params.header
+                //       .getHash()
+                //       .toString("hex")}...`
+                //   );
+                // }
                 try {
                   const match = await callback(params);
                   if (match > 0) matches += match;
