@@ -108,14 +108,19 @@ class DbBlocks {
 
   async getTx({ txid, block, pos, len = 1000000 }) {
     const dir = path.join(this.blocksDir, `${block.toString("hex")}.bin`);
-    const file = await fs.promises.open(dir, "r")
-    const { bytesRead, buffer } = await file.read(Buffer.alloc(len), 0, len, pos)
-    await file.close()
+    const file = await fs.promises.open(dir, "r");
+    const { bytesRead, buffer } = await file.read(
+      Buffer.alloc(len),
+      0,
+      len,
+      pos
+    );
+    await file.close();
     const tx = bsv.Transaction.fromBuffer(buffer);
     if (txid && txid.toString("hex") !== tx.getTxid()) {
       throw Error(`Invalid txid`);
     }
-    return { tx }
+    return { tx };
   }
 }
 
