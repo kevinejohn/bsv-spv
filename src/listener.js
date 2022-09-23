@@ -17,6 +17,7 @@ class Listener extends EventEmitter {
     disableInterval = false,
   }) {
     super();
+    this.setMaxListeners(0);
     if (!name) throw Error(`Missing plugin name`);
     if (!ticker) throw Error(`Missing ticker!`);
     if (!dataDir) throw Error(`Missing dataDir`);
@@ -77,7 +78,7 @@ class Listener extends EventEmitter {
 
   connect(opts = {}) {
     if (this.client) return;
-    if (!this.connectOpts) this.connectOpts = opts
+    if (!this.connectOpts) this.connectOpts = opts;
     const { host = "localhost", port = 8080 } = this.connectOpts;
     this.host = host;
     this.port = port;

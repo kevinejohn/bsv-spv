@@ -24,6 +24,7 @@ class BsvSpv extends EventEmitter {
     DEBUG_LOG = false,
   }) {
     super();
+    this.setMaxListeners(0);
     if (!dataDir) throw Error(`Missing dataDir`);
     this.saveBlocks = saveBlocks;
     this.saveMempool = saveMempool;
