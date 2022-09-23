@@ -76,6 +76,35 @@ class Listener extends EventEmitter {
     clearTimeout(this.reconnectTimeout);
   }
 
+  onMessage(obj) {
+    const { command, data } = obj;
+    if (command === "headers_saved") {
+      const { hashes } = data;
+      for (const hash of hashes) {
+        const header = this.db_headers.getHeader(hash);
+        this.headers.addHeader({ header });
+      }
+      this.headers.process();
+      const tip = this.headers.getTip();
+      console.log(`New headers loaded. Tip ${tip.height}, ${tip.hash}`);
+    } else if (command === "mempool_txs_saved") {
+      this.txsSeen += data.txids.length;
+      this.txsSize += data.size;
+    } else if (command === "block_reorg") {
+      const { height, hash } = data;
+      console.warn(`Block re-org after height ${height}, ${hash}!`);
+      const from = height + 1;
+      const to = this.headers.getHeight();
+      this.delBlocks(from, to);
+    } else if (command === "block_saved") {
+      const { height, hash } = data;
+      console.log(`New block saved ${height}, ${hash}`);
+    } else {
+      console.log(`Unknown command: ${JSON.stringify(obj)}`);
+    }
+    this.emit(command, data);
+  }
+
   connect(opts = {}) {
     if (this.client) return;
     if (!this.connectOpts) this.connectOpts = opts;
@@ -83,8 +112,8 @@ class Listener extends EventEmitter {
     this.host = host;
     this.port = port;
 
-    let txsSeen = 0;
-    let txsSize = 0;
+    this.txsSeen = 0;
+    this.txsSize = 0;
 
     const client = new Net.Socket();
     this.client = client;
@@ -96,35 +125,18 @@ class Listener extends EventEmitter {
 
     client.on("data", (message) => {
       try {
-        const obj = JSON.parse(message.toString().trim());
-        const { command, data } = obj;
-        if (command === "headers_saved") {
-          const { hashes } = data;
-          for (const hash of hashes) {
-            const header = this.db_headers.getHeader(hash);
-            this.headers.addHeader({ header });
+        const msgs = message.toString().split("\n\n");
+        for (const msg of msgs) {
+          try {
+            if (!msg.trim()) continue;
+            const obj = JSON.parse(msg.trim());
+            this.onMessage(obj);
+          } catch (err) {
+            console.error(err, message.length, message.toString(), msg);
           }
-          this.headers.process();
-          const tip = this.headers.getTip();
-          console.log(`New headers loaded. Tip ${tip.height}, ${tip.hash}`);
-        } else if (command === "mempool_txs_saved") {
-          txsSeen += data.txids.length;
-          txsSize += data.size;
-        } else if (command === "block_reorg") {
-          const { height, hash } = data;
-          console.warn(`Block re-org after height ${height}, ${hash}!`);
-          const from = height + 1;
-          const to = this.headers.getHeight();
-          this.delBlocks(from, to);
-        } else if (command === "block_saved") {
-          const { height, hash } = data;
-          console.log(`New block saved ${height}, ${hash}`);
-        } else {
-          console.log(`Unknown command: ${message.toString()}`);
         }
-        this.emit(command, data);
       } catch (err) {
-        console.error(err, message.toString());
+        console.error(err, message.length, message.toString());
       }
     });
 
@@ -147,12 +159,14 @@ class Listener extends EventEmitter {
       const REFRESH = 10; // 10 seconds
       this.interval = setInterval(() => {
         console.log(
-          `Seen ${txsSeen} mempool txs in ${REFRESH} seconds. ${Helpers.formatBytes(
-            txsSize
+          `Seen ${
+            this.txsSeen
+          } mempool txs in ${REFRESH} seconds. ${Helpers.formatBytes(
+            this.txsSize
           )}`
         );
-        txsSeen = 0;
-        txsSize = 0;
+        this.txsSeen = 0;
+        this.txsSize = 0;
       }, REFRESH * 1000);
     }
   }

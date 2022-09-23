@@ -11,15 +11,23 @@ process.on("uncaughtException", (err) => {
 
 class Worker {
   constructor() {
-    process.on("message", (msg) => {
+    process.on("message", (message) => {
       try {
-        const obj = JSON.parse(msg);
-        if (obj.command === "init")
-          this.start(obj).catch((err) => console.error(err));
+        const msgs = message.toString().split("\n\n");
+        for (const msg of msgs) {
+          if (!msg.trim()) continue;
+          const obj = JSON.parse(msg.trim());
+          if (obj.command === "init")
+            this.start(obj).catch((err) => console.error(err));
+        }
       } catch (err) {
         console.error(err);
       }
     });
+  }
+
+  sendToMaster(obj) {
+    process.send(`${JSON.stringify(obj)}\n\n`);
   }
 
   async start(params) {
@@ -78,22 +86,18 @@ class Worker {
       console.error(`${id} disconnected ${disconnects} times`);
       clearInterval(interval);
 
-      process.send(
-        JSON.stringify({
-          command: `disconnected`,
-          data: { node, disconnects },
-        })
-      );
+      this.sendToMaster({
+        command: `disconnected`,
+        data: { node, disconnects },
+      });
     });
     spv.on("connected", async ({ node }) => {
       console.log(`${id} connected`);
 
-      process.send(
-        JSON.stringify({
-          command: `connected`,
-          data: { node },
-        })
-      );
+      this.sendToMaster({
+        command: `connected`,
+        data: { node },
+      });
 
       clearInterval(interval);
       if (mempool) {
@@ -122,23 +126,19 @@ class Worker {
     });
     spv.on("headers_saved", ({ hashes }) => {
       console.log(`${id} ${hashes.length} new headers saved to disk`);
-      process.send(
-        JSON.stringify({
-          command: `headers_saved`,
-          data: { hashes: hashes.map((h) => h.toString("hex")) },
-        })
-      );
+      this.sendToMaster({
+        command: `headers_saved`,
+        data: { hashes: hashes.map((h) => h.toString("hex")) },
+      });
     });
     spv.on("block_reorg", async ({ height, hash }) => {
       console.log(
         `${id} Re-org detected after block height ${height}, ${hash}!`
       );
-      process.send(
-        JSON.stringify({
-          command: `block_reorg`,
-          data: { hash, height },
-        })
-      );
+      this.sendToMaster({
+        command: `block_reorg`,
+        data: { hash, height },
+      });
       if (blocks) {
         await spv.syncHeaders();
         await spv.syncBlocks();
@@ -183,12 +183,10 @@ class Worker {
         // console.log(`${id} ${txids.length} new txs saved from mempool`);
         txsSaved += txids.length;
         txsSize += size;
-        process.send(
-          JSON.stringify({
-            command: `mempool_txs_saved`,
-            data: { txids: txids.map((h) => h.toString("hex")), size },
-          })
-        );
+        this.sendToMaster({
+          command: `mempool_txs_saved`,
+          data: { txids: txids.map((h) => h.toString("hex")), size },
+        });
       });
     }
 
@@ -209,12 +207,10 @@ class Worker {
             1
           )} Mbps.`
         );
-        process.send(
-          JSON.stringify({
-            command: `block_saved`,
-            data: { hash, height, size, txCount },
-          })
-        );
+        this.sendToMaster({
+          command: `block_saved`,
+          data: { hash, height, size, txCount },
+        });
       });
       spv.on(
         "block_already_saved",

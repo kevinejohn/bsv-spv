@@ -29,7 +29,7 @@ class Master {
         worker = cluster.fork();
         worker.on("message", (data) => this.onMessage(data));
         worker.send(
-          JSON.stringify({ ...config, node, command: "init", blocks })
+          `${JSON.stringify({ ...config, node, command: "init", blocks })}\n\n`
         );
         this.workers[`blocks-${node}`] = worker;
       }
@@ -37,7 +37,7 @@ class Master {
         worker = cluster.fork();
         worker.on("message", (data) => this.onMessage(data));
         worker.send(
-          JSON.stringify({ ...config, node, command: "init", mempool })
+          `${JSON.stringify({ ...config, node, command: "init", mempool })}\n\n`
         );
         this.workers[`mempool-${node}`] = worker;
       }
@@ -64,12 +64,22 @@ class Master {
 
       socket.on("end", () => {
         console.log("Listener disconnected.");
+        try {
+          socket.destroy();
+        } catch (err) {
+          console.error(err);
+        }
         delete this.sockets[uid];
       });
 
       socket.on("error", (err) => {
         console.error(`Socket error`, err);
-        socket.end();
+        try {
+          socket.destroy();
+        } catch (err) {
+          console.error(err);
+        }
+        delete this.sockets[uid];
       });
     });
   }

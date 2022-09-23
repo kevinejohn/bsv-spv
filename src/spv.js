@@ -330,14 +330,10 @@ class BsvSpv extends EventEmitter {
     }
     this.peer.on("transactions", ({ header, transactions }) => {
       if (header) return;
-      try {
-        for (const [, transaction] of transactions) {
-          this.saveMempool && this.mempoolTxCache.push(transaction);
-          this.emit(`mempool_tx`, { transaction });
-        }
-      } catch (err) {
-        console.error(err);
+      for (const [, transaction] of transactions) {
+        this.saveMempool && this.mempoolTxCache.push(transaction);
       }
+      this.emit(`mempool_txs`, { transactions });
     });
     this.peer.listenForTxs(async (txids) => {
       try {
