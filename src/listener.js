@@ -77,7 +77,8 @@ class Listener extends EventEmitter {
 
   connect(opts = {}) {
     if (this.client) return;
-    const { host = "localhost", port = 8080 } = opts;
+    if (!this.connectOpts) this.connectOpts = opts
+    const { host = "localhost", port = 8080 } = this.connectOpts;
     this.host = host;
     this.port = port;
 
