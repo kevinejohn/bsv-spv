@@ -116,11 +116,14 @@ class DbBlocks {
       pos
     );
     await file.close();
-    const tx = bsv.Transaction.fromBuffer(buffer);
-    if (txid && txid.toString("hex") !== tx.getTxid()) {
-      throw Error(`Invalid txid`);
+    let tx;
+    if (txid) {
+      tx = bsv.Transaction.fromBuffer(buffer);
+      if (txid && txid.toString("hex") !== tx.getTxid()) {
+        throw Error(`Invalid txid`);
+      }
     }
-    return { tx };
+    return { tx, buffer, bytesRead };
   }
 }
 
