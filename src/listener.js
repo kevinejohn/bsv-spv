@@ -96,7 +96,7 @@ class Listener extends EventEmitter {
 
     client.on("data", (message) => {
       try {
-        const obj = JSON.parse(message.toString());
+        const obj = JSON.parse(message.toString().trim());
         const { command, data } = obj;
         if (command === "headers_saved") {
           const { hashes } = data;
@@ -116,9 +116,11 @@ class Listener extends EventEmitter {
           const from = height + 1;
           const to = this.headers.getHeight();
           this.delBlocks(from, to);
-        } else if ("block_saved") {
+        } else if (command === "block_saved") {
           const { height, hash } = data;
           console.log(`New block saved ${height}, ${hash}`);
+        } else {
+          console.log(`Unknown command: ${message.toString()}`);
         }
         this.emit(command, data);
       } catch (err) {
