@@ -14,6 +14,19 @@ class DbBlocks {
     return files;
   }
 
+  getSavedBlocks() {
+    const hashes = [];
+    const files = fs.readdirSync(this.blocksDir);
+    for (const file of files) {
+      const split = file.split(".");
+      if (split.length === 2 && split[0].length === 64) {
+        const hash = split[0]
+        hashes.push(hash);
+      }
+    }
+    return hashes;
+  }
+
   writeBlockChunk({ chunk, blockHash, started, finished }) {
     return new Promise((resolve, reject) => {
       if (started) {

@@ -14,8 +14,8 @@ class BsvSpv extends EventEmitter {
     node,
     dataDir,
     forceUserAgent,
-    saveBlocks = true,
-    saveMempool = true,
+    blocks = false,
+    mempool = false,
     autoReconnect = true,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
@@ -27,8 +27,8 @@ class BsvSpv extends EventEmitter {
     super();
     this.setMaxListeners(0);
     if (!dataDir) throw Error(`Missing dataDir`);
-    this.saveBlocks = saveBlocks;
-    this.saveMempool = saveMempool;
+    this.saveBlocks = blocks;
+    this.saveMempool = mempool;
     this.pruneBlocks = pruneBlocks;
     this.blockHeight = blockHeight;
     this.ticker = ticker;
@@ -39,7 +39,7 @@ class BsvSpv extends EventEmitter {
       node,
       ticker,
       autoReconnect,
-      mempoolTxs: saveMempool,
+      mempoolTxs: mempool,
       DEBUG_LOG,
     });
     this.headers = new Headers({ invalidBlocks });
@@ -62,7 +62,7 @@ class BsvSpv extends EventEmitter {
     });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
     this.db_plugin = new DbPlugin({ pluginDir, readOnly: false });
-    if (saveBlocks) {
+    if (this.saveBlocks) {
       this.db_plugin.loadBlocks();
       let startDate;
       this.peer.on(
@@ -402,6 +402,32 @@ class BsvSpv extends EventEmitter {
       this.blockHeight = tipHeight + 1;
     } else if (this.blockHeight < 0) {
       this.blockHeight += tipHeight;
+    }
+
+    try {
+      if (this.db_plugin.blocksProcessed() === 0) {
+        const startDate = +new Date();
+        console.log(`Finding which blocks are already saved to disk...`);
+        // Quicker initialization to figure out which blocks are saved
+        const files = this.db_blocks.getSavedBlocks();
+        const arr = [];
+        for (const hash of files) {
+          try {
+            const height = this.headers.getHeight(hash);
+            const blockHash = Buffer.from(hash, "hex");
+            arr.push({ height, blockHash });
+          } catch (err) {}
+        }
+        console.log(`Found ${arr.length} already saved blocks.`);
+        await this.db_plugin.batchBlocksProcessed(arr);
+        console.log(
+          `${arr.length} blocks have already been saved. Took ${
+            (+new Date() - startDate) / 1000
+          } seconds to determine.`
+        );
+      }
+    } catch (err) {
+      console.error(err);
     }
 
     for (let height = this.blockHeight; height <= tipHeight; height++) {

@@ -60,6 +60,33 @@ class DbPlugin {
     this.processedBlocks[`${height}`] = blockHash.toString("hex");
   }
 
+  async batchBlocksProcessed(array) {
+    if (array.length === 0) return;
+    const heights = [];
+    const blocks = [];
+    const date = +new Date();
+    for (const obj of array) {
+      const { blockHash, height, matches, errors, txCount, size, timer } = obj;
+      const value = Buffer.from(
+        JSON.stringify({ matches, errors, txCount, size, date, timer })
+      );
+      blocks.push([this.dbi_blocks, blockHash, value]);
+      heights.push([this.dbi_heights, height, blockHash]);
+    }
+    await new Promise((resolve, reject) => {
+      this.env.batchWrite(blocks, {}, (err, results) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+    await new Promise((resolve, reject) => {
+      this.env.batchWrite(heights, { keyIsUint32: true }, (err, results) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+
   loadBlocks() {
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor = new lmdb.Cursor(txn, this.dbi_heights);
@@ -68,7 +95,7 @@ class DbPlugin {
       height !== null;
       height = cursor.goToNext()
     ) {
-      const hash = txn.getBinary(this.dbi_heights, height).toString("hex");
+      const hash = cursor.getCurrentBinary().toString("hex");
       this.processedBlocks[`${height}`] = hash;
     }
     cursor.close();
@@ -109,17 +136,6 @@ class DbPlugin {
       delete this.processedBlocks[`${height}`];
     }
     txn.commit();
-    // return new Promise((resolve, reject) => {
-    //   if (from === to) return resolve();
-    //   const operations = [];
-    //   for (let height = from; height <= to; height++) {
-    //     operations.push([this.dbi_heights, height]);
-    //   }
-    //   this.env.batchWrite(operations, {}, (err, results) => {
-    //     if (err) return reject(err);
-    //     resolve();
-    //   });
-    // });
   }
 }
 
