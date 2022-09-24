@@ -1,4 +1,4 @@
-function formatBytes(bytes) {
+export function formatBytes(bytes: number) {
   if (bytes >= 1000000000) {
     return `${Number(bytes / 1000000000).toFixed(1)} GB`;
   } else if (bytes >= 1000000) {
@@ -9,7 +9,3 @@ function formatBytes(bytes) {
     return `${bytes} Bytes`;
   }
 }
-
-module.exports = {
-  formatBytes,
-};

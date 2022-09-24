@@ -341,7 +341,7 @@ export default class BsvSpv extends EventEmitter {
   }
   readBlock(
     { hash, height }: { height: number; hash: string },
-    callback: (params: any) => void
+    callback: (params: any) => Promise<void>
   ) {
     if (!hash) hash = this.headers.getHash(height);
     if (typeof height !== "number") {
