@@ -1,10 +1,11 @@
-const P2P = require("bsv-p2p");
+const BsvP2p = require("bsv-p2p").default;
 const Headers = require("bsv-headers");
 const EventEmitter = require("events");
 const DbHeaders = require("./db_headers");
 const DbBlocks = require("./db_blocks");
 const DbMempool = require("./db_mempool");
 const DbNodes = require("./db_nodes");
+const DbPlugin = require("./db_plugin");
 const path = require("path");
 
 class BsvSpv extends EventEmitter {
@@ -34,13 +35,20 @@ class BsvSpv extends EventEmitter {
     this.node = node;
     this.forceUserAgent = forceUserAgent;
     this.COMMAND_TIMEOUT = COMMAND_TIMEOUT;
-    this.peer = new P2P({ node, ticker, autoReconnect, DEBUG_LOG });
+    this.peer = new BsvP2p({
+      node,
+      ticker,
+      autoReconnect,
+      mempoolTxs: saveMempool,
+      DEBUG_LOG,
+    });
     this.headers = new Headers({ invalidBlocks });
     dataDir = path.join(dataDir, ticker);
     const headersDir = path.join(dataDir, "headers");
     const blocksDir = path.join(dataDir, "blocks");
     const mempoolDir = path.join(dataDir, "mempool");
     const nodesDir = path.join(dataDir, "nodes");
+    const pluginDir = path.join(dataDir, "history", `node-${node}`);
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({
       headersDir,
@@ -53,7 +61,9 @@ class BsvSpv extends EventEmitter {
       readOnly: false,
     });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
+    this.db_plugin = new DbPlugin({ pluginDir, readOnly: false });
     if (saveBlocks) {
+      this.db_plugin.loadBlocks();
       let startDate;
       this.peer.on(
         "block_chunk",
@@ -86,6 +96,13 @@ class BsvSpv extends EventEmitter {
                 // More reliable if we calculate the height
                 blockHeight = this.headers.getHeight(hash);
               } catch (err) {}
+              this.db_blocks.markBlockProcessed({
+                blockHash,
+                height: blockHeight,
+                txCount,
+                size,
+                timer: +new Date() - startDate,
+              });
               if (success) {
                 this.emit("block_saved", {
                   height: blockHeight,
@@ -103,7 +120,6 @@ class BsvSpv extends EventEmitter {
                   txCount,
                 });
               }
-              this.emit(`block_ready_${hash}`);
 
               if (this.pruneBlocks > 0) {
                 try {
@@ -268,40 +284,14 @@ class BsvSpv extends EventEmitter {
     return { tx };
   }
 
-  async downloadBlock(heightOrHash) {
-    let height, hash;
-    if (typeof heightOrHash === "number" && heightOrHash >= 0) {
-      height = heightOrHash;
-      hash = this.headers.getHash(height);
-    } else {
-      hash = heightOrHash.toString("hex");
-    }
+  async downloadBlock({ height, hash }) {
     if (!this.db_blocks.blockExists(hash)) {
       await this.peer.connect(); // Wait until connected
-
-      const event = `block_ready_${hash}`;
-      let listener, timeout;
-      try {
-        const promise = new Promise((resolve, reject) => {
-          listener = () => {
-            clearTimeout(timeout);
-            resolve();
-          };
-          this.once(event, listener);
-          timeout = setTimeout(
-            () => reject(Error(`Timeout`)),
-            this.COMMAND_TIMEOUT
-          );
-        });
-        this.emit(`block_downloading`, { hash, height });
-        await this.peer.getBlock(hash);
-        await promise; // Wait until block is fully downloaded and ready
-      } catch (err) {
-        clearTimeout(timeout);
-        this.removeListener(event, listener);
-        throw err;
-      }
+      this.emit(`block_downloading`, { hash, height });
+      await this.peer.getBlock(hash);
       return true;
+    } else {
+      this.db_plugin.markBlockProcessed({ height, blockHash: hash });
     }
     return false;
   }
@@ -402,38 +392,35 @@ class BsvSpv extends EventEmitter {
     if (!disableAutoDl) this.peer.listenForBlocks();
   }
 
-  async syncBlocks(opts = {}) {
-    const { checkAll = false } = opts;
-    let height = this.headers.getHeight();
-    if (typeof this.blockHeight !== "number") {
-      this.blockHeight = height + 1;
-    } else if (this.blockHeight < 0) {
-      this.blockHeight += height;
-    }
-    const endHeight = Math.max(
-      0,
-      this.blockHeight,
-      this.pruneBlocks > 0 ? height - this.pruneBlocks : 0
-    );
+  async syncBlocks() {
     let blocksDled = 0;
-    for (height; height >= endHeight; height--) {
+    if (this.blocksSyncing) return blocksDled;
+    this.blocksSyncing = true;
+
+    let tipHeight = this.headers.getHeight();
+    if (typeof this.blockHeight !== "number") {
+      this.blockHeight = tipHeight + 1;
+    } else if (this.blockHeight < 0) {
+      this.blockHeight += tipHeight;
+    }
+
+    for (let height = this.blockHeight; height <= tipHeight; height++) {
+      if (this.db_plugin.isProcessed(height)) continue;
       try {
-        if (await this.downloadBlock(height)) {
-          // Block downloaded
-          blocksDled++;
-        } else {
-          // Block is already downloaded
-          if (!checkAll) break;
-        }
+        const hash = this.headers.getHash(height);
+        const blockDownloaded = await this.downloadBlock({ height, hash });
+        if (blockDownloaded) blocksDled++;
+        tipHeight = this.headers.getHeight();
       } catch (err) {
         const RETRY = 3;
         console.error(
           `syncBlocks error: ${err.message}. Retrying in ${RETRY} seconds...`
         );
         await new Promise((r) => setTimeout(r, RETRY * 1000));
-        height++; // Retry height
+        height--; // Retry height
       }
     }
+    this.blocksSyncing = false;
     return blocksDled;
   }
 
