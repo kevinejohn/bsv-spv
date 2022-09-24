@@ -95,7 +95,7 @@ class Listener extends EventEmitter {
       console.warn(`Block re-org after height ${height}, ${hash}!`);
       const from = height + 1;
       const to = this.headers.getHeight();
-      this.delBlocks(from, to);
+      this.db_plugin.delBlocks(from, to);
     } else if (command === "block_saved") {
       const { height, hash } = data;
       console.log(`New block saved ${height}, ${hash}`);

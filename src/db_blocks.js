@@ -20,7 +20,7 @@ class DbBlocks {
     for (const file of files) {
       const split = file.split(".");
       if (split.length === 2 && split[0].length === 64) {
-        const hash = split[0]
+        const hash = split[0];
         hashes.push(hash);
       }
     }

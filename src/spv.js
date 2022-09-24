@@ -96,7 +96,7 @@ class BsvSpv extends EventEmitter {
                 // More reliable if we calculate the height
                 blockHeight = this.headers.getHeight(hash);
               } catch (err) {}
-              this.db_blocks.markBlockProcessed({
+              this.db_plugin.markBlockProcessed({
                 blockHash,
                 height: blockHeight,
                 txCount,
