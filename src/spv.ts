@@ -511,7 +511,7 @@ export default class BsvSpv extends EventEmitter {
     return prunedCount;
   }
 
-  async pruneMempool(olderThan: number) {
+  async pruneMempool(olderThan?: number) {
     const txids = await this.db_mempool.pruneTxs(olderThan);
     if (txids.length > 0)
       this.emit(`mempool_pruned`, { txids, txCount: txids.length });

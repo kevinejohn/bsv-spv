@@ -1,5 +1,5 @@
-const cluster = require("cluster");
-const Net = require("net");
+import cluster, { Worker } from "cluster";
+import Net from "net";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Master Unhandled Rejection at Promise", p);
@@ -9,8 +9,14 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-class Master {
-  constructor(config) {
+export default class Master {
+  config: any; // TODO: Fix
+  sockets: { [key: string]: Net.Socket };
+  workers: { [key: string]: Worker };
+  server?: Net.Server;
+
+  constructor(config: any) {
+    // TODO: Fix
     this.config = config;
     this.sockets = {};
     this.workers = {};
@@ -44,8 +50,7 @@ class Master {
     }
   }
 
-  startServer(opts = {}) {
-    const { port = 8080, host = "localhost" } = opts;
+  startServer({ port = 8080, host = "localhost" }) {
     const server = new Net.Server();
     this.server = server;
 
@@ -84,7 +89,7 @@ class Master {
     });
   }
 
-  onMessage(data) {
+  onMessage(data: any) {
     if (typeof data !== "string") return;
     try {
       for (const key in this.sockets) {
@@ -95,5 +100,3 @@ class Master {
     }
   }
 }
-
-module.exports = Master;

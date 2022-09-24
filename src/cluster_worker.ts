@@ -1,5 +1,5 @@
-const BsvSpv = require("./spv");
-const Helpers = require("./helpers");
+import BsvSpv from "./spv";
+import * as Helpers from "./helpers";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Worker Unhandled Rejection at Promise", p);
@@ -9,9 +9,12 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-class Worker {
+export default class Worker {
+  spv?: BsvSpv;
+
   constructor() {
-    process.on("message", (message) => {
+    process.on("message", (message: any) => {
+      // TODO: Fix
       try {
         const msgs = message.toString().split("\n\n");
         for (const msg of msgs) {
@@ -26,11 +29,14 @@ class Worker {
     });
   }
 
-  sendToMaster(obj) {
-    process.send(`${JSON.stringify(obj)}\n\n`);
+  sendToMaster(obj: any) {
+    if (process.send) {
+      process.send(`${JSON.stringify(obj)}\n\n`);
+    }
   }
 
-  async start(params) {
+  async start(params: any) {
+    // TODO: Fix
     const {
       node,
       mempool,
@@ -40,7 +46,7 @@ class Worker {
       MEMPOOL_PRUNE_AFTER,
     } = params;
     const REFRESH = 10; // console.log status every X seconds
-    let interval;
+    let interval: NodeJS.Timer;
     let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
@@ -128,7 +134,7 @@ class Worker {
       console.log(`${id} ${hashes.length} new headers saved to disk`);
       this.sendToMaster({
         command: `headers_saved`,
-        data: { hashes: hashes.map((h) => h.toString("hex")) },
+        data: { hashes: hashes.map((h: Buffer) => h.toString("hex")) },
       });
     });
     spv.on("block_reorg", async ({ height, hash }) => {
@@ -147,7 +153,7 @@ class Worker {
     spv.on("block_seen", async ({ hashes }) => {
       console.log(
         `${id} New block seen: ${hashes
-          .map((h) => h.toString("hex"))
+          .map((h: Buffer) => h.toString("hex"))
           .join(", ")}`
       );
       if (blocks) {
@@ -185,7 +191,7 @@ class Worker {
         txsSize += size;
         this.sendToMaster({
           command: `mempool_txs_saved`,
-          data: { txids: txids.map((h) => h.toString("hex")), size },
+          data: { txids: txids.map((h: Buffer) => h.toString("hex")), size },
         });
       });
     }
@@ -271,5 +277,3 @@ class Worker {
     }
   }
 }
-
-module.exports = Worker;
