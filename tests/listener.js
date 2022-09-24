@@ -1,4 +1,4 @@
-const { Listener } = require("../src");
+const { Listener } = require("../lib");
 const path = require("path");
 
 const name = "test-plugin";

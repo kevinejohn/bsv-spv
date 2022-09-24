@@ -1,8 +1,29 @@
-const lmdb = require("node-lmdb");
-const fs = require("fs");
+import lmdb from "node-lmdb";
+import fs from "fs";
 
-class DbPlugin {
-  constructor({ pluginDir, readOnly = true }) {
+export interface PluginOptions {
+  blockHash: string | Buffer;
+  height: number;
+  matches?: number;
+  errors?: number;
+  txCount?: number;
+  size?: number;
+  timer?: number;
+}
+
+export default class DbPlugin {
+  processedBlocks: { [key: string]: string };
+  env: any;
+  dbi_blocks: any;
+  dbi_heights: any;
+
+  constructor({
+    pluginDir,
+    readOnly = true,
+  }: {
+    pluginDir: string;
+    readOnly?: boolean;
+  }) {
     if (!pluginDir) throw Error(`Missing pluginDir`);
     fs.mkdirSync(pluginDir, { recursive: true });
 
@@ -47,7 +68,7 @@ class DbPlugin {
     txCount,
     size,
     timer,
-  }) {
+  }: PluginOptions) {
     if (!Buffer.isBuffer(blockHash)) blockHash = Buffer.from(blockHash, "hex");
     const date = +new Date();
     const value = Buffer.from(
@@ -60,10 +81,10 @@ class DbPlugin {
     this.processedBlocks[`${height}`] = blockHash.toString("hex");
   }
 
-  async batchBlocksProcessed(array) {
+  async batchBlocksProcessed(array: PluginOptions[]) {
     if (array.length === 0) return;
-    const heights = [];
-    const blocks = [];
+    const heights: any = [];
+    const blocks: any = [];
     const date = +new Date();
     for (const obj of array) {
       const { blockHash, height, matches, errors, txCount, size, timer } = obj;
@@ -74,16 +95,20 @@ class DbPlugin {
       heights.push([this.dbi_heights, height, blockHash]);
     }
     await new Promise((resolve, reject) => {
-      this.env.batchWrite(blocks, {}, (err, results) => {
+      this.env.batchWrite(blocks, {}, (err: any, results: number[]) => {
         if (err) return reject(err);
-        resolve();
+        resolve(results);
       });
     });
     await new Promise((resolve, reject) => {
-      this.env.batchWrite(heights, { keyIsUint32: true }, (err, results) => {
-        if (err) return reject(err);
-        resolve();
-      });
+      this.env.batchWrite(
+        heights,
+        { keyIsUint32: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          resolve(results);
+        }
+      );
     });
   }
 
@@ -95,24 +120,24 @@ class DbPlugin {
       height !== null;
       height = cursor.goToNext()
     ) {
-      const hash = cursor.getCurrentBinary().toString("hex");
-      this.processedBlocks[`${height}`] = hash;
+      const hash = cursor.getCurrentBinary();
+      if (hash) this.processedBlocks[`${height}`] = hash.toString("hex");
     }
     cursor.close();
     txn.commit();
   }
 
-  isProcessed(height) {
+  isProcessed(height: number) {
     return !!this.processedBlocks[`${height}`];
   }
   blocksProcessed() {
     return Object.keys(this.processedBlocks).length;
   }
-  getHash(height) {
+  getHash(height: number) {
     return this.processedBlocks[`${height}`];
   }
 
-  getBlockInfo(blockHash) {
+  getBlockInfo(blockHash: string | Buffer) {
     if (!Buffer.isBuffer(blockHash)) blockHash = Buffer.from(blockHash, "hex");
     const txn = this.env.beginTxn({ readOnly: true });
     const value = txn.getBinary(this.dbi_blocks, blockHash);
@@ -121,7 +146,7 @@ class DbPlugin {
     return JSON.parse(value.toString());
   }
 
-  getBlockHash(height) {
+  getBlockHash(height: number) {
     const txn = this.env.beginTxn({ readOnly: true });
     const value = txn.getBinary(this.dbi_heights, height);
     txn.commit();
@@ -129,7 +154,7 @@ class DbPlugin {
     return value.toString("hex");
   }
 
-  delBlocks(from, to) {
+  delBlocks(from: number, to: number) {
     const txn = this.env.beginTxn({ readOnly: false });
     for (let height = from; height <= to; height++) {
       txn.del(this.dbi_heights, height);
@@ -138,5 +163,3 @@ class DbPlugin {
     txn.commit();
   }
 }
-
-module.exports = DbPlugin;

@@ -2,9 +2,10 @@
   "name": "bsv-spv",
   "version": "0.2.6",
   "description": "Stay in sync with latest bitcoin headers",
-  "main": "src/index.js",
+  "main": "lib/index.ts",
   "scripts": {
-    "test": "node ./tests/cluster.js"
+    "test": "ts-node ./tests/cluster.js",
+    "build": "tsc"
   },
   "author": "Kevin Johnson",
   "license": "MIT",
@@ -16,8 +17,16 @@
   "dependencies": {
     "bsv-headers": "^0.1.1",
     "bsv-minimal": "^1.0.2",
-    "bsv-p2p": "^1.0.0",
+    "bsv-p2p": "^1.0.2",
     "express": "^4.18.1",
+    "source-map-support": "^0.5.21",
     "node-lmdb": "^0.9.7"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.20",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.23.15",
+    "typedoc-plugin-markdown": "^3.13.6",
+    "typescript": "^4.8.3"
   }
 }

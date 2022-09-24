@@ -1,4 +1,4 @@
-const { Worker, Master } = require("../src");
+const { Worker, Master } = require("../lib");
 const path = require("path");
 const cluster = require("cluster");
 
