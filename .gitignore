@@ -2,4 +2,5 @@ node_modules
 *.mdb
 *.bin
 tests/data
-
+/lib
+.DS_Store

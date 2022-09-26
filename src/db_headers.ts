@@ -1,9 +1,21 @@
-const lmdb = require("node-lmdb");
-const bsv = require("bsv-minimal");
-const fs = require("fs");
+import * as bsv from "bsv-minimal";
+import lmdb from "node-lmdb";
+import fs from "fs";
 
-class DbHeaders {
-  constructor({ headersDir, headers, readOnly = true }) {
+export default class DbHeaders {
+  headers: any;
+  env: any;
+  dbi_headers: any;
+
+  constructor({
+    headersDir,
+    headers,
+    readOnly = true,
+  }: {
+    headersDir: string;
+    headers: any;
+    readOnly?: boolean;
+  }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
     fs.mkdirSync(headersDir, { recursive: true });
@@ -35,11 +47,11 @@ class DbHeaders {
     } catch (err) {}
   }
 
-  saveHeaders(headerArray) {
+  saveHeaders(headerArray: bsv.Header[]): Promise<Buffer[]> {
     return new Promise((resolve, reject) => {
-      const hashes = [];
-      if (headerArray.length === 0) return resolve({ hashes });
-      const operations = [];
+      const hashes: Buffer[] = [];
+      if (headerArray.length === 0) return resolve(hashes);
+      const operations: any = [];
       headerArray.map((header) => {
         operations.push([
           this.dbi_headers,
@@ -48,12 +60,12 @@ class DbHeaders {
           null,
         ]);
       });
-      this.env.batchWrite(operations, {}, (err, results) => {
+      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
         if (err) return reject(err);
         headerArray.map(
           (header, i) => results[i] === 0 && hashes.push(header.getHash())
         );
-        resolve({ hashes });
+        resolve(hashes);
       });
     });
   }
@@ -76,11 +88,13 @@ class DbHeaders {
   //   return newHeaders;
   // }
 
-  getHeader(hash) {
+  getHeader(hash: string | Buffer) {
     if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
     const txn = this.env.beginTxn({ readOnly: true });
     const buf = txn.getBinary(this.dbi_headers, hash);
     txn.commit();
+    // TODO: Return GENESIS_HEADER if matches hash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+    if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;
   }
@@ -93,7 +107,7 @@ class DbHeaders {
       hash !== null;
       hash = cursor.goToNext()
     ) {
-      if (!this.headers.headers[hash.toString("hex")]) {
+      if (!this.headers.headers[Buffer.from(hash).toString("hex")]) {
         const buf = cursor.getCurrentBinary();
         this.headers.addHeader({ buf, hash });
       }
@@ -103,5 +117,3 @@ class DbHeaders {
     this.headers.process();
   }
 }
-
-module.exports = DbHeaders;

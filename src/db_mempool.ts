@@ -1,12 +1,21 @@
-const lmdb = require("node-lmdb");
-const bsv = require("bsv-minimal");
-const fs = require("fs");
+import * as bsv from "bsv-minimal";
+import lmdb from "node-lmdb";
+import fs from "fs";
 
-class DbMempool {
+export default class DbMempool {
+  pruneAfter: number;
+  env: any;
+  dbi_txs: any;
+  dbi_tx_times: any;
+
   constructor({
     mempoolDir,
     pruneAfter = 1000 * 60 * 60 * 12, // After 12 hours
     readOnly = true,
+  }: {
+    mempoolDir: string;
+    pruneAfter?: number;
+    readOnly?: boolean;
   }) {
     if (!mempoolDir) throw Error(`Missing mempoolDir`);
     fs.mkdirSync(mempoolDir, { recursive: true });
@@ -44,12 +53,14 @@ class DbMempool {
     } catch (err) {}
   }
 
-  saveTxs(txsArray) {
+  saveTxs(
+    txsArray: bsv.Transaction[]
+  ): Promise<{ txids: Buffer[]; size: number }> {
     return new Promise((resolve, reject) => {
-      const txids = [];
+      const txids: Buffer[] = [];
       let size = 0;
       if (txsArray.length === 0) return resolve({ txids, size });
-      const operations = [];
+      const operations: any = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
       bw.writeUInt32LE(date);
@@ -60,7 +71,7 @@ class DbMempool {
         operations.push([this.dbi_txs, txid, tx.toBuffer(), null]);
         operations.push([this.dbi_tx_times, txid, time, null]);
       });
-      this.env.batchWrite(operations, {}, (err, results) => {
+      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
         if (err) return reject(err);
         txsArray.map(
           (tx, i) => results[i * 2] === 0 && txids.push(tx.getHash())
@@ -70,11 +81,11 @@ class DbMempool {
     });
   }
 
-  saveTimes(txidArr) {
+  saveTimes(txidArr: Buffer[]): Promise<Buffer[]> {
     return new Promise((resolve, reject) => {
-      const txids = [];
-      if (txidArr.length === 0) return resolve({ txids });
-      const operations = [];
+      const txids: Buffer[] = [];
+      if (txidArr.length === 0) return resolve(txids);
+      const operations: any = [];
       const bw = new bsv.utils.BufferWriter();
       const date = Math.round(+new Date() / 1000);
       bw.writeUInt32LE(date);
@@ -82,50 +93,60 @@ class DbMempool {
       txidArr.map((txid) => {
         operations.push([this.dbi_tx_times, txid, time, null]);
       });
-      this.env.batchWrite(operations, {}, (err, results) => {
+      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
         if (err) return reject(err);
         txidArr.map((txid, i) => results[i] === 0 && txids.push(txid));
-        resolve({ txids });
+        resolve(txids);
       });
     });
   }
 
-  delTxs(txidArr) {
+  delTxs(txidArr: Buffer[]): Promise<Buffer[]> {
     return new Promise((resolve, reject) => {
-      const txids = [];
-      if (txidArr.length === 0) return resolve({ txids });
-      const operations = [];
+      const txids: Buffer[] = [];
+      if (txidArr.length === 0) return resolve(txids);
+      const operations: any = [];
       txidArr.map((txid) => {
         operations.push([this.dbi_txs, txid]);
         operations.push([this.dbi_tx_times, txid]);
       });
-      this.env.batchWrite(operations, {}, (err, results) => {
+      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
         if (err) return reject(err);
         txidArr.map((txid, i) => results[i * 2] === 0 && txids.push(txid));
-        resolve({ txids });
+        resolve(txids);
       });
     });
   }
 
-  getTxids(opts = {}) {
-    const { olderThan, newerThan } = opts;
+  getTxids({
+    olderThan,
+    newerThan,
+  }: {
+    olderThan?: number;
+    newerThan?: number;
+  }) {
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor = new lmdb.Cursor(txn, this.dbi_tx_times);
-    const txids = [];
+    const txids: Buffer[] = [];
     for (
       let txid = cursor.goToFirst();
       txid !== null;
       txid = cursor.goToNext()
     ) {
-      if (olderThan >= 0 || newerThan >= 0) {
+      if ((olderThan && olderThan >= 0) || (newerThan && newerThan >= 0)) {
         const buf = cursor.getCurrentBinary();
-        const br = new bsv.utils.BufferReader(buf);
-        const time = br.readUInt32LE() * 1000;
-        if (olderThan > time || newerThan < time) {
-          txids.push(txid);
+        if (buf) {
+          const br = new bsv.utils.BufferReader(buf);
+          const time = br.readUInt32LE() * 1000;
+          if (
+            (olderThan && olderThan > time) ||
+            (newerThan && newerThan < time)
+          ) {
+            txids.push(Buffer.from(txid));
+          }
         }
       } else {
-        txids.push(txid);
+        txids.push(Buffer.from(txid));
       }
     }
     cursor.close();
@@ -133,22 +154,25 @@ class DbMempool {
     return txids;
   }
 
-  getTx(txid, getTime = true) {
+  getTx(txid: string, getTime = true) {
     const { txs, size, times } = this.getTxs([txid], getTime);
     const tx = txs[0];
     if (!tx) throw Error(`Not found`);
     const time = times[0];
     return { tx, time, size };
   }
-  getTxs(txids = false, getTime = false) {
+  getTxs(
+    txids?: string[] | Buffer[],
+    getTime = false
+  ): { txs: bsv.Transaction[]; size: number; times: (number | null)[] } {
     const txs = [];
     const times = [];
     let size = 0;
     const txn = this.env.beginTxn({ readOnly: true });
     if (txids) {
       for (let txid of txids) {
-        if (!Buffer.isBuffer(txid)) txid = Buffer.from(txid, "hex");
-        const buf = txn.getBinary(this.dbi_txs, txid);
+        const key = Buffer.isBuffer(txid) ? txid : Buffer.from(txid, "hex");
+        const buf = txn.getBinary(this.dbi_txs, key);
         if (buf) {
           const tx = bsv.Transaction.fromBuffer(buf);
           txs.push(tx);
@@ -163,9 +187,11 @@ class DbMempool {
         txid = cursor.goToNext()
       ) {
         const buf = cursor.getCurrentBinary();
-        const tx = bsv.Transaction.fromBuffer(buf);
-        txs.push(tx);
-        size += buf.length;
+        if (buf) {
+          const tx = bsv.Transaction.fromBuffer(buf);
+          txs.push(tx);
+          size += buf.length;
+        }
       }
       cursor.close();
     }
@@ -185,15 +211,13 @@ class DbMempool {
     return { txs, size, times };
   }
 
-  pruneTxs(olderThan) {
-    if (!(olderThan >= 0)) olderThan = +new Date() - this.pruneAfter;
+  pruneTxs(olderThan?: number) {
+    if (!olderThan) olderThan = +new Date() - this.pruneAfter;
     const txids = this.getTxids({ olderThan });
     if (txids.length > 0) {
       return this.delTxs(txids);
     } else {
-      return { txids };
+      return txids;
     }
   }
 }
-
-module.exports = DbMempool;

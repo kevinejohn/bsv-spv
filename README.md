@@ -10,6 +10,10 @@ Stay in sync with latest bitcoin headers
 npm i bsv-spv
 ```
 
+### Docs
+
+- [View TypeScript documentation here](docs/README.md)
+
 ## Use
 
 ```js

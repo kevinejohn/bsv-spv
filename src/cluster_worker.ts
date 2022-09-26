@@ -1,5 +1,5 @@
-const BsvSpv = require("./spv");
-const Helpers = require("./helpers");
+import Spv, { SpvOptions } from "./spv";
+import * as Helpers from "./helpers";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Worker Unhandled Rejection at Promise", p);
@@ -9,9 +9,12 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-class Worker {
+export default class Worker {
+  spv?: Spv;
+
   constructor() {
-    process.on("message", (message) => {
+    process.on("message", (message: any) => {
+      // TODO: Fix
       try {
         const msgs = message.toString().split("\n\n");
         for (const msg of msgs) {
@@ -26,22 +29,15 @@ class Worker {
     });
   }
 
-  sendToMaster(obj) {
-    process.send(`${JSON.stringify(obj)}\n\n`);
+  sendToMaster(obj: any) {
+    if (process.send) process.send(`${JSON.stringify(obj)}\n\n`);
   }
 
-  async start(params) {
-    const {
-      node,
-      mempool,
-      blocks,
-      user_agent,
-      forceUserAgent,
-      MEMPOOL_PRUNE_AFTER,
-    } = params;
-    const REFRESH = 10; // console.log status every X seconds
-    let interval;
-    let txsSeen = 0;
+  async start(config: SpvOptions) {
+    const { node, mempool, blocks, MEMPOOL_PRUNE_AFTER } = config;
+    const REFRESH = 10; // console.log status every 10 seconds
+    let interval: NodeJS.Timer;
+    // let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
 
@@ -49,7 +45,7 @@ class Worker {
     console.log(`${id} Loading headers from disk...`);
 
     let date = +new Date();
-    const spv = new BsvSpv(params);
+    const spv = new Spv(config);
     this.spv = spv;
 
     let { height, hash } = spv.getTip();
@@ -77,9 +73,9 @@ class Worker {
         spv.getNodePeers();
       }
     });
-    spv.on("version_invalid", ({ user_agent, node }) => {
+    spv.on("version_invalid", ({ user_agent, expected_user_agent }) => {
       console.error(
-        `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${forceUserAgent}"`
+        `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${expected_user_agent}"`
       );
     });
     spv.on("disconnected", ({ node, disconnects }) => {
@@ -107,7 +103,7 @@ class Worker {
               txsSize / REFRESH
             )}/s`
           );
-          txsSeen = 0;
+          // txsSeen = 0;
           txsSaved = 0;
           txsSize = 0;
         }, REFRESH * 1000);
@@ -128,7 +124,7 @@ class Worker {
       console.log(`${id} ${hashes.length} new headers saved to disk`);
       this.sendToMaster({
         command: `headers_saved`,
-        data: { hashes: hashes.map((h) => h.toString("hex")) },
+        data: { hashes: hashes.map((h: Buffer) => h.toString("hex")) },
       });
     });
     spv.on("block_reorg", async ({ height, hash }) => {
@@ -147,7 +143,7 @@ class Worker {
     spv.on("block_seen", async ({ hashes }) => {
       console.log(
         `${id} New block seen: ${hashes
-          .map((h) => h.toString("hex"))
+          .map((h: Buffer) => h.toString("hex"))
           .join(", ")}`
       );
       if (blocks) {
@@ -175,17 +171,17 @@ class Worker {
       //     `${id} tx ${transaction.getTxid()} downloaded from mempool`
       //   );
       // });
-      spv.on("mempool_txs_seen", ({ txids }) => {
-        // console.log(`${id} ${txids.length} txs seen in mempool`);
-        txsSeen += txids.length;
-      });
+      // spv.on("mempool_txs_seen", ({ txids }) => {
+      //   // console.log(`${id} ${txids.length} txs seen in mempool`);
+      //   txsSeen += txids.length;
+      // });
       spv.on("mempool_txs_saved", ({ txids, size }) => {
         // console.log(`${id} ${txids.length} new txs saved from mempool`);
         txsSaved += txids.length;
         txsSize += size;
         this.sendToMaster({
           command: `mempool_txs_saved`,
-          data: { txids: txids.map((h) => h.toString("hex")), size },
+          data: { txids: txids.map((h: Buffer) => h.toString("hex")), size },
         });
       });
     }
@@ -244,21 +240,14 @@ class Worker {
     }
 
     console.log(`${id} Connecting to node...`);
-    const options = {
-      version: 70016, // >= 70016 for extmsg
-      services: Buffer.from("0000000000000000", "hex"),
-      user_agent,
-      start_height: height,
-      relay: mempool ? Buffer.from([1]) : Buffer.from([0]),
-    };
-    await spv.connect(options);
+    await spv.connect();
 
     if (mempool) {
       await spv.pruneMempool(); // Delete old mempool txs if they exist
       spv.onMempoolTx(); // Download mempool txs
       console.log(`${id} Listening for mempool txs...`);
 
-      if (MEMPOOL_PRUNE_AFTER > 0) {
+      if (MEMPOOL_PRUNE_AFTER) {
         setInterval(() => {
           spv.pruneMempool().catch((err) => console.error(err));
         }, MEMPOOL_PRUNE_AFTER);
@@ -271,5 +260,3 @@ class Worker {
     }
   }
 }
-
-module.exports = Worker;

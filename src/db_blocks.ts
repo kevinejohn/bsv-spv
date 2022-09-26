@@ -1,9 +1,13 @@
-const fs = require("fs");
-const path = require("path");
-const bsv = require("bsv-minimal");
+import * as bsv from "bsv-minimal";
+import path from "path";
+import fs from "fs";
 
-class DbBlocks {
-  constructor({ blocksDir }) {
+export default class DbBlocks {
+  blocksDir: string;
+  writeDir?: string;
+  writeStream?: any;
+
+  constructor({ blocksDir }: { blocksDir: string }) {
     if (!blocksDir) throw Error(`Missing blocksDir`);
     this.blocksDir = blocksDir;
     fs.mkdirSync(blocksDir, { recursive: true });
@@ -27,7 +31,17 @@ class DbBlocks {
     return hashes;
   }
 
-  writeBlockChunk({ chunk, blockHash, started, finished }) {
+  writeBlockChunk({
+    chunk,
+    blockHash,
+    started,
+    finished,
+  }: {
+    chunk: Buffer;
+    blockHash: Buffer;
+    started: boolean;
+    finished: boolean;
+  }) {
     return new Promise((resolve, reject) => {
       if (started) {
         this.writeDir = path.join(
@@ -43,10 +57,10 @@ class DbBlocks {
 
       if (finished) {
         const dir = this.writeDir;
-        this.writeStream.close((err) => {
+        this.writeStream.close((err: any) => {
           try {
             if (err) throw err;
-            if (!fs.existsSync(dir)) {
+            if (dir && !fs.existsSync(dir)) {
               // Save block to disk
               fs.renameSync(`${dir}.${process.pid}`, dir);
               return resolve(true);
@@ -64,15 +78,17 @@ class DbBlocks {
         });
         this.writeStream = null;
       } else {
-        resolve();
+        resolve(false);
       }
     });
   }
 
-  streamBlock({ hash, height }, callback) {
+  streamBlock(
+    { hash, height }: { hash: string | Buffer; height: number },
+    callback: (params: bsv.BlockStream) => Promise<void> | void
+  ) {
     return new Promise((resolve, reject) => {
       try {
-        const startDate = +new Date();
         if (typeof callback !== "function") throw Error(`Missing callback`);
         hash = hash.toString("hex");
         hash = hash.split(".").length > 1 ? hash : `${hash}.bin`;
@@ -81,21 +97,20 @@ class DbBlocks {
 
         const block = new bsv.Block();
         const stream = fs.createReadStream(dir);
-        stream.on("data", async (data) => {
+        stream.on("data", async (data: Buffer) => {
           try {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
             stream.pause();
-            const obj = { ...result, startDate };
-            if (height >= 0) obj.height = height;
-            await callback(obj);
+            if (height >= 0) result.height = height;
+            await callback(result);
             stream.resume();
           } catch (err) {
             stream.destroy();
             reject(err);
           }
         });
-        stream.on("end", () => resolve());
+        stream.on("end", () => resolve(true));
         stream.on("error", (err) => reject(err));
       } catch (err) {
         reject(err);
@@ -103,7 +118,7 @@ class DbBlocks {
     });
   }
 
-  delBlock(hash) {
+  delBlock(hash: string | Buffer) {
     let dir;
     hash = hash.toString("hex");
     if (hash.split(".").length > 1) {
@@ -114,12 +129,22 @@ class DbBlocks {
     fs.unlinkSync(dir);
   }
 
-  blockExists(hash) {
+  blockExists(hash: string) {
     const dir = path.join(this.blocksDir, `${hash}.bin`);
     return fs.existsSync(dir);
   }
 
-  async getTx({ txid, block, pos, len = 1000000 }) {
+  async getTx({
+    txid,
+    block,
+    pos,
+    len = 1000000,
+  }: {
+    txid?: string | Buffer;
+    block: string | Buffer;
+    pos: number;
+    len: number;
+  }) {
     const dir = path.join(this.blocksDir, `${block.toString("hex")}.bin`);
     const file = await fs.promises.open(dir, "r");
     const { bytesRead, buffer } = await file.read(
@@ -139,5 +164,3 @@ class DbBlocks {
     return { tx, buffer, bytesRead };
   }
 }
-
-module.exports = DbBlocks;
