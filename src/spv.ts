@@ -26,7 +26,7 @@ export interface SpvOptions {
   DEBUG_LOG?: boolean;
 }
 
-export default class BsvSpv extends EventEmitter {
+export default class Spv extends EventEmitter {
   ticker: string;
   node: string;
   saveBlocks: boolean;

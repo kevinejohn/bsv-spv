@@ -1,5 +1,5 @@
 require("source-map-support").install();
-import BsvSpv from "./spv";
+import Spv from "./spv";
 import DbBlocks from "./db_blocks";
 import DbHeaders from "./db_headers";
 import DbMempool from "./db_mempool";
@@ -10,7 +10,7 @@ import Listener from "./listener";
 import Server from "./server";
 
 export {
-  BsvSpv,
+  Spv,
   DbBlocks,
   DbHeaders,
   DbMempool,

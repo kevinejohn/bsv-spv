@@ -2,10 +2,13 @@
   "name": "bsv-spv",
   "version": "0.2.6",
   "description": "Stay in sync with latest bitcoin headers",
-  "main": "lib/index.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "test": "ts-node ./tests/cluster.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "docs": "typedoc",
+    "prepare": "npm run build && npm run docs"
   },
   "author": "Kevin Johnson",
   "license": "MIT",

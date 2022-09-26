@@ -1,4 +1,4 @@
-import BsvSpv, { SpvOptions } from "./spv";
+import Spv, { SpvOptions } from "./spv";
 import * as Helpers from "./helpers";
 
 process.on("unhandledRejection", (reason, p) => {
@@ -10,7 +10,7 @@ process.on("uncaughtException", (err) => {
 });
 
 export default class Worker {
-  spv?: BsvSpv;
+  spv?: Spv;
 
   constructor() {
     process.on("message", (message: any) => {
@@ -45,7 +45,7 @@ export default class Worker {
     console.log(`${id} Loading headers from disk...`);
 
     let date = +new Date();
-    const spv = new BsvSpv(config);
+    const spv = new Spv(config);
     this.spv = spv;
 
     let { height, hash } = spv.getTip();
