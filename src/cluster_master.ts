@@ -1,4 +1,5 @@
 import cluster, { Worker } from "cluster";
+import { SpvOptions } from "./spv";
 import Net from "net";
 
 process.on("unhandledRejection", (reason, p) => {
@@ -9,15 +10,40 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+export interface MasterConfig {
+  ticker: string;
+  nodes: string[];
+  forceUserAgent?: string;
+  user_agent?: string;
+  invalidBlocks?: string[];
+  dataDir: string;
+  pruneBlocks: number;
+  blockHeight: number;
+  mempool: boolean;
+  blocks: boolean;
+  MEMPOOL_PRUNE_AFTER: number;
+  DEBUG_LOG?: boolean;
+}
+
 export default class Master {
-  config: any; // TODO: Fix
   sockets: { [key: string]: Net.Socket };
   workers: { [key: string]: Worker };
   server?: Net.Server;
 
-  constructor(config: any) {
-    // TODO: Fix
-    this.config = config;
+  constructor({
+    ticker,
+    nodes,
+    forceUserAgent,
+    user_agent,
+    invalidBlocks,
+    dataDir,
+    pruneBlocks,
+    blockHeight,
+    mempool,
+    blocks,
+    MEMPOOL_PRUNE_AFTER,
+    DEBUG_LOG,
+  }: MasterConfig) {
     this.sockets = {};
     this.workers = {};
 
@@ -27,30 +53,57 @@ export default class Master {
       );
     });
 
-    const { blocks = true, mempool = true } = config;
-
-    for (const node of config.nodes) {
+    for (const node of nodes) {
       let worker;
+
+      const workerConfig: SpvOptions = {
+        ticker,
+        node,
+        forceUserAgent,
+        user_agent,
+        invalidBlocks,
+        dataDir,
+        pruneBlocks,
+        blockHeight,
+        MEMPOOL_PRUNE_AFTER,
+        DEBUG_LOG,
+      };
       if (blocks) {
         worker = cluster.fork();
         worker.on("message", (data) => this.onMessage(data));
         worker.send(
-          `${JSON.stringify({ ...config, node, command: "init", blocks })}\n\n`
+          `${JSON.stringify({
+            ...workerConfig,
+            command: "init",
+            blocks: true,
+          })}\n\n`
         );
         this.workers[`blocks-${node}`] = worker;
+        console.log(`Forked blocks-${node}`);
       }
       if (mempool) {
         worker = cluster.fork();
         worker.on("message", (data) => this.onMessage(data));
         worker.send(
-          `${JSON.stringify({ ...config, node, command: "init", mempool })}\n\n`
+          `${JSON.stringify({
+            ...workerConfig,
+            command: "init",
+            mempool: true,
+          })}\n\n`
         );
         this.workers[`mempool-${node}`] = worker;
+        console.log(`Forked mempool-${node}`);
       }
     }
   }
 
-  startServer({ port = 8080, host = "localhost" }) {
+  startServer({
+    port = 8080,
+    host = "localhost",
+  }: {
+    port: number;
+    host?: string;
+  }) {
     const server = new Net.Server();
     this.server = server;
 

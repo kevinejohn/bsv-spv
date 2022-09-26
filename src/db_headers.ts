@@ -93,6 +93,8 @@ export default class DbHeaders {
     const txn = this.env.beginTxn({ readOnly: true });
     const buf = txn.getBinary(this.dbi_headers, hash);
     txn.commit();
+    // TODO: Return GENESIS_HEADER if matches hash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
+    if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;
   }

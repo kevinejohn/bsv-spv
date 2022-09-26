@@ -7,6 +7,7 @@ import Headers from "bsv-headers";
 import Net from "net";
 import path from "path";
 import * as Helpers from "./helpers";
+import { BlockStream } from "bsv-minimal";
 
 export default class Listener extends EventEmitter {
   ticker: string;
@@ -42,7 +43,7 @@ export default class Listener extends EventEmitter {
     blockHeight: number;
     dataDir: string;
     ticker: string;
-    disableInterval: boolean;
+    disableInterval?: boolean;
   }) {
     super();
     this.setMaxListeners(0);
@@ -202,7 +203,9 @@ export default class Listener extends EventEmitter {
   }
 
   syncBlocks(
-    callback: (params: any) => Promise<{ matches: number; errors: number }>
+    callback: (
+      params: BlockStream
+    ) => Promise<{ matches: number; errors?: number }>
   ) {
     if (!this.promiseSyncBlock) {
       this.promiseSyncBlock = new Promise(async (resolve, reject) => {
@@ -234,8 +237,8 @@ export default class Listener extends EventEmitter {
                 // }
                 const result = await callback(params);
                 if (result) {
-                  if (result.matches > 0) matches += result.matches;
-                  if (result.errors > 0) errors += result.errors;
+                  if (result.matches) matches += result.matches;
+                  if (result.errors) errors += result.errors;
                 }
                 if (params.finished) {
                   const { header, size, txCount, startDate } = params;

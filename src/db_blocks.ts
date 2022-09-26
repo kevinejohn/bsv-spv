@@ -85,11 +85,10 @@ export default class DbBlocks {
 
   streamBlock(
     { hash, height }: { hash: string | Buffer; height: number },
-    callback: (params: any) => Promise<void>
+    callback: (params: bsv.BlockStream) => Promise<void> | void
   ) {
     return new Promise((resolve, reject) => {
       try {
-        const startDate = +new Date();
         if (typeof callback !== "function") throw Error(`Missing callback`);
         hash = hash.toString("hex");
         hash = hash.split(".").length > 1 ? hash : `${hash}.bin`;
@@ -103,9 +102,8 @@ export default class DbBlocks {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
             stream.pause();
-            const obj = { ...result, startDate };
-            if (height >= 0) obj.height = height;
-            await callback(obj);
+            if (height >= 0) result.height = height;
+            await callback(result);
             stream.resume();
           } catch (err) {
             stream.destroy();

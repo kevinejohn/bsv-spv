@@ -1,5 +1,5 @@
-const { Listener } = require("../lib");
-const path = require("path");
+import { Listener } from "../src";
+import path from "path";
 
 const name = "test-plugin";
 const ticker = "BSV";
@@ -46,5 +46,5 @@ listener.on("block_saved", async ({ height, hash }) => {
   await listener.syncBlocks(onBlock);
 });
 
-listener.connect();
+listener.connect({ port: 8080 });
 listener.syncBlocks(onBlock);

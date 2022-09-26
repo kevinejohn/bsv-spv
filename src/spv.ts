@@ -14,10 +14,12 @@ export interface SpvOptions {
   node: string;
   dataDir: string;
   forceUserAgent?: string;
-  blocks: boolean;
-  mempool: boolean;
+  user_agent?: string;
+  start_height?: number;
+  blocks?: boolean;
+  mempool?: boolean;
   autoReconnect?: boolean;
-  invalidBlocks?: String[];
+  invalidBlocks?: string[];
   pruneBlocks?: number;
   blockHeight?: number;
   MEMPOOL_PRUNE_AFTER?: number;
@@ -31,9 +33,9 @@ export default class BsvSpv extends EventEmitter {
   saveMempool: boolean;
   pruneBlocks: number;
   blockHeight: number;
-  forceUserAgent: string | undefined;
+  forceUserAgent?: string;
   peer: BsvP2p;
-  headers: any;
+  headers: Headers;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
   db_mempool: DbMempool;
@@ -50,6 +52,8 @@ export default class BsvSpv extends EventEmitter {
     node,
     dataDir,
     forceUserAgent,
+    user_agent,
+    start_height = 0,
     blocks = false,
     mempool = false,
     autoReconnect = true,
@@ -77,10 +81,13 @@ export default class BsvSpv extends EventEmitter {
       node,
       ticker,
       autoReconnect,
+      start_height,
+      user_agent,
       mempoolTxs: mempool,
       DEBUG_LOG,
     });
-    this.headers = new Headers({ invalidBlocks });
+    const headers = new Headers({ invalidBlocks });
+    this.headers = headers;
     dataDir = path.join(dataDir, ticker);
     const headersDir = path.join(dataDir, "headers");
     const blocksDir = path.join(dataDir, "blocks");
@@ -88,11 +95,7 @@ export default class BsvSpv extends EventEmitter {
     const nodesDir = path.join(dataDir, "nodes");
     const pluginDir = path.join(dataDir, "history", `node-${node}`);
     this.db_blocks = new DbBlocks({ blocksDir });
-    this.db_headers = new DbHeaders({
-      headersDir,
-      headers: this.headers,
-      readOnly: false,
-    });
+    this.db_headers = new DbHeaders({ headersDir, headers, readOnly: false });
     this.db_mempool = new DbMempool({
       mempoolDir,
       pruneAfter: MEMPOOL_PRUNE_AFTER,
@@ -132,7 +135,7 @@ export default class BsvSpv extends EventEmitter {
                 // Height was not included in blocks until v2
                 // https://en.bitcoin.it/wiki/BIP_0034
                 // More reliable if we calculate the height
-                blockHeight = this.headers.getHeight(hash);
+                blockHeight = headers.getHeight(hash);
               } catch (err) {}
               this.db_plugin.markBlockProcessed({
                 blockHash,
@@ -164,7 +167,7 @@ export default class BsvSpv extends EventEmitter {
                   const tipHeight =
                     blockHeight > 0 ? blockHeight : this.headers.getHeight();
                   const height = tipHeight - this.pruneBlocks;
-                  const hash = this.headers.getHash(height);
+                  const hash = headers.getHash(height);
                   this.db_blocks.delBlock(hash);
                   this.emit("pruned_block", { height, hash });
                 } catch (err) {}
@@ -186,7 +189,7 @@ export default class BsvSpv extends EventEmitter {
     const newTip = this.headers.getTip();
     const hashes = await this.db_headers.saveHeaders(headers);
     if (hashes.length > 0) this.emit("headers_saved", { hashes });
-    if (lastTip && lastTip.height < prevTip.height) {
+    if (lastTip && lastTip.height && lastTip.height < prevTip.height) {
       // Chain re-org detected!
       const { height, hash } = lastTip;
       this.emit("block_reorg", { height, hash });
@@ -201,23 +204,24 @@ export default class BsvSpv extends EventEmitter {
     return newHeaders;
   }
 
-  async syncHeaders() {
-    if (this.syncingHeaders) return;
-    this.syncingHeaders = true;
+  async syncHeaders(): Promise<number> {
     let newHeaders = 0;
+    if (this.syncingHeaders) return newHeaders;
+    this.syncingHeaders = true;
     while (true) {
       try {
         let from = this.headers.getFromHeaderArray();
         do {
-          let lastHash = Array.isArray(from) ? from[0] : from;
+          let lastHash = from[0];
           await this.peer.connect();
-          const headers: any = await this.peer.getHeaders({ from });
+          const headers: any = await this.peer.getHeaders({
+            from: from.map((o) => Buffer.from(o, "hex")),
+          });
           if (headers.length === 0) break;
-          lastHash = headers[headers.length - 1].getHash();
           newHeaders += await this.addHeaders({ headers });
-          if (!lastHash || lastHash.toString("hex") === from.toString("hex"))
-            break;
-          from = headers[headers.length - 1].getHash();
+          const lastHeader = headers[headers.length - 1];
+          if (lastHash === lastHeader.getHash(true)) break;
+          from = [lastHeader.getHash(true)];
         } while (true);
         break;
       } catch (err: any) {
@@ -232,7 +236,7 @@ export default class BsvSpv extends EventEmitter {
     return newHeaders;
   }
 
-  async connect(options: any) {
+  async connect(options?: any) {
     if (this.connecting) return;
     this.connecting = true;
     this.peer.on("disconnected", (params) => {
@@ -246,12 +250,14 @@ export default class BsvSpv extends EventEmitter {
       try {
         if (typeof this.forceUserAgent === "string") {
           const { user_agent } = version;
-          if (
-            !user_agent
-              .toLowerCase()
-              .includes(this.forceUserAgent.toLowerCase())
-          ) {
-            this.emit("version_invalid", { user_agent, version, node });
+          const expected_user_agent = this.forceUserAgent.toLowerCase();
+          if (!user_agent.toLowerCase().includes(expected_user_agent)) {
+            this.emit("version_invalid", {
+              user_agent,
+              expected_user_agent,
+              version,
+              node,
+            });
             this.db_nodes.blacklist(node);
             return this.disconnect();
           }
@@ -278,7 +284,7 @@ export default class BsvSpv extends EventEmitter {
     clearInterval(this.mempoolInterval);
     this.mempoolTxCache = [];
   }
-  getHeight(hash = false) {
+  getHeight(hash?: string) {
     return this.headers.getHeight(hash);
   }
   getHash(height: number) {
