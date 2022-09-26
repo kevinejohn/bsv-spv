@@ -17,8 +17,8 @@ export default class Server extends Listener {
     name: string;
     ticker: string;
     dataDir: string;
-    MAX_FILE_SIZE: number;
-    disableInterval: boolean;
+    MAX_FILE_SIZE?: number;
+    disableInterval?: boolean;
   }) {
     super({ name, ticker, blockHeight: -1, dataDir, disableInterval });
 
@@ -67,7 +67,7 @@ export default class Server extends Listener {
             res.setHeader("x-block-pos", `${pos}`);
             res.setHeader("x-block-len", `${lenInt}`);
             try {
-              heightInt = this.headers.getHeight(block);
+              heightInt = this.headers.getHeight(`${block}`);
               res.setHeader("x-block-height", `${heightInt}`);
             } catch (err) {}
             try {

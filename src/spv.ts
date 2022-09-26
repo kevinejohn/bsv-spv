@@ -210,24 +210,25 @@ export default class BsvSpv extends EventEmitter {
     this.syncingHeaders = true;
     while (true) {
       try {
-        let from = this.headers.getFromHeaderArray();
+        let from = this.headers
+          .getFromHeaderArray()
+          .map((o) => Buffer.from(o, "hex"));
         do {
           let lastHash = from[0];
           await this.peer.connect();
-          const headers: any = await this.peer.getHeaders({
-            from: from.map((o) => Buffer.from(o, "hex")),
-          });
+          const headers: bsvMin.Header[] = await this.peer.getHeaders({ from });
           if (headers.length === 0) break;
           newHeaders += await this.addHeaders({ headers });
           const lastHeader = headers[headers.length - 1];
-          if (lastHash === lastHeader.getHash(true)) break;
-          from = [lastHeader.getHash(true)];
+          if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
+          from = [lastHeader.getHash()];
         } while (true);
         break;
       } catch (err: any) {
         const RETRY = 3;
         console.error(
-          `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`
+          `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`,
+          err
         );
         await new Promise((r) => setTimeout(r, RETRY * 1000));
       }

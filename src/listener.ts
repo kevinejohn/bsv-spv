@@ -20,7 +20,7 @@ export default class Listener extends EventEmitter {
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
   db_plugin: DbPlugin;
-  headers: any; // Fix
+  headers: Headers; // Fix
   reconnectTimeout?: NodeJS.Timeout;
   interval?: NodeJS.Timer;
   client?: Net.Socket;
@@ -205,7 +205,10 @@ export default class Listener extends EventEmitter {
   syncBlocks(
     callback: (
       params: BlockStream
-    ) => Promise<{ matches: number; errors?: number }>
+    ) =>
+      | Promise<{ matches: number; errors?: number }>
+      | { matches: number; errors?: number }
+      | void
   ) {
     if (!this.promiseSyncBlock) {
       this.promiseSyncBlock = new Promise(async (resolve, reject) => {
@@ -226,46 +229,47 @@ export default class Listener extends EventEmitter {
               let errors = 0;
               let matches = 0;
 
-              await this.readBlock({ height, hash }, async (params: any) => {
-                // Fix any
-                // if (params.started) {
-                //   console.log(
-                //     `Streaming block ${height}, ${params.header
-                //       .getHash()
-                //       .toString("hex")}...`
-                //   );
-                // }
-                const result = await callback(params);
-                if (result) {
-                  if (result.matches) matches += result.matches;
-                  if (result.errors) errors += result.errors;
+              await this.readBlock(
+                { height, hash },
+                async (params: BlockStream) => {
+                  // Fix any
+                  // if (params.started) {
+                  //   console.log(
+                  //     `Streaming block ${height}, ${params.header
+                  //       .getHash()
+                  //       .toString("hex")}...`
+                  //   );
+                  // }
+                  const result = await callback(params);
+                  if (result) {
+                    if (result.matches) matches += result.matches;
+                    if (result.errors) errors += result.errors;
+                  }
+                  if (params.finished) {
+                    const { header, size, txCount, startDate } = params;
+                    const blockHash = header ? header.getHash(true) : "";
+                    const timer = +new Date() - startDate;
+                    this.db_plugin.markBlockProcessed({
+                      blockHash,
+                      height,
+                      matches,
+                      errors,
+                      size,
+                      txCount,
+                      timer,
+                    });
+                    processed++;
+                    blockSize += size;
+                    console.log(
+                      `Streamed block ${height} ${blockHash}, ${txCount} txs, ${Number(
+                        size
+                      ).toLocaleString("en-US")} bytes in ${
+                        (+new Date() - startDate) / 1000
+                      } seconds.`
+                    );
+                  }
                 }
-                if (params.finished) {
-                  const { header, size, txCount, startDate } = params;
-                  const blockHash = header.getHash("hex");
-                  const timer = +new Date() - startDate;
-                  this.db_plugin.markBlockProcessed({
-                    blockHash,
-                    height,
-                    matches,
-                    errors,
-                    size,
-                    txCount,
-                    timer,
-                  });
-                  processed++;
-                  blockSize += size;
-                  console.log(
-                    `Streamed block ${height} ${header
-                      .getHash()
-                      .toString("hex")}, ${txCount} txs, ${Number(
-                      size
-                    ).toLocaleString("en-US")} bytes in ${
-                      (+new Date() - startDate) / 1000
-                    } seconds.`
-                  );
-                }
-              });
+              );
             } catch (err) {
               // console.error(err);
               // Block not saved
@@ -308,7 +312,7 @@ export default class Listener extends EventEmitter {
     }
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
-  getMempoolTxs(txids: Buffer[], getTime: boolean) {
+  getMempoolTxs(txids: string[], getTime: boolean) {
     if (!Array.isArray(txids)) txids = [txids];
     return this.db_mempool.getTxs(txids, getTime);
   }

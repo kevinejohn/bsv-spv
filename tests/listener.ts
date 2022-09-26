@@ -1,5 +1,6 @@
 import { Listener } from "../src";
 import path from "path";
+import { BlockStream } from "bsv-minimal";
 
 const name = "test-plugin";
 const ticker = "BSV";
@@ -17,7 +18,7 @@ const onBlock = ({
   txCount,
   transactions,
   startDate,
-}) => {
+}: BlockStream) => {
   // for (const [index, tx, pos, len] of transactions) {
   //   console.log(
   //     `#${index} tx ${tx.getTxid()} in block ${height}`
@@ -25,8 +26,8 @@ const onBlock = ({
   // }
 };
 
-const onMempool = ({ txids }) => {
-  const { txs, size } = listener.getMempoolTxs(txids);
+const onMempool = ({ txids }: { txids: string[] }) => {
+  const { txs, size } = listener.getMempoolTxs(txids, false);
   console.log(
     `${txids.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
   );
@@ -35,16 +36,22 @@ const onMempool = ({ txids }) => {
   }
 };
 
-listener.on("headers_saved", ({ hashes }) => {});
-listener.on("mempool_txs_saved", ({ txids }) => {
+listener.on("headers_saved", ({ hashes }: { hashes: string[] }) => {});
+listener.on("mempool_txs_saved", ({ txids }: { txids: string[] }) => {
   // onMempool({ txids });
 });
-listener.on("block_reorg", async ({ height, hash }) => {
-  // Re-org after height
-});
-listener.on("block_saved", async ({ height, hash }) => {
-  await listener.syncBlocks(onBlock);
-});
+listener.on(
+  "block_reorg",
+  async ({ height, hash }: { height: number; hash: string }) => {
+    // Re-org after height
+  }
+);
+listener.on(
+  "block_saved",
+  async ({ height, hash }: { height: number; hash: string }) => {
+    await listener.syncBlocks(onBlock);
+  }
+);
 
 listener.connect({ port: 8080 });
 listener.syncBlocks(onBlock);

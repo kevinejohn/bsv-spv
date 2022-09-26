@@ -154,22 +154,25 @@ export default class DbMempool {
     return txids;
   }
 
-  getTx(txid: string | Buffer, getTime = true) {
-    if (typeof txid === "string") txid = Buffer.from(txid, "hex");
+  getTx(txid: string, getTime = true) {
     const { txs, size, times } = this.getTxs([txid], getTime);
     const tx = txs[0];
     if (!tx) throw Error(`Not found`);
     const time = times[0];
     return { tx, time, size };
   }
-  getTxs(txids?: Buffer[], getTime = false) {
+  getTxs(
+    txids?: string[] | Buffer[],
+    getTime = false
+  ): { txs: bsv.Transaction[]; size: number; times: (number | null)[] } {
     const txs = [];
     const times = [];
     let size = 0;
     const txn = this.env.beginTxn({ readOnly: true });
     if (txids) {
       for (let txid of txids) {
-        const buf = txn.getBinary(this.dbi_txs, txid);
+        const key = Buffer.isBuffer(txid) ? txid : Buffer.from(txid, "hex");
+        const buf = txn.getBinary(this.dbi_txs, key);
         if (buf) {
           const tx = bsv.Transaction.fromBuffer(buf);
           txs.push(tx);
