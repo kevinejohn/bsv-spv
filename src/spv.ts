@@ -41,7 +41,7 @@ export default class Spv extends EventEmitter {
   db_mempool: DbMempool;
   db_nodes: DbNodes;
   db_plugin: DbPlugin;
-  syncingHeaders: boolean;
+  syncingHeaders?: Promise<number>;
   syncingBlocks: boolean;
   connecting: boolean;
   mempoolInterval: any;
@@ -73,7 +73,7 @@ export default class Spv extends EventEmitter {
     this.connecting = false;
     this.ticker = ticker;
     this.node = node;
-    this.syncingHeaders = false;
+    this.syncingHeaders;
     this.syncingBlocks = false;
     this.mempoolTxCache = [];
     this.forceUserAgent = forceUserAgent;
@@ -205,36 +205,41 @@ export default class Spv extends EventEmitter {
   }
 
   async syncHeaders(): Promise<number> {
-    let newHeaders = 0;
-    if (this.syncingHeaders) return newHeaders;
-    this.syncingHeaders = true;
-    while (true) {
-      try {
-        let from = this.headers
-          .getFromHeaderArray()
-          .map((o) => Buffer.from(o, "hex"));
-        do {
-          let lastHash = from[0];
-          await this.peer.connect();
-          const headers: bsvMin.Header[] = await this.peer.getHeaders({ from });
-          if (headers.length === 0) break;
-          newHeaders += await this.addHeaders({ headers });
-          const lastHeader = headers[headers.length - 1];
-          if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
-          from = [lastHeader.getHash()];
-        } while (true);
-        break;
-      } catch (err: any) {
-        const RETRY = 3;
-        console.error(
-          `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`,
-          err
-        );
-        await new Promise((r) => setTimeout(r, RETRY * 1000));
-      }
+    if (!this.syncingHeaders) {
+      this.syncingHeaders = new Promise(async (resolve, reject) => {
+        let newHeaders = 0;
+        while (true) {
+          try {
+            let from = this.headers
+              .getFromHeaderArray()
+              .map((o) => Buffer.from(o, "hex"));
+            do {
+              let lastHash = from[0];
+              await this.peer.connect();
+              const headers: bsvMin.Header[] = await this.peer.getHeaders({
+                from,
+              });
+              if (headers.length === 0) break;
+              newHeaders += await this.addHeaders({ headers });
+              const lastHeader = headers[headers.length - 1];
+              if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
+              from = [lastHeader.getHash()];
+            } while (true);
+            break;
+          } catch (err: any) {
+            const RETRY = 3;
+            console.error(
+              `Error syncing headers: ${err.message}. Retrying in ${RETRY} seconds....`,
+              err
+            );
+            await new Promise((r) => setTimeout(r, RETRY * 1000));
+          }
+        }
+        delete this.syncingHeaders;
+        resolve(newHeaders);
+      });
     }
-    this.syncingHeaders = false;
-    return newHeaders;
+    return this.syncingHeaders;
   }
 
   async connect(options?: any) {
@@ -299,20 +304,10 @@ export default class Spv extends EventEmitter {
     if (!hash) throw Error(`Missing hash`);
     return this.db_headers.getHeader(hash);
   }
-  getNodePeers() {
+  async getNodePeers() {
     // Get list of connected peers
-    return new Promise(async (resolve, reject) => {
-      this.peer.once("addr", async ({ addrs }) => {
-        try {
-          const nodes = await this.db_nodes.saveSeenNodes(addrs);
-          this.emit("node_peers", { addrs, nodes });
-        } catch (err) {
-          console.error(err);
-        }
-        resolve({ addrs });
-      });
-      this.peer.getAddr();
-    });
+    await this.peer.connect();
+    return this.peer.getAddr();
   }
 
   getMempoolTxs(txids: Buffer[], getTime = true) {
