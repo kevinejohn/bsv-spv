@@ -152,7 +152,7 @@ export default class Worker {
       }
     });
     spv.on("block_downloading", ({ hash, height }) => {
-      console.log(`${id} Downloading block: ${height}, ${hash}...`);
+      // console.log(`${id} Downloading block: ${height}, ${hash}...`);
     });
     spv.on("mempool_pruned", ({ header, height, finished, txCount }) => {
       if (!header) {

@@ -9,6 +9,14 @@ import path from "path";
 import * as Helpers from "./helpers";
 import { BlockStream } from "bsv-minimal";
 
+export interface ListenerOptions {
+  name: string;
+  blockHeight: number;
+  dataDir: string;
+  ticker: string;
+  disableInterval?: boolean;
+}
+
 export default class Listener extends EventEmitter {
   ticker: string;
   host?: string;
@@ -38,13 +46,7 @@ export default class Listener extends EventEmitter {
     dataDir,
     ticker,
     disableInterval = false,
-  }: {
-    name: string;
-    blockHeight: number;
-    dataDir: string;
-    ticker: string;
-    disableInterval?: boolean;
-  }) {
+  }: ListenerOptions) {
     super();
     this.setMaxListeners(0);
     if (!name) throw Error(`Missing plugin name`);
