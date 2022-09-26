@@ -1,9 +1,10 @@
 import * as bsv from "bsv-minimal";
 import lmdb from "node-lmdb";
+import Headers from "bsv-headers";
 import fs from "fs";
 
 export default class DbHeaders {
-  headers: any;
+  headers: Headers;
   env: any;
   dbi_headers: any;
 
@@ -88,12 +89,14 @@ export default class DbHeaders {
   //   return newHeaders;
   // }
 
-  getHeader(hash: string | Buffer) {
+  getHeader(hash: string | Buffer): bsv.Header {
     if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
+    if (hash.toString("hex") === this.headers.genesis) {
+      return this.headers.genesisHeader;
+    }
     const txn = this.env.beginTxn({ readOnly: true });
     const buf = txn.getBinary(this.dbi_headers, hash);
     txn.commit();
-    // TODO: Return GENESIS_HEADER if matches hash 000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f
     if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;
@@ -109,7 +112,7 @@ export default class DbHeaders {
     ) {
       if (!this.headers.headers[Buffer.from(hash).toString("hex")]) {
         const buf = cursor.getCurrentBinary();
-        this.headers.addHeader({ buf, hash });
+        if (buf) this.headers.addHeader({ buf, hash });
       }
     }
     cursor.close();

@@ -1,13 +1,13 @@
-import BsvP2p from "bsv-p2p";
-import bsvMin from "bsv-minimal";
+import Peer from "bsv-p2p";
+import * as bsvMin from "bsv-minimal";
 import Headers from "bsv-headers";
-import EventEmitter from "events";
+import { EventEmitter } from "events";
 import DbHeaders from "./db_headers";
 import DbBlocks from "./db_blocks";
 import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
 import DbPlugin from "./db_plugin";
-import path from "path";
+import * as path from "path";
 
 export interface SpvOptions {
   ticker: string;
@@ -34,7 +34,7 @@ export default class Spv extends EventEmitter {
   pruneBlocks: number;
   blockHeight: number;
   forceUserAgent?: string;
-  peer: BsvP2p;
+  peer: Peer;
   headers: Headers;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
@@ -77,7 +77,7 @@ export default class Spv extends EventEmitter {
     this.syncingBlocks = false;
     this.mempoolTxCache = [];
     this.forceUserAgent = forceUserAgent;
-    this.peer = new BsvP2p({
+    this.peer = new Peer({
       node,
       ticker,
       autoReconnect,
