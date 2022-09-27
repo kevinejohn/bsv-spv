@@ -104,8 +104,10 @@ export default class Worker {
         interval = setInterval(() => {
           console.log(
             `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatBytes(
-              txsSize / REFRESH
-            )}/s`
+              txsSize
+            )}. ${Helpers.formatBytes(txsSize / REFRESH)}/s ${Number(
+              ((txsSize / REFRESH) * 8) / (1024 * 1024)
+            ).toFixed(1)} Mbps`
           );
           // txsSeen = 0;
           txsSaved = 0;
