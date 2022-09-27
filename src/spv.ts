@@ -373,7 +373,7 @@ export default class Spv extends EventEmitter {
       }
       this.emit(`mempool_txs`, { transactions });
     });
-    this.peer.listenForTxs(async (txids) => {
+    this.peer.fetchMempoolTxs(async (txids) => {
       this.emit(`mempool_txs_seen`, { txids });
       if (this.saveMempool) {
         // Only fetch txs we haven't already requested
@@ -432,7 +432,7 @@ export default class Spv extends EventEmitter {
         }
       }
     );
-    if (!disableAutoDl) this.peer.listenForBlocks();
+    if (!disableAutoDl) this.peer.fetchNewBlocks((hashes) => hashes);
   }
 
   async syncBlocks() {
