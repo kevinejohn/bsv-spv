@@ -34,7 +34,6 @@
 | `__namedParameters` | `Object` |
 | `__namedParameters.headers` | `any` |
 | `__namedParameters.headersDir` | `string` |
-| `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -44,7 +43,7 @@
 
 ### dbi\_headers
 
-• **dbi\_headers**: `any`
+• **dbi\_headers**: `Dbi`
 
 #### Defined in
 
@@ -82,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L42)
+[src/db_headers.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L32)
 
 ___
 
@@ -102,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:92](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L92)
+[src/db_headers.ts:86](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L86)
 
 ___
 
@@ -116,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:105](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L105)
+[src/db_headers.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L99)
 
 ___
 
@@ -136,4 +135,4 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L51)
+[src/db_headers.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L41)

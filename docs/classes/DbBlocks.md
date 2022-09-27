@@ -65,7 +65,7 @@ ___
 
 ### writeStream
 
-• `Optional` **writeStream**: `any`
+• `Optional` **writeStream**: `WriteStream`
 
 #### Defined in
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:132](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L132)
+[src/db_blocks.ts:133](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L133)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L121)
+[src/db_blocks.ts:122](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L122)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:137](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L137)
+[src/db_blocks.ts:138](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L138)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:86](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L86)
+[src/db_blocks.ts:87](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L87)
 
 ___
 

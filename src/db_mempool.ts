@@ -5,17 +5,15 @@ import fs from "fs";
 export default class DbMempool {
   pruneAfter: number;
   env: any;
-  dbi_txs: any;
-  dbi_tx_times: any;
+  dbi_txs: lmdb.Dbi;
+  dbi_tx_times: lmdb.Dbi;
 
   constructor({
     mempoolDir,
     pruneAfter = 1000 * 60 * 60 * 12, // After 12 hours
-    readOnly = true,
   }: {
     mempoolDir: string;
     pruneAfter?: number;
-    readOnly?: boolean;
   }) {
     if (!mempoolDir) throw Error(`Missing mempoolDir`);
     fs.mkdirSync(mempoolDir, { recursive: true });
@@ -26,17 +24,15 @@ export default class DbMempool {
       path: mempoolDir,
       mapSize: 1 * 1024 * 1024 * 1024 * 1024, // 1TB mempool max
       maxDbs: 3,
-      maxReaders: 64,
-      readOnly,
     });
     this.dbi_txs = this.env.openDbi({
       name: "txs",
-      create: !readOnly,
+      create: true,
       keyIsBuffer: true,
     });
     this.dbi_tx_times = this.env.openDbi({
       name: "tx_times",
-      create: !readOnly,
+      create: true,
       keyIsBuffer: true,
     });
   }
@@ -71,13 +67,17 @@ export default class DbMempool {
         operations.push([this.dbi_txs, txid, tx.toBuffer(), null]);
         operations.push([this.dbi_tx_times, txid, time, null]);
       });
-      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        txsArray.map(
-          (tx, i) => results[i * 2] === 0 && txids.push(tx.getHash())
-        );
-        resolve({ txids, size });
-      });
+      this.env.batchWrite(
+        operations,
+        { keyIsBuffer: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          txsArray.map(
+            (tx, i) => results[i * 2] === 0 && txids.push(tx.getHash())
+          );
+          resolve({ txids, size });
+        }
+      );
     });
   }
 
@@ -93,11 +93,15 @@ export default class DbMempool {
       txidArr.map((txid) => {
         operations.push([this.dbi_tx_times, txid, time, null]);
       });
-      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        txidArr.map((txid, i) => results[i] === 0 && txids.push(txid));
-        resolve(txids);
-      });
+      this.env.batchWrite(
+        operations,
+        { keyIsBuffer: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          txidArr.map((txid, i) => results[i] === 0 && txids.push(txid));
+          resolve(txids);
+        }
+      );
     });
   }
 
@@ -110,11 +114,15 @@ export default class DbMempool {
         operations.push([this.dbi_txs, txid]);
         operations.push([this.dbi_tx_times, txid]);
       });
-      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        txidArr.map((txid, i) => results[i * 2] === 0 && txids.push(txid));
-        resolve(txids);
-      });
+      this.env.batchWrite(
+        operations,
+        { keyIsBuffer: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          txidArr.map((txid, i) => results[i * 2] === 0 && txids.push(txid));
+          resolve(txids);
+        }
+      );
     });
   }
 
@@ -126,7 +134,13 @@ export default class DbMempool {
     newerThan?: number;
   }) {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_tx_times);
+    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(
+      txn,
+      this.dbi_tx_times,
+      {
+        keyIsBuffer: true,
+      }
+    );
     const txids: Buffer[] = [];
     for (
       let txid = cursor.goToFirst();
@@ -172,7 +186,7 @@ export default class DbMempool {
     if (txids) {
       for (let txid of txids) {
         const key = Buffer.isBuffer(txid) ? txid : Buffer.from(txid, "hex");
-        const buf = txn.getBinary(this.dbi_txs, key);
+        const buf = txn.getBinary(this.dbi_txs, key, { keyIsBuffer: true });
         if (buf) {
           const tx = bsv.Transaction.fromBuffer(buf);
           txs.push(tx);
@@ -180,7 +194,9 @@ export default class DbMempool {
         }
       }
     } else {
-      const cursor = new lmdb.Cursor(txn, this.dbi_txs);
+      const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_txs, {
+        keyIsBuffer: true,
+      });
       for (
         let txid = cursor.goToFirst();
         txid !== null;
@@ -197,7 +213,9 @@ export default class DbMempool {
     }
     if (getTime) {
       for (const tx of txs) {
-        const buf = txn.getBinary(this.dbi_tx_times, tx.getHash());
+        const buf = txn.getBinary(this.dbi_tx_times, tx.getHash(), {
+          keyIsBuffer: true,
+        });
         if (buf) {
           const br = new bsv.utils.BufferReader(buf);
           const time = br.readUInt32LE() * 1000;

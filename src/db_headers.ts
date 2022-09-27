@@ -6,17 +6,9 @@ import fs from "fs";
 export default class DbHeaders {
   headers: Headers;
   env: any;
-  dbi_headers: any;
+  dbi_headers: lmdb.Dbi;
 
-  constructor({
-    headersDir,
-    headers,
-    readOnly = true,
-  }: {
-    headersDir: string;
-    headers: any;
-    readOnly?: boolean;
-  }) {
+  constructor({ headersDir, headers }: { headersDir: string; headers: any }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
     fs.mkdirSync(headersDir, { recursive: true });
@@ -27,12 +19,10 @@ export default class DbHeaders {
       path: headersDir,
       mapSize: 1 * 1024 * 1024 * 1024,
       maxDbs: 1,
-      maxReaders: 64,
-      readOnly,
     });
     this.dbi_headers = this.env.openDbi({
       name: "headers",
-      create: !readOnly,
+      create: true,
       keyIsBuffer: true,
     });
 
@@ -61,13 +51,17 @@ export default class DbHeaders {
           null,
         ]);
       });
-      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        headerArray.map(
-          (header, i) => results[i] === 0 && hashes.push(header.getHash())
-        );
-        resolve(hashes);
-      });
+      this.env.batchWrite(
+        operations,
+        { keyIsBuffer: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          headerArray.map(
+            (header, i) => results[i] === 0 && hashes.push(header.getHash())
+          );
+          resolve(hashes);
+        }
+      );
     });
   }
 
@@ -95,7 +89,7 @@ export default class DbHeaders {
       return this.headers.genesisHeader;
     }
     const txn = this.env.beginTxn({ readOnly: true });
-    const buf = txn.getBinary(this.dbi_headers, hash);
+    const buf = txn.getBinary(this.dbi_headers, hash, { keyIsBuffer: true });
     txn.commit();
     if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
@@ -104,13 +98,15 @@ export default class DbHeaders {
 
   loadHeaders() {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_headers);
+    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_headers, {
+      keyIsBuffer: true,
+    });
     for (
       let hash = cursor.goToFirst();
       hash !== null;
       hash = cursor.goToNext()
     ) {
-      if (!this.headers.headers[Buffer.from(hash).toString("hex")]) {
+      if (!this.headers.headers[hash.toString("hex")]) {
         const buf = cursor.getCurrentBinary();
         if (buf) this.headers.addHeader({ buf, hash });
       }

@@ -1,5 +1,6 @@
 import lmdb from "node-lmdb";
 import fs from "fs";
+import * as bsv from "bsv-minimal";
 
 export interface PluginOptions {
   blockHash: string | Buffer;
@@ -14,16 +15,10 @@ export interface PluginOptions {
 export default class DbPlugin {
   processedBlocks: { [key: string]: string };
   env: any;
-  dbi_blocks: any;
-  dbi_heights: any;
+  dbi_blocks: lmdb.Dbi;
+  dbi_heights: lmdb.Dbi;
 
-  constructor({
-    pluginDir,
-    readOnly = true,
-  }: {
-    pluginDir: string;
-    readOnly?: boolean;
-  }) {
+  constructor({ pluginDir }: { pluginDir: string }) {
     if (!pluginDir) throw Error(`Missing pluginDir`);
     fs.mkdirSync(pluginDir, { recursive: true });
 
@@ -33,18 +28,16 @@ export default class DbPlugin {
       path: pluginDir,
       mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
       maxDbs: 3,
-      maxReaders: 64,
-      readOnly,
     });
     this.dbi_blocks = this.env.openDbi({
       name: "block_info",
-      create: !readOnly,
+      create: true,
       keyIsBuffer: true,
     });
     this.dbi_heights = this.env.openDbi({
       name: "block_heights",
-      create: !readOnly,
-      keyIsUint32: true,
+      create: true,
+      keyIsBuffer: true,
     });
   }
 
@@ -74,52 +67,57 @@ export default class DbPlugin {
     const value = Buffer.from(
       JSON.stringify({ matches, errors, txCount, size, date, timer })
     );
+    const bw = new bsv.utils.BufferWriter();
+    bw.writeUInt32LE(height);
+    const key = bw.toBuffer();
     const txn = this.env.beginTxn({ readOnly: false });
-    txn.putBinary(this.dbi_heights, height, blockHash);
-    txn.putBinary(this.dbi_blocks, blockHash, value);
+    txn.putBinary(this.dbi_heights, key, blockHash, { keyIsBuffer: true });
+    txn.putBinary(this.dbi_blocks, blockHash, value, { keyIsBuffer: true });
     txn.commit();
     this.processedBlocks[`${height}`] = blockHash.toString("hex");
   }
 
-  async batchBlocksProcessed(array: PluginOptions[]) {
-    if (array.length === 0) return;
-    const heights: any = [];
-    const blocks: any = [];
-    const date = +new Date();
-    for (const obj of array) {
-      const { blockHash, height, matches, errors, txCount, size, timer } = obj;
-      const value = Buffer.from(
-        JSON.stringify({ matches, errors, txCount, size, date, timer })
-      );
-      blocks.push([this.dbi_blocks, blockHash, value]);
-      heights.push([this.dbi_heights, height, blockHash]);
-    }
-    await new Promise((resolve, reject) => {
-      this.env.batchWrite(blocks, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        resolve(results);
-      });
-    });
-    await new Promise((resolve, reject) => {
-      this.env.batchWrite(
-        heights,
-        { keyIsUint32: true },
-        (err: any, results: number[]) => {
-          if (err) return reject(err);
-          resolve(results);
+  async batchBlocksProcessed(array: PluginOptions[]): Promise<null> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (array.length === 0) return resolve(null);
+        const operations: any = [];
+        const date = +new Date();
+        for (const obj of array) {
+          const { blockHash, height, matches, errors, txCount, size, timer } =
+            obj;
+          const bw = new bsv.utils.BufferWriter();
+          bw.writeUInt32LE(height);
+          const key = bw.toBuffer();
+          const value = Buffer.from(
+            JSON.stringify({ matches, errors, txCount, size, date, timer })
+          );
+          operations.push([this.dbi_blocks, blockHash, value]);
+          operations.push([this.dbi_heights, key, blockHash]);
         }
-      );
+
+        this.env.batchWrite(
+          operations,
+          { keyIsBuffer: true },
+          (err: any, results: number[]) => {
+            if (err) return reject(err);
+            resolve(null);
+          }
+        );
+      } catch (err) {
+        reject(err);
+      }
     });
   }
 
   loadBlocks() {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_heights);
-    for (
-      let height = cursor.goToFirst();
-      height !== null;
-      height = cursor.goToNext()
-    ) {
+    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_heights, {
+      keyIsBuffer: true,
+    });
+    for (let key = cursor.goToFirst(); key !== null; key = cursor.goToNext()) {
+      const br = new bsv.utils.BufferReader(key);
+      const height = br.readUInt32LE();
       const hash = cursor.getCurrentBinary();
       if (hash) this.processedBlocks[`${height}`] = hash.toString("hex");
     }
@@ -140,15 +138,20 @@ export default class DbPlugin {
   getBlockInfo(blockHash: string | Buffer) {
     if (!Buffer.isBuffer(blockHash)) blockHash = Buffer.from(blockHash, "hex");
     const txn = this.env.beginTxn({ readOnly: true });
-    const value = txn.getBinary(this.dbi_blocks, blockHash);
+    const value = txn.getBinary(this.dbi_blocks, blockHash, {
+      keyIsBuffer: true,
+    });
     txn.commit();
     if (!value) throw Error(`Missing block info`);
     return JSON.parse(value.toString());
   }
 
   getBlockHash(height: number) {
+    const bw = new bsv.utils.BufferWriter();
+    bw.writeUInt32LE(height);
+    const key = bw.toBuffer();
     const txn = this.env.beginTxn({ readOnly: true });
-    const value = txn.getBinary(this.dbi_heights, height);
+    const value = txn.getBinary(this.dbi_heights, key, { keyIsBuffer: true });
     txn.commit();
     if (!value) throw Error(`Missing block height`);
     return value.toString("hex");
@@ -157,7 +160,9 @@ export default class DbPlugin {
   delBlocks(from: number, to: number) {
     const txn = this.env.beginTxn({ readOnly: false });
     for (let height = from; height <= to; height++) {
-      txn.del(this.dbi_heights, height);
+      const bw = new bsv.utils.BufferWriter();
+      bw.writeUInt32LE(height);
+      txn.del(this.dbi_heights, bw.toBuffer(), { keyIsBuffer: true });
       delete this.processedBlocks[`${height}`];
     }
     txn.commit();

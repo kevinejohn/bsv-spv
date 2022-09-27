@@ -5,7 +5,7 @@ import fs from "fs";
 export default class DbBlocks {
   blocksDir: string;
   writeDir?: string;
-  writeStream?: any;
+  writeStream?: fs.WriteStream;
 
   constructor({ blocksDir }: { blocksDir: string }) {
     if (!blocksDir) throw Error(`Missing blocksDir`);
@@ -52,6 +52,7 @@ export default class DbBlocks {
           `${this.writeDir}.${process.pid}`
         );
       }
+      if (!this.writeStream) throw Error(`No WriteStream`);
 
       this.writeStream.write(chunk);
 
@@ -76,7 +77,7 @@ export default class DbBlocks {
           }
           resolve(false);
         });
-        this.writeStream = null;
+        this.writeStream = undefined;
       } else {
         resolve(false);
       }

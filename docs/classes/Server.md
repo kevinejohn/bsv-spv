@@ -181,7 +181,7 @@ ___
 
 ### db\_plugin
 
-• **db\_plugin**: `default`
+• **db\_plugin**: [`DbPlugin`](DbPlugin.md)
 
 #### Inherited from
 

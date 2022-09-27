@@ -39,7 +39,6 @@
 | `__namedParameters` | `Object` |
 | `__namedParameters.mempoolDir` | `string` |
 | `__namedParameters.pruneAfter?` | `number` |
-| `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -49,7 +48,7 @@
 
 ### dbi\_tx\_times
 
-• **dbi\_tx\_times**: `any`
+• **dbi\_tx\_times**: `Dbi`
 
 #### Defined in
 
@@ -59,7 +58,7 @@ ___
 
 ### dbi\_txs
 
-• **dbi\_txs**: `any`
+• **dbi\_txs**: `Dbi`
 
 #### Defined in
 
@@ -97,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L44)
+[src/db_mempool.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L40)
 
 ___
 
@@ -117,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:104](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L104)
+[src/db_mempool.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L108)
 
 ___
 
@@ -144,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:157](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L157)
+[src/db_mempool.ts:171](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L171)
 
 ___
 
@@ -166,7 +165,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L121)
+[src/db_mempool.ts:129](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L129)
 
 ___
 
@@ -193,7 +192,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:164](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L164)
+[src/db_mempool.ts:178](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L178)
 
 ___
 
@@ -213,7 +212,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:214](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L214)
+[src/db_mempool.ts:232](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L232)
 
 ___
 
@@ -253,4 +252,4 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L56)
+[src/db_mempool.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L52)

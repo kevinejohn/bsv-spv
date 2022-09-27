@@ -10,7 +10,7 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-export interface MasterConfig {
+export interface MasterOptions {
   ticker: string;
   nodes: string[];
   forceUserAgent?: string;
@@ -43,7 +43,7 @@ export default class Master {
     blocks,
     MEMPOOL_PRUNE_AFTER,
     DEBUG_LOG,
-  }: MasterConfig) {
+  }: MasterOptions) {
     this.sockets = {};
     this.workers = {};
 

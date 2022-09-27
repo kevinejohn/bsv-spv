@@ -29,7 +29,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `MasterConfig` |
+| `__namedParameters` | [`MasterOptions`](../interfaces/MasterOptions.md) |
 
 #### Defined in
 

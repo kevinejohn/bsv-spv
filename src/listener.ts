@@ -73,7 +73,7 @@ export default class Listener extends EventEmitter {
     this.db_mempool = new DbMempool({ mempoolDir });
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({ headersDir, headers });
-    this.db_plugin = new DbPlugin({ pluginDir, readOnly: false });
+    this.db_plugin = new DbPlugin({ pluginDir });
 
     this.db_headers.loadHeaders();
     this.db_plugin.loadBlocks();

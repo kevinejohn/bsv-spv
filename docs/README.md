@@ -10,6 +10,7 @@ bsv-spv
 - [DbHeaders](classes/DbHeaders.md)
 - [DbMempool](classes/DbMempool.md)
 - [DbNodes](classes/DbNodes.md)
+- [DbPlugin](classes/DbPlugin.md)
 - [Listener](classes/Listener.md)
 - [Master](classes/Master.md)
 - [Server](classes/Server.md)
@@ -19,4 +20,5 @@ bsv-spv
 ### Interfaces
 
 - [ListenerOptions](interfaces/ListenerOptions.md)
+- [MasterOptions](interfaces/MasterOptions.md)
 - [SpvOptions](interfaces/SpvOptions.md)

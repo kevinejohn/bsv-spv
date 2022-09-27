@@ -5,17 +5,15 @@ import fs from "fs";
 export default class DbNodes {
   blacklistTime: number;
   env: any;
-  dbi_seen: any;
-  dbi_connected: any;
-  dbi_blacklisted: any;
+  dbi_seen: lmdb.Dbi;
+  dbi_connected: lmdb.Dbi;
+  dbi_blacklisted: lmdb.Dbi;
 
   constructor({
     nodesDir,
-    readOnly = true,
     blacklistTime = (+new Date() - 1000 * 60 * 60 * 24) / 1000, // 24 hour blacklist
   }: {
     nodesDir: string;
-    readOnly?: boolean;
     blacklistTime?: number;
   }) {
     if (!nodesDir) throw Error(`Missing nodesDir`);
@@ -27,22 +25,20 @@ export default class DbNodes {
       path: nodesDir,
       mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
       maxDbs: 5,
-      maxReaders: 64,
-      readOnly,
     });
     this.dbi_seen = this.env.openDbi({
       name: "peers_seen",
-      create: !readOnly,
+      create: true,
       keyIsString: true,
     });
     this.dbi_connected = this.env.openDbi({
       name: "peers_connected",
-      create: !readOnly,
+      create: true,
       keyIsString: true,
     });
     this.dbi_blacklisted = this.env.openDbi({
       name: "peers_blacklisted",
-      create: !readOnly,
+      create: true,
       keyIsString: true,
     });
   }
@@ -77,11 +73,15 @@ export default class DbNodes {
       nodeArray.map((node) => {
         operations.push([this.dbi_seen, node, time, null]);
       });
-      this.env.batchWrite(operations, {}, (err: any, results: number[]) => {
-        if (err) return reject(err);
-        nodeArray.map((node, i) => results[i] === 0 && nodes.push(node));
-        resolve(nodes);
-      });
+      this.env.batchWrite(
+        operations,
+        { keyIsString: true },
+        (err: any, results: number[]) => {
+          if (err) return reject(err);
+          nodeArray.map((node, i) => results[i] === 0 && nodes.push(node));
+          resolve(nodes);
+        }
+      );
     });
   }
 
@@ -108,7 +108,7 @@ export default class DbNodes {
       if (date > this.blacklistTime) {
         blacklisted = true;
       } else {
-        txn.del(this.dbi_blacklisted, node);
+        txn.del(this.dbi_blacklisted, node, { keyIsString: true });
       }
     }
     txn.commit();
@@ -117,7 +117,13 @@ export default class DbNodes {
 
   async getBlacklistedNodes() {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_blacklisted);
+    const cursor: lmdb.Cursor<string> = new lmdb.Cursor(
+      txn,
+      this.dbi_blacklisted,
+      {
+        keyIsString: true,
+      }
+    );
     const nodes = [];
     const expired: any[] = [];
     for (
@@ -138,10 +144,14 @@ export default class DbNodes {
     txn.commit();
     if (expired.length > 0) {
       await new Promise((resolve, reject) => {
-        this.env.batchWrite(expired, {}, (err: any, results: number[]) => {
-          if (err) return reject(err);
-          resolve(results);
-        });
+        this.env.batchWrite(
+          expired,
+          { keyIsString: true },
+          (err: any, results: number[]) => {
+            if (err) return reject(err);
+            resolve(results);
+          }
+        );
       });
     }
     return nodes;
@@ -149,7 +159,9 @@ export default class DbNodes {
 
   getConnectedNodes() {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_connected);
+    const cursor = new lmdb.Cursor(txn, this.dbi_connected, {
+      keyIsString: true,
+    });
     const nodes: string[] = [];
     for (
       let node = cursor.goToFirst();
@@ -165,7 +177,9 @@ export default class DbNodes {
 
   getSeenNodes() {
     const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_seen);
+    const cursor: lmdb.Cursor<string> = new lmdb.Cursor(txn, this.dbi_seen, {
+      keyIsString: true,
+    });
     const nodes = [];
     for (
       let node = cursor.goToFirst();
