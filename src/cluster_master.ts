@@ -51,6 +51,7 @@ export default class Master {
       console.error(
         `Worker ${worker.id} exited with code: ${code}, signal: ${signal}`
       );
+      process.exit(code); // TODO: Recover instead of shutting down
     });
 
     for (const node of nodes) {
