@@ -156,10 +156,13 @@ export default class Listener extends EventEmitter {
       this.db_headers.loadHeaders();
     });
 
+    let messageBuffer = "";
     client.on("data", (message) => {
       try {
-        const msgs = message.toString().split("\n\n");
-        for (const msg of msgs) {
+        const msgs = `${messageBuffer}${message}`.toString().split("\n\n");
+        messageBuffer = msgs[msgs.length - 1];
+        for (let i = 0; i < msgs.length - 1; i++) {
+          const msg = msgs[i];
           try {
             if (!msg.trim()) continue;
             const obj = JSON.parse(msg.trim());
