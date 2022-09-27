@@ -6,6 +6,6 @@ export function formatBytes(bytes: number) {
   } else if (bytes >= 1000) {
     return `${Number(bytes / 1000).toFixed(1)} KB`;
   } else {
-    return `${bytes} Bytes`;
+    return `${Number(bytes).toFixed(0)} Bytes`;
   }
 }

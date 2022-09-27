@@ -1,5 +1,6 @@
 import Spv, { SpvOptions } from "./spv";
 import * as Helpers from "./helpers";
+import * as bsv from "bsv-minimal";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Worker Unhandled Rejection at Promise", p);
@@ -40,6 +41,7 @@ export default class Worker {
     // let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
+    let blockInterval: NodeJS.Timer;
 
     const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${node}`;
     console.log(`${id} Loading headers from disk...`);
@@ -81,6 +83,7 @@ export default class Worker {
     spv.on("disconnected", ({ node, disconnects }) => {
       console.error(`${id} disconnected ${disconnects} times`);
       clearInterval(interval);
+      clearInterval(blockInterval);
 
       this.sendToMaster({
         command: `disconnected`,
@@ -96,6 +99,7 @@ export default class Worker {
       });
 
       clearInterval(interval);
+      clearInterval(blockInterval);
       if (mempool) {
         interval = setInterval(() => {
           console.log(
@@ -229,6 +233,31 @@ export default class Worker {
               1
             )} Mbps. Block already saved.`
           );
+        }
+      );
+      let downloadedSize: number = 0;
+      spv.on(
+        "block_chunk",
+        ({ started, finished, blockHash, height, size, startDate }) => {
+          downloadedSize = size;
+          if (started) {
+            clearInterval(blockInterval);
+            blockInterval = setInterval(() => {
+              const seconds = (+new Date() - startDate) / 1000;
+              console.log(
+                `${id} downloading block ${height} ${blockHash.toString(
+                  "hex"
+                )} taking ${seconds} seconds so far. ${Helpers.formatBytes(
+                  downloadedSize
+                )}. ${Helpers.formatBytes(downloadedSize / seconds)}/s ${Number(
+                  ((downloadedSize / seconds) * 8) / (1024 * 1024)
+                ).toFixed(1)} Mbps`
+              );
+            }, 1000 * 10); // TODO: Change to 10 seconds
+          }
+          if (finished) {
+            clearInterval(blockInterval);
+          }
         }
       );
       // spv.on(

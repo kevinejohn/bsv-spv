@@ -118,6 +118,17 @@ export default class Spv extends EventEmitter {
           startDate,
         }) => {
           try {
+            this.emit("block_chunk", {
+              header,
+              chunk,
+              blockHash,
+              finished,
+              started,
+              size,
+              height: blockHeight,
+              txCount,
+              startDate,
+            });
             if (started) this.addHeaders({ headers: [header] });
             const success = await this.db_blocks.writeBlockChunk({
               chunk,
