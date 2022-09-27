@@ -279,12 +279,15 @@ export default class Listener extends EventEmitter {
             }
             tip = this.headers.getTip();
           }
+          const seconds = (+new Date() - date) / 1000;
           console.log(
             `Synced ${processed} blocks (${Helpers.formatBytes(
               blockSize
-            )}) in ${
-              (+new Date() - date) / 1000
-            } seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
+            )} total. ${Helpers.formatBytes(blockSize / seconds)}/s ${Number(
+              ((blockSize / seconds) * 8) / (1024 * 1024)
+            ).toFixed(
+              1
+            )} Mbps) in ${seconds} seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
               tip.height
             } blocks processed.`
           );
