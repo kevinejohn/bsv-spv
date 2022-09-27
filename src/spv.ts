@@ -105,7 +105,6 @@ export default class Spv extends EventEmitter {
     this.db_plugin = new DbPlugin({ pluginDir, readOnly: false });
     if (this.saveBlocks) {
       this.db_plugin.loadBlocks();
-      let startDate: number;
       this.peer.on(
         "block_chunk",
         async ({
@@ -117,12 +116,10 @@ export default class Spv extends EventEmitter {
           size,
           height: blockHeight,
           txCount,
+          startDate,
         }) => {
           try {
-            if (started) {
-              startDate = +new Date();
-              this.addHeaders({ headers: [header] });
-            }
+            if (started) this.addHeaders({ headers: [header] });
             const success = await this.db_blocks.writeBlockChunk({
               chunk,
               blockHash,
@@ -386,7 +383,7 @@ export default class Spv extends EventEmitter {
   }
 
   onBlockTx({ disableAutoDl = false }: { disableAutoDl?: boolean }) {
-    let startDate: number, prunedTxs: number;
+    let prunedTxs: number;
     this.peer.on(
       "transactions",
       async ({
@@ -397,10 +394,10 @@ export default class Spv extends EventEmitter {
         height,
         transactions,
         txCount,
+        startDate,
       }) => {
         if (!header) return;
         if (started) {
-          startDate = +new Date();
           prunedTxs = 0;
         }
         this.emit(`block_txs`, {

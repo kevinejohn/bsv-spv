@@ -127,6 +127,12 @@ export default class Worker {
         data: { hashes: hashes.map((h: Buffer) => h.toString("hex")) },
       });
     });
+    spv.on(
+      "peer_error",
+      ({ error, buffer }: { error: any; buffer: Buffer }) => {
+        console.error(`${id} peer_error`, error, buffer.toString("hex"));
+      }
+    );
     spv.on("block_reorg", async ({ height, hash }) => {
       console.log(
         `${id} Re-org detected after block height ${height}, ${hash}!`
