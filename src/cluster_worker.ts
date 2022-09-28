@@ -243,7 +243,7 @@ export default class Worker {
               console.log(
                 `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
                   "hex"
-                )} taking ${seconds} seconds so far. ${Helpers.formatSpeeds(
+                )} taking ${Number(seconds).toFixed(0)} seconds so far. ${Helpers.formatSpeeds(
                   downloadedSize,
                   seconds
                 )}`
