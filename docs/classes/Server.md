@@ -16,6 +16,7 @@
 
 ### Properties
 
+- [SHOW\_LOGS](Server.md#show_logs)
 - [app](Server.md#app)
 - [blockHeight](Server.md#blockheight)
 - [client](Server.md#client)
@@ -95,9 +96,19 @@
 
 #### Defined in
 
-[src/server.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L10)
+[src/server.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L11)
 
 ## Properties
+
+### SHOW\_LOGS
+
+• **SHOW\_LOGS**: `boolean`
+
+#### Defined in
+
+[src/server.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L9)
+
+___
 
 ### app
 
@@ -699,7 +710,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L98)
+[src/server.ts:103](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L103)
 
 ___
 

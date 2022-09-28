@@ -6,6 +6,7 @@ import Listener from "./listener";
 export default class Server extends Listener {
   app: any;
   server: any;
+  SHOW_LOGS: boolean;
 
   constructor({
     name,
@@ -22,6 +23,7 @@ export default class Server extends Listener {
   }) {
     super({ name, ticker, blockHeight: -1, dataDir, disableInterval });
 
+    this.SHOW_LOGS = true;
     const app = express();
     this.app = app;
     this.server = Http.createServer(app);
@@ -39,11 +41,12 @@ export default class Server extends Listener {
             const size = tx.toBuffer().length;
             res.setHeader("x-mempool-time", `${time}`);
             res.send(tx.toBuffer());
-            console.log(
-              `${req.ip} /txid/${txid} ${Helpers.formatBytes(
-                size
-              )} from mempool`
-            );
+            this.SHOW_LOGS &&
+              console.log(
+                `${req.ip} /txid/${txid} ${Helpers.formatBytes(
+                  size
+                )} from mempool`
+              );
           } else {
             let heightInt = parseInt(`${height}`);
             let lenInt = parseInt(`${len}`);
@@ -75,27 +78,30 @@ export default class Server extends Listener {
               res.setHeader("x-block-time", `${time}`);
             } catch (err) {}
             res.send(tx.toBuffer());
-            console.log(
-              `${req.ip} /txid/${txid} ${Helpers.formatBytes(
-                size
-              )} from block ${height} ${block}`
-            );
+            this.SHOW_LOGS &&
+              console.log(
+                `${req.ip} /txid/${txid} ${Helpers.formatBytes(
+                  size
+                )} from block ${height} ${block}`
+              );
           }
         } catch (err) {
           throw Error(`Tx not found`);
         }
       } catch (err: any) {
-        console.error(
-          `${req.ip} /txid/${txid} error: ${err.message} ${
-            pos ? `in block ${height} ${block}, ${pos}, ${len}` : "mempool"
-          }`
-        );
+        this.SHOW_LOGS &&
+          console.error(
+            `${req.ip} /txid/${txid} error: ${err.message} ${
+              pos ? `in block ${height} ${block}, ${pos}, ${len}` : "mempool"
+            }`
+          );
         res.status(404).send(err.message);
       }
     });
   }
 
-  listen({ port = 8081, host = "localhost" }) {
+  listen({ port = 8081, host = "localhost", SHOW_LOGS = true }) {
+    this.SHOW_LOGS = SHOW_LOGS;
     this.server.listen(port, host, () => {
       console.log(`Tx server listening on ${host}:${port}`);
     });
