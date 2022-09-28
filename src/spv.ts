@@ -95,12 +95,13 @@ export default class Spv extends EventEmitter {
     const nodesDir = path.join(dataDir, "nodes");
     const pluginDir = path.join(dataDir, "history", `node-${node}`);
     this.db_blocks = new DbBlocks({ blocksDir, readOnly: false });
-    this.db_headers = new DbHeaders({ headersDir, headers });
+    this.db_headers = new DbHeaders({ headersDir, headers, readOnly: false });
     this.db_mempool = new DbMempool({
       mempoolDir,
       pruneAfter: MEMPOOL_PRUNE_AFTER,
+      readOnly: false,
     });
-    this.db_nodes = new DbNodes({ nodesDir });
+    this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
     this.db_plugin = new DbPlugin({ pluginDir });
     if (this.saveBlocks) {
       this.db_plugin.loadBlocks();

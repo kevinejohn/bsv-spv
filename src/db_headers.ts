@@ -8,7 +8,15 @@ export default class DbHeaders {
   env: any;
   dbi_headers: lmdb.Dbi;
 
-  constructor({ headersDir, headers }: { headersDir: string; headers: any }) {
+  constructor({
+    headersDir,
+    headers,
+    readOnly = true,
+  }: {
+    headersDir: string;
+    headers: any;
+    readOnly?: boolean;
+  }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
     fs.mkdirSync(headersDir, { recursive: true });
@@ -19,10 +27,11 @@ export default class DbHeaders {
       path: headersDir,
       mapSize: 1 * 1024 * 1024 * 1024,
       maxDbs: 1,
+      readOnly,
     });
     this.dbi_headers = this.env.openDbi({
       name: "headers",
-      create: true,
+      create: !readOnly,
       keyIsBuffer: true,
     });
 

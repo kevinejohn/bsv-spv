@@ -11,9 +11,11 @@ export default class DbMempool {
   constructor({
     mempoolDir,
     pruneAfter = 1000 * 60 * 60 * 12, // After 12 hours
+    readOnly = true,
   }: {
     mempoolDir: string;
     pruneAfter?: number;
+    readOnly?: boolean;
   }) {
     if (!mempoolDir) throw Error(`Missing mempoolDir`);
     fs.mkdirSync(mempoolDir, { recursive: true });
@@ -24,15 +26,16 @@ export default class DbMempool {
       path: mempoolDir,
       mapSize: 1 * 1024 * 1024 * 1024 * 1024, // 1TB mempool max
       maxDbs: 3,
+      readOnly,
     });
     this.dbi_txs = this.env.openDbi({
       name: "txs",
-      create: true,
+      create: !readOnly,
       keyIsBuffer: true,
     });
     this.dbi_tx_times = this.env.openDbi({
       name: "tx_times",
-      create: true,
+      create: !readOnly,
       keyIsBuffer: true,
     });
   }

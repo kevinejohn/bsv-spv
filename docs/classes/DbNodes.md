@@ -40,6 +40,7 @@
 | `__namedParameters` | `Object` |
 | `__namedParameters.blacklistTime?` | `number` |
 | `__namedParameters.nodesDir` | `string` |
+| `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -113,7 +114,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L96)
+[src/db_nodes.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L99)
 
 ___
 
@@ -127,7 +128,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L46)
+[src/db_nodes.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L49)
 
 ___
 
@@ -147,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:88](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L88)
+[src/db_nodes.ts:91](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L91)
 
 ___
 
@@ -161,7 +162,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:118](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L118)
+[src/db_nodes.ts:123](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L123)
 
 ___
 
@@ -175,7 +176,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:160](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L160)
+[src/db_nodes.ts:165](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L165)
 
 ___
 
@@ -189,7 +190,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:178](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L178)
+[src/db_nodes.ts:183](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L183)
 
 ___
 
@@ -209,7 +210,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:103](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L103)
+[src/db_nodes.ts:106](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L106)
 
 ___
 
@@ -229,4 +230,4 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L61)
+[src/db_nodes.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L64)

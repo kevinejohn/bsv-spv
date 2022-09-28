@@ -12,9 +12,11 @@ export default class DbNodes {
   constructor({
     nodesDir,
     blacklistTime = (+new Date() - 1000 * 60 * 60 * 24) / 1000, // 24 hour blacklist
+    readOnly = true,
   }: {
     nodesDir: string;
     blacklistTime?: number;
+    readOnly?: boolean;
   }) {
     if (!nodesDir) throw Error(`Missing nodesDir`);
     fs.mkdirSync(nodesDir, { recursive: true });
@@ -25,20 +27,21 @@ export default class DbNodes {
       path: nodesDir,
       mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
       maxDbs: 5,
+      readOnly,
     });
     this.dbi_seen = this.env.openDbi({
       name: "peers_seen",
-      create: true,
+      create: !readOnly,
       keyIsString: true,
     });
     this.dbi_connected = this.env.openDbi({
       name: "peers_connected",
-      create: true,
+      create: !readOnly,
       keyIsString: true,
     });
     this.dbi_blacklisted = this.env.openDbi({
       name: "peers_blacklisted",
-      create: true,
+      create: !readOnly,
       keyIsString: true,
     });
   }
