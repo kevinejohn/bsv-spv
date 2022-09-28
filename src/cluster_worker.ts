@@ -231,30 +231,25 @@ export default class Worker {
           );
         }
       );
-      let downloadedSize: number = 0;
-      spv.on(
-        "block_chunk",
-        ({ started, finished, blockHash, height, size, startDate }) => {
-          downloadedSize = size;
-          if (started) {
-            clearInterval(blockInterval);
-            blockInterval = setInterval(() => {
-              const seconds = (+new Date() - startDate) / 1000;
-              console.log(
-                `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
-                  "hex"
-                )} taking ${Number(seconds).toFixed(0)} seconds so far. ${Helpers.formatSpeeds(
-                  downloadedSize,
-                  seconds
-                )}`
-              );
-            }, 1000 * 10); // TODO: Change to 10 seconds
-          }
-          if (finished) {
-            clearInterval(blockInterval);
-          }
+      let chunkParams: any;
+      spv.on("block_chunk", (params) => {
+        chunkParams = params;
+        if (params.started) {
+          clearInterval(blockInterval);
+          blockInterval = setInterval(() => {
+            const { blockHash, height, size, startDate } = chunkParams;
+            const seconds = (+new Date() - startDate) / 1000;
+            console.log(
+              `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
+                "hex"
+              )} taking ${Number(seconds).toFixed(
+                0
+              )} seconds so far. ${Helpers.formatSpeeds(size, seconds)}`
+            );
+          }, 1000 * 10); // TODO: Change to 10 seconds
         }
-      );
+        if (params.finished) clearInterval(blockInterval);
+      });
       // spv.on(
       //   "block_txs",
       //   ({ transactions, header, started, finished, height, size }) => {

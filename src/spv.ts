@@ -171,14 +171,16 @@ export default class Spv extends EventEmitter {
               }
 
               if (this.pruneBlocks > 0) {
-                try {
-                  const tipHeight =
-                    blockHeight > 0 ? blockHeight : this.headers.getHeight();
-                  const height = tipHeight - this.pruneBlocks;
-                  const hash = headers.getHash(height);
-                  this.db_blocks.delBlock(hash);
-                  this.emit("pruned_block", { height, hash });
-                } catch (err) {}
+                const tipHeight =
+                  blockHeight > 0 ? blockHeight : this.headers.getHeight();
+                const height = tipHeight - this.pruneBlocks;
+                const hash = headers.getHash(height);
+                this.db_blocks
+                  .delBlock(hash)
+                  .then(() => {
+                    this.emit("pruned_block", { height, hash });
+                  })
+                  .catch((err) => console.error(err));
               }
             }
           } catch (err) {
@@ -504,7 +506,7 @@ export default class Spv extends EventEmitter {
   async warningPruneBlocks() {
     let prunedCount = 0;
     if (!(this.pruneBlocks > 0)) return prunedCount;
-    const files = this.db_blocks.getBlocksSync();
+    const files = await this.db_blocks.getBlocks();
     const pruneHeight = this.headers.getHeight() - this.pruneBlocks;
     for (const file of files) {
       const hash = file.split(".")[0];
@@ -514,7 +516,7 @@ export default class Spv extends EventEmitter {
           height = this.headers.getHeight(hash);
           if (height <= pruneHeight) throw Error(`Prune`);
         } catch (err) {
-          this.db_blocks.delBlock(file);
+          await this.db_blocks.delBlock(file);
           this.emit("block_pruned", { height, hash });
           prunedCount++;
         }

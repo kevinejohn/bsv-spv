@@ -277,11 +277,12 @@ export default class Listener extends EventEmitter {
                     });
                     processed++;
                     blockSize += size;
-                    const seconds = (+new Date() - startDate) / 1000
+                    const seconds = (+new Date() - startDate) / 1000;
                     console.log(
-                      `Streamed block ${height}/${this.headers.getHeight()} ${blockHash}, ${txCount} txs in ${
+                      `Streamed block ${height}/${this.headers.getHeight()} ${blockHash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
+                        size,
                         seconds
-                      } seconds. ${Helpers.formatSpeeds(size, seconds)} at ${new Date().toLocaleString()}.`
+                      )} at ${new Date().toLocaleString()}.`
                     );
                   }
                 }

@@ -70,6 +70,11 @@ export default class DbBlocks {
     return hashes;
   }
 
+  async getBlocks() {
+    const files = await fs.promises.readdir(this.blocksDir);
+    return files;
+  }
+
   getBlocksSync() {
     const files = fs.readdirSync(this.blocksDir);
     return files;
@@ -86,6 +91,15 @@ export default class DbBlocks {
       }
     }
     return hashes;
+  }
+
+  async fileExists(dir: string) {
+    try {
+      await fs.promises.access(dir, fs.constants.F_OK);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   writeBlockChunk({
@@ -114,13 +128,15 @@ export default class DbBlocks {
       this.writeStream.write(chunk);
 
       if (finished) {
+        if (!this.writeDir) return reject(Error(`Missing writeDir`));
         const dir = this.writeDir;
-        this.writeStream.close((err: any) => {
+        this.writeStream.close(async (err: any) => {
           try {
             if (err) throw err;
-            if (dir && !fs.existsSync(dir)) {
+            const fileExists = await this.fileExists(dir);
+            if (!fileExists) {
               // Save block to disk
-              fs.renameSync(`${dir}.${process.pid}`, dir);
+              await fs.promises.rename(`${dir}.${process.pid}`, dir);
               const txn = this.env.beginTxn({ readOnly: false });
               txn.putBinary(this.dbi_blocks, blockHash, Buffer.from(""));
               txn.commit();
@@ -132,7 +148,7 @@ export default class DbBlocks {
           } catch (err) {
             // console.error(err);
             try {
-              fs.unlinkSync(`${dir}.${process.pid}`);
+              await fs.promises.unlink(`${dir}.${process.pid}`);
             } catch (err) {}
           }
           resolve(false);
@@ -148,14 +164,15 @@ export default class DbBlocks {
     { hash, height }: { hash: string | Buffer; height: number },
     callback: (params: bsv.BlockStream) => Promise<void> | void
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         if (typeof callback !== "function") throw Error(`Missing callback`);
         hash = hash.toString("hex");
         hash = hash.split(".").length > 1 ? hash : `${hash}.bin`;
         const dir = path.join(this.blocksDir, hash);
-        if (!fs.existsSync(dir)) {
-          this.delBlock(hash);
+        const fileExists = await this.fileExists(dir);
+        if (!fileExists) {
+          await this.delBlock(hash);
           throw Error(`Missing block ${hash}`);
         }
 
@@ -182,7 +199,7 @@ export default class DbBlocks {
     });
   }
 
-  delBlock(hash: string | Buffer) {
+  async delBlock(hash: string | Buffer) {
     let dir;
     hash = hash.toString("hex");
     if (hash.split(".").length > 1) {
@@ -190,7 +207,7 @@ export default class DbBlocks {
     } else {
       dir = path.join(this.blocksDir, `${hash}.bin`);
     }
-    fs.unlinkSync(dir);
+    await fs.promises.unlink(dir);
     hash = hash.split(".")[0];
     const txn = this.env.beginTxn({ readOnly: false });
     try {
