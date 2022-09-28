@@ -102,11 +102,10 @@ export default class Worker {
       if (mempool) {
         interval = setInterval(() => {
           console.log(
-            `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatBytes(
-              txsSize
-            )}. ${Helpers.formatBytes(txsSize / REFRESH)}/s ${Number(
-              ((txsSize / REFRESH) * 8) / (1024 * 1024)
-            ).toFixed(1)} Mbps`
+            `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatSpeeds(
+              txsSize,
+              REFRESH
+            )}`
           );
           // txsSeen = 0;
           txsSaved = 0;
@@ -210,15 +209,10 @@ export default class Worker {
       spv.on("block_saved", ({ height, hash, size, txCount, startDate }) => {
         const seconds = (+new Date() - startDate) / 1000;
         console.log(
-          `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
-            size
-          ).toLocaleString(
-            "en-US"
-          )} bytes in ${seconds} seconds. ${Helpers.formatBytes(
-            size / seconds
-          )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
-            1
-          )} Mbps. ${new Date().toLocaleString()}`
+          `${id} Downloaded block ${height}/${spv.getHeight()}, ${hash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
+            size,
+            seconds
+          )}. ${new Date().toLocaleString()}`
         );
         this.sendToMaster({
           command: `block_saved`,
@@ -230,15 +224,10 @@ export default class Worker {
         ({ height, hash, size, txCount, startDate }) => {
           const seconds = (+new Date() - startDate) / 1000;
           console.log(
-            `${id} Downloaded block ${height}, ${hash}, ${txCount} txs, ${Number(
-              size
-            ).toLocaleString(
-              "en-US"
-            )} bytes in ${seconds} seconds. ${Helpers.formatBytes(
-              size / seconds
-            )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
-              1
-            )} Mbps. Block already saved. ${new Date().toLocaleString()}`
+            `${id} Downloaded block ${height}/${spv.getHeight()}, ${hash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
+              size,
+              seconds
+            )}. Block already saved. ${new Date().toLocaleString()}`
           );
         }
       );
@@ -252,13 +241,12 @@ export default class Worker {
             blockInterval = setInterval(() => {
               const seconds = (+new Date() - startDate) / 1000;
               console.log(
-                `${id} downloading block ${height} ${blockHash.toString(
+                `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
                   "hex"
-                )} taking ${seconds} seconds so far. ${Helpers.formatBytes(
-                  downloadedSize
-                )}. ${Helpers.formatBytes(downloadedSize / seconds)}/s ${Number(
-                  ((downloadedSize / seconds) * 8) / (1024 * 1024)
-                ).toFixed(1)} Mbps. ${new Date().toLocaleString()}`
+                )} taking ${seconds} seconds so far. ${Helpers.formatSpeeds(
+                  downloadedSize,
+                  seconds
+                )}`
               );
             }, 1000 * 10); // TODO: Change to 10 seconds
           }
