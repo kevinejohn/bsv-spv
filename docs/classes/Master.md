@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:146](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L146)
+[src/cluster_master.ts:148](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L148)
 
 ___
 

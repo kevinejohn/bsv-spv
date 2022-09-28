@@ -115,14 +115,16 @@ export default class Master {
     server.on("connection", (socket) => {
       const uid = `${Math.random()}`;
       this.sockets[uid] = socket;
-      console.log(`A new listener has connected.`);
+      console.log(
+        `A new listener has connected at ${new Date().toLocaleString()}`
+      );
 
       socket.on("data", (chunk) => {
         // const obj = JSON.parse(chunk.toString());
       });
 
       socket.on("end", () => {
-        console.log("Listener disconnected.");
+        console.log("Listener disconnected at ${new Date().toLocaleString()}");
         try {
           socket.destroy();
         } catch (err) {

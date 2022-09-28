@@ -90,7 +90,7 @@ export default class Worker {
       });
     });
     spv.on("connected", async ({ node }) => {
-      console.log(`${id} connected`);
+      console.log(`${id} connected at ${new Date().toLocaleString()}`);
 
       this.sendToMaster({
         command: `connected`,
@@ -122,11 +122,17 @@ export default class Worker {
     spv.on("headers_new", ({ headers }) => {
       const { height, hash } = spv.getTip();
       console.log(
-        `${id} ${headers.length} new headers. Tip: ${height}, ${hash}`
+        `${id} ${
+          headers.length
+        } new headers. Tip: ${height}, ${hash} at ${new Date().toLocaleString()}`
       );
     });
     spv.on("headers_saved", ({ hashes }) => {
-      console.log(`${id} ${hashes.length} new headers saved to disk`);
+      console.log(
+        `${id} ${
+          hashes.length
+        } new headers saved to disk at ${new Date().toLocaleString()}`
+      );
       this.sendToMaster({
         command: `headers_saved`,
         data: { hashes: hashes.map((h: Buffer) => h.toString("hex")) },
@@ -140,7 +146,7 @@ export default class Worker {
     );
     spv.on("block_reorg", async ({ height, hash }) => {
       console.log(
-        `${id} Re-org detected after block height ${height}, ${hash}!`
+        `${id} Re-org detected after block height ${height}, ${hash} at ${new Date().toLocaleString()}!`
       );
       this.sendToMaster({
         command: `block_reorg`,
@@ -155,7 +161,7 @@ export default class Worker {
       console.log(
         `${id} New block seen: ${hashes
           .map((h: Buffer) => h.toString("hex"))
-          .join(", ")}`
+          .join(", ")} at ${new Date().toLocaleString()}`
       );
       if (blocks) {
         await spv.syncHeaders();
@@ -212,7 +218,7 @@ export default class Worker {
             size / seconds
           )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
             1
-          )} Mbps.`
+          )} Mbps. ${new Date().toLocaleString()}`
         );
         this.sendToMaster({
           command: `block_saved`,
@@ -232,7 +238,7 @@ export default class Worker {
               size / seconds
             )}/s ${Number(((size / seconds) * 8) / (1024 * 1024)).toFixed(
               1
-            )} Mbps. Block already saved.`
+            )} Mbps. Block already saved. ${new Date().toLocaleString()}`
           );
         }
       );
@@ -252,7 +258,7 @@ export default class Worker {
                   downloadedSize
                 )}. ${Helpers.formatBytes(downloadedSize / seconds)}/s ${Number(
                   ((downloadedSize / seconds) * 8) / (1024 * 1024)
-                ).toFixed(1)} Mbps`
+                ).toFixed(1)} Mbps. ${new Date().toLocaleString()}`
               );
             }, 1000 * 10); // TODO: Change to 10 seconds
           }

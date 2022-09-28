@@ -100,7 +100,9 @@ export default class Listener extends EventEmitter {
         console.log(
           `Disconnected from ${this.host}:${this.port}${
             this.reconnectTime > 0
-              ? `. Reconnecting in ${this.reconnectTime} seconds...`
+              ? ` at ${new Date().toLocaleString()}. Reconnecting in ${
+                  this.reconnectTime
+                } seconds...`
               : ""
           }`
         );
@@ -121,19 +123,27 @@ export default class Listener extends EventEmitter {
       }
       this.headers.process();
       const tip = this.headers.getTip();
-      console.log(`New headers loaded. Tip ${tip.height}, ${tip.hash}`);
+      console.log(
+        `New headers loaded. Tip ${tip.height}, ${
+          tip.hash
+        } at ${new Date().toLocaleString()}`
+      );
     } else if (command === "mempool_txs_saved") {
       this.txsSeen += data.txids.length;
       this.txsSize += data.size;
     } else if (command === "block_reorg") {
       const { height, hash } = data;
-      console.warn(`Block re-org after height ${height}, ${hash}!`);
+      console.warn(
+        `Block re-org after height ${height}, ${hash} at ${new Date().toLocaleString()}!`
+      );
       const from = height + 1;
       const to = this.headers.getHeight();
       this.db_plugin.delBlocks(from, to);
     } else if (command === "block_saved") {
       const { height, hash } = data;
-      console.log(`New block saved ${height}, ${hash}`);
+      console.log(
+        `New block saved ${height}, ${hash} at ${new Date().toLocaleString()}`
+      );
     } else {
       console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
@@ -151,7 +161,9 @@ export default class Listener extends EventEmitter {
     const client = new Net.Socket();
     this.client = client;
     client.connect(port, host, () => {
-      console.log(`Connected to ${host}:${port}!`);
+      console.log(
+        `Connected to ${host}:${port} at ${new Date().toLocaleString()}!`
+      );
       // client.write("Hello World!");
       this.db_headers.loadHeaders();
     });
@@ -270,7 +282,7 @@ export default class Listener extends EventEmitter {
                         size
                       ).toLocaleString("en-US")} bytes in ${
                         (+new Date() - startDate) / 1000
-                      } seconds.`
+                      } seconds at ${new Date().toLocaleString()}.`
                     );
                   }
                 }
@@ -292,7 +304,7 @@ export default class Listener extends EventEmitter {
               1
             )} Mbps) in ${seconds} seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
               tip.height
-            } blocks processed.`
+            } blocks processed at ${new Date().toLocaleString()}`
           );
           resolve({ skipped, processed, blockSize });
         } catch (err) {
