@@ -1,6 +1,5 @@
 import Spv, { SpvOptions } from "./spv";
 import * as Helpers from "./helpers";
-import * as bsv from "bsv-minimal";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Worker Unhandled Rejection at Promise", p);

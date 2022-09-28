@@ -108,7 +108,9 @@ export default class DbNodes {
       if (date > this.blacklistTime) {
         blacklisted = true;
       } else {
-        txn.del(this.dbi_blacklisted, node, { keyIsString: true });
+        try {
+          txn.del(this.dbi_blacklisted, node, { keyIsString: true });
+        } catch (err) {}
       }
     }
     txn.commit();

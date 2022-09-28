@@ -318,6 +318,7 @@ export default class Listener extends EventEmitter {
         height = this.headers.getHeight(hash);
       } catch (err) {}
     }
+    if (!this.db_blocks.blockExists(hash)) throw Error(`Block not saved`);
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
   getMempoolTxs(txids: string[], getTime: boolean) {

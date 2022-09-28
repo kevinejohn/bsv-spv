@@ -94,7 +94,7 @@ export default class Spv extends EventEmitter {
     const mempoolDir = path.join(dataDir, "mempool");
     const nodesDir = path.join(dataDir, "nodes");
     const pluginDir = path.join(dataDir, "history", `node-${node}`);
-    this.db_blocks = new DbBlocks({ blocksDir });
+    this.db_blocks = new DbBlocks({ blocksDir, readOnly: false });
     this.db_headers = new DbHeaders({ headersDir, headers });
     this.db_mempool = new DbMempool({
       mempoolDir,
@@ -459,9 +459,9 @@ export default class Spv extends EventEmitter {
         const startDate = +new Date();
         console.log(`Finding which blocks are already saved to disk...`);
         // Quicker initialization to figure out which blocks are saved
-        const files = this.db_blocks.getSavedBlocks();
+        const hashes = this.db_blocks.getSavedBlocks();
         const arr = [];
-        for (const hash of files) {
+        for (const hash of hashes) {
           try {
             const height = this.headers.getHeight(hash);
             const blockHash = Buffer.from(hash, "hex");
@@ -503,18 +503,20 @@ export default class Spv extends EventEmitter {
   async warningPruneBlocks() {
     let prunedCount = 0;
     if (!(this.pruneBlocks > 0)) return prunedCount;
-    const files = this.db_blocks.getBlocks();
+    const files = this.db_blocks.getBlocksSync();
     const pruneHeight = this.headers.getHeight() - this.pruneBlocks;
     for (const file of files) {
       const hash = file.split(".")[0];
-      let height;
-      try {
-        height = this.headers.getHeight(hash);
-        if (height <= pruneHeight) throw Error(`Prune`);
-      } catch (err) {
-        this.db_blocks.delBlock(file);
-        this.emit("block_pruned", { height, hash });
-        prunedCount++;
+      if (hash.length === 64) {
+        let height;
+        try {
+          height = this.headers.getHeight(hash);
+          if (height <= pruneHeight) throw Error(`Prune`);
+        } catch (err) {
+          this.db_blocks.delBlock(file);
+          this.emit("block_pruned", { height, hash });
+          prunedCount++;
+        }
       }
     }
     return prunedCount;

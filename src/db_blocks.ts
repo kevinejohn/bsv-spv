@@ -1,31 +1,88 @@
 import * as bsv from "bsv-minimal";
 import path from "path";
+import lmdb from "node-lmdb";
 import fs from "fs";
 
 export default class DbBlocks {
   blocksDir: string;
   writeDir?: string;
   writeStream?: fs.WriteStream;
+  env: any;
+  dbi_blocks: lmdb.Dbi;
 
-  constructor({ blocksDir }: { blocksDir: string }) {
+  constructor({
+    blocksDir,
+    readOnly = true,
+  }: {
+    blocksDir: string;
+    readOnly?: boolean;
+  }) {
     if (!blocksDir) throw Error(`Missing blocksDir`);
     this.blocksDir = blocksDir;
     fs.mkdirSync(blocksDir, { recursive: true });
+    const dbPath = path.join(blocksDir, "meta");
+    let initialize = false;
+    if (!fs.existsSync(dbPath)) initialize = true;
+    fs.mkdirSync(dbPath, { recursive: true });
+
+    this.env = new lmdb.Env();
+    this.env.open({
+      path: dbPath,
+      mapSize: 1 * 1024 * 1024 * 1024, // 1 GB max
+      maxDbs: 1,
+      readOnly,
+    });
+    this.dbi_blocks = this.env.openDbi({
+      name: "blocks",
+      create: !readOnly,
+      keyIsBuffer: true,
+    });
+
+    if (initialize && !readOnly) {
+      const hashes = this.getSavedBlocksSync();
+      const txn = this.env.beginTxn({ readOnly: false });
+      hashes.forEach((hash: string) => {
+        txn.putBinary(
+          this.dbi_blocks,
+          Buffer.from(hash, "hex"),
+          Buffer.from("")
+        );
+      });
+      txn.commit();
+    }
   }
 
-  getBlocks() {
+  getSavedBlocks() {
+    const txn = this.env.beginTxn({ readOnly: true });
+    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_blocks, {
+      keyIsBuffer: true,
+    });
+    const hashes: string[] = [];
+    for (
+      let hashBuf = cursor.goToFirst();
+      hashBuf !== null;
+      hashBuf = cursor.goToNext()
+    ) {
+      if (hashBuf) hashes.push(hashBuf.toString("hex"));
+    }
+    cursor.close();
+    txn.commit();
+    return hashes;
+  }
+
+  getBlocksSync() {
     const files = fs.readdirSync(this.blocksDir);
     return files;
   }
 
-  getSavedBlocks() {
-    const hashes = [];
-    const files = fs.readdirSync(this.blocksDir);
+  getSavedBlocksSync() {
+    const hashes: Set<string> = new Set();
+    const files = this.getBlocksSync();
     for (const file of files) {
       const split = file.split(".");
       if (split.length === 2 && split[0].length === 64) {
         const hash = split[0];
-        hashes.push(hash);
+        hashes.add(hash);
       }
     }
     return hashes;
@@ -64,6 +121,9 @@ export default class DbBlocks {
             if (dir && !fs.existsSync(dir)) {
               // Save block to disk
               fs.renameSync(`${dir}.${process.pid}`, dir);
+              const txn = this.env.beginTxn({ readOnly: false });
+              txn.putBinary(this.dbi_blocks, blockHash, Buffer.from(""));
+              txn.commit();
               return resolve(true);
             } else {
               // Block already saved. Delete copy
@@ -94,7 +154,10 @@ export default class DbBlocks {
         hash = hash.toString("hex");
         hash = hash.split(".").length > 1 ? hash : `${hash}.bin`;
         const dir = path.join(this.blocksDir, hash);
-        if (!fs.existsSync(dir)) throw Error(`Missing block ${hash}`);
+        if (!fs.existsSync(dir)) {
+          this.delBlock(hash);
+          throw Error(`Missing block ${hash}`);
+        }
 
         const block = new bsv.Block();
         const stream = fs.createReadStream(dir);
@@ -128,9 +191,22 @@ export default class DbBlocks {
       dir = path.join(this.blocksDir, `${hash}.bin`);
     }
     fs.unlinkSync(dir);
+    hash = hash.split(".")[0];
+    const txn = this.env.beginTxn({ readOnly: false });
+    try {
+      txn.del(this.dbi_blocks, Buffer.from(hash, "hex"), { keyIsBuffer: true });
+    } catch (err) {}
+    txn.commit();
   }
 
   blockExists(hash: string) {
+    const txn = this.env.beginTxn({ readOnly: true });
+    const value = txn.getBinary(this.dbi_blocks, Buffer.from(hash, "hex"));
+    txn.commit();
+    return !!value;
+  }
+
+  blockExistsSync(hash: string) {
     const dir = path.join(this.blocksDir, `${hash}.bin`);
     return fs.existsSync(dir);
   }

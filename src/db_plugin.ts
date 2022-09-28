@@ -162,7 +162,9 @@ export default class DbPlugin {
     for (let height = from; height <= to; height++) {
       const bw = new bsv.utils.BufferWriter();
       bw.writeUInt32LE(height);
-      txn.del(this.dbi_heights, bw.toBuffer(), { keyIsBuffer: true });
+      try {
+        txn.del(this.dbi_heights, bw.toBuffer(), { keyIsBuffer: true });
+      } catch (err) {}
       delete this.processedBlocks[`${height}`];
     }
     txn.commit();
