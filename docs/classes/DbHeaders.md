@@ -10,15 +10,20 @@
 
 ### Properties
 
+- [dbIsOpen](DbHeaders.md#dbisopen)
 - [dbi\_headers](DbHeaders.md#dbi_headers)
 - [env](DbHeaders.md#env)
 - [headers](DbHeaders.md#headers)
+- [headersDir](DbHeaders.md#headersdir)
+- [keepOpen](DbHeaders.md#keepopen)
+- [readOnly](DbHeaders.md#readonly)
 
 ### Methods
 
 - [close](DbHeaders.md#close)
 - [getHeader](DbHeaders.md#getheader)
 - [loadHeaders](DbHeaders.md#loadheaders)
+- [open](DbHeaders.md#open)
 - [saveHeaders](DbHeaders.md#saveheaders)
 
 ## Constructors
@@ -34,13 +39,24 @@
 | `__namedParameters` | `Object` |
 | `__namedParameters.headers` | `any` |
 | `__namedParameters.headersDir` | `string` |
+| `__namedParameters.keepOpen?` | `boolean` |
 | `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
-[src/db_headers.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L11)
+[src/db_headers.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L15)
 
 ## Properties
+
+### dbIsOpen
+
+• **dbIsOpen**: `boolean`
+
+#### Defined in
+
+[src/db_headers.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L13)
+
+___
 
 ### dbi\_headers
 
@@ -70,6 +86,36 @@ ___
 
 [src/db_headers.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L7)
 
+___
+
+### headersDir
+
+• **headersDir**: `string`
+
+#### Defined in
+
+[src/db_headers.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L10)
+
+___
+
+### keepOpen
+
+• **keepOpen**: `boolean`
+
+#### Defined in
+
+[src/db_headers.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L12)
+
+___
+
+### readOnly
+
+• **readOnly**: `boolean`
+
+#### Defined in
+
+[src/db_headers.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L11)
+
 ## Methods
 
 ### close
@@ -82,7 +128,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L41)
+[src/db_headers.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L67)
 
 ___
 
@@ -102,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:95](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L95)
+[src/db_headers.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L112)
 
 ___
 
@@ -116,7 +162,21 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L108)
+[src/db_headers.ts:127](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L127)
+
+___
+
+### open
+
+▸ **open**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/db_headers.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L50)
 
 ___
 
@@ -136,4 +196,4 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L50)
+[src/db_headers.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L78)

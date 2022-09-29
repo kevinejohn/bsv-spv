@@ -10,6 +10,7 @@
 - [blockHeight](ListenerOptions.md#blockheight)
 - [dataDir](ListenerOptions.md#datadir)
 - [disableInterval](ListenerOptions.md#disableinterval)
+- [keepHeadersOpen](ListenerOptions.md#keepheadersopen)
 - [name](ListenerOptions.md#name)
 - [ticker](ListenerOptions.md#ticker)
 
@@ -21,7 +22,7 @@
 
 #### Defined in
 
-[src/listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L18)
+[src/listener.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L19)
 
 ___
 
@@ -52,6 +53,16 @@ ___
 #### Defined in
 
 [src/listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L17)
+
+___
+
+### keepHeadersOpen
+
+• `Optional` **keepHeadersOpen**: `boolean`
+
+#### Defined in
+
+[src/listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L18)
 
 ___
 
