@@ -124,7 +124,7 @@ export default class Master {
       });
 
       socket.on("end", () => {
-        console.log("Listener disconnected at ${new Date().toLocaleString()}");
+        console.log(`Listener disconnected at ${new Date().toLocaleString()}`);
         try {
           socket.destroy();
         } catch (err) {
