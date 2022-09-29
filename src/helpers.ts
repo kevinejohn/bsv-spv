@@ -11,6 +11,7 @@ export function formatBytes(bytes: number) {
 }
 
 export function formatSpeeds(bytes: number, seconds: number) {
+  if (seconds === 0 || bytes === 0) return "";
   return `${formatBytes(bytes)}, ${formatBytes(bytes / seconds)}/s ${Number(
     ((bytes / seconds) * 8) / (1024 * 1024)
   ).toFixed(1)}Mbps`;
