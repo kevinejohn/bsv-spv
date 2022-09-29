@@ -87,6 +87,7 @@ export default class Listener extends EventEmitter {
   }
 
   reconnect() {
+    delete this.promiseSyncBlock;
     this.disconnect();
     this.reconnectTimeout = setTimeout(
       () => this.connect({ host: this.host, port: this.port }),
