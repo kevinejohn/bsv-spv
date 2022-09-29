@@ -52,7 +52,7 @@ export default class Master {
 
     cluster.on("exit", (worker, code, signal) => {
       console.error(
-        `Worker ${worker.id} exited with code: ${code}, signal: ${signal}`
+        `master Worker ${worker.id} exited with code: ${code}, signal: ${signal}`
       );
       process.exit(code); // TODO: Recover instead of shutting down
     });
@@ -84,7 +84,7 @@ export default class Master {
           })}\n\n`
         );
         this.workers[`blocks-${node}`] = worker;
-        console.log(`Forked blocks-${node}`);
+        console.log(`master Forked blocks-${node}`);
       }
       if (mempool) {
         worker = cluster.fork();
@@ -97,7 +97,7 @@ export default class Master {
           })}\n\n`
         );
         this.workers[`mempool-${node}`] = worker;
-        console.log(`Forked mempool-${node}`);
+        console.log(`master Forked mempool-${node}`);
       }
     }
 
@@ -105,7 +105,7 @@ export default class Master {
       setInterval(() => {
         const m: any = process.memoryUsage();
         console.log(
-          `Master Memory: ${Object.keys(m)
+          `master Memory: ${Object.keys(m)
             .map((key: string) => `${key}: ${Helpers.formatBytes(m[key])}`)
             .join(", ")}`
         );
@@ -124,14 +124,14 @@ export default class Master {
     this.server = server;
 
     server.listen(port, host, () => {
-      console.log(`Master opened socket ${host}:${port}`);
+      console.log(`master opened socket ${host}:${port}`);
     });
 
     server.on("connection", (socket) => {
       const uid = `${Math.random()}`;
       this.sockets[uid] = socket;
       console.log(
-        `A new listener has connected at ${new Date().toLocaleString()}`
+        `master A new listener has connected at ${new Date().toLocaleString()}`
       );
 
       socket.on("data", (chunk) => {
@@ -139,7 +139,9 @@ export default class Master {
       });
 
       socket.on("end", () => {
-        console.log(`Listener disconnected at ${new Date().toLocaleString()}`);
+        console.log(
+          `master Listener disconnected at ${new Date().toLocaleString()}`
+        );
         try {
           socket.destroy();
         } catch (err) {
@@ -167,7 +169,7 @@ export default class Master {
         this.sockets[key].write(data);
       }
     } catch (err) {
-      console.log(`Could not send message`, err, typeof data, data);
+      console.log(`master Could not send message`, err, typeof data, data);
     }
   }
 }
