@@ -42,14 +42,14 @@ listener.on("mempool_txs_saved", ({ txids }: { txids: string[] }) => {
 });
 listener.on(
   "block_reorg",
-  async ({ height, hash }: { height: number; hash: string }) => {
+  ({ height, hash }: { height: number; hash: string }) => {
     // Re-org after height
   }
 );
 listener.on(
   "block_saved",
-  async ({ height, hash }: { height: number; hash: string }) => {
-    await listener.syncBlocks(onBlock);
+  ({ height, hash }: { height: number; hash: string }) => {
+    listener.syncBlocks(onBlock);
   }
 );
 

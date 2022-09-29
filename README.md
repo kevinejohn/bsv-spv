@@ -16,7 +16,7 @@ npm i bsv-spv
 
 ## Use
 
-```js
+```ts
 const { Master, Worker } = require("bsv-spv");
 const cluster = require("cluster");
 
@@ -30,10 +30,10 @@ const config = {
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)
   dataDir: __dirname, // Directory to store files
   pruneBlocks: 0, // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
-  blockHeight: -1, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
+  blockHeight: -10, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
   MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // Prune mempool txs after 2 hours
-  // mempool: false, // Disable mempool
-  // blocks: false, // Disable blocks
+  mempool: true, // Enable/disable mempool
+  blocks: true, // Enable/disable block downloads
 };
 
 if (cluster.isWorker) {
@@ -46,14 +46,14 @@ if (cluster.isWorker) {
 
 ### Listen to mempool and block transactions from other processes
 
-```js
+```ts
 const { Listener } = require("bsv-spv");
 
 const name = "test-plugin";
 const ticker = "BSV";
 const blockHeight = -10; // Number. If negative then it's number from the tip.
-
 const dataDir = __dirname;
+const port = 8080; // Same as Masters port above
 const listener = new Listener({ name, ticker, blockHeight, dataDir });
 
 const onBlock = ({
@@ -66,11 +66,9 @@ const onBlock = ({
   transactions,
   startDate,
 }) => {
-  // for (const [index, tx, pos, len] of transactions) {
-  //   console.log(
-  //     `#${index} tx ${tx.getTxid()} in block ${height}`
-  //   );
-  // }
+  for (const [index, tx, pos, len] of transactions) {
+    console.log(`#${index} tx ${tx.getTxid()} in block ${height}`);
+  }
 };
 
 const onMempool = ({ txids }) => {
@@ -85,17 +83,17 @@ const onMempool = ({ txids }) => {
 
 listener.on("headers_saved", ({ hashes }) => {});
 listener.on("mempool_txs_saved", ({ txids }) => {
-  // onMempool({ txids });
+  onMempool({ txids });
 });
-listener.on("block_reorg", async ({ height, hash }) => {
+listener.on("block_reorg", ({ height, hash }) => {
   // Re-org after height
 });
-listener.on("block_saved", async ({ height, hash }) => {
-  await listener.syncBlocks(onBlock);
+listener.on("block_saved", ({ height, hash }) => {
+  listener.syncBlocks(onBlock);
 });
 
 listener.syncBlocks(onBlock);
-listener.connect();
+listener.connect({ port });
 ```
 
 ### Serve txs from express server
@@ -106,9 +104,10 @@ const { Server } = require("bsv-spv");
 const name = "test-server";
 const ticker = "BSV";
 const dataDir = __dirname;
+const port = 8080; // Same as Masters port above
 const server = new Server({ name, ticker, dataDir });
-server.connect();
-server.listen();
+server.connect({ port });
+server.listen({ port: 8081 }); // Express server to server txs
 
 // Get tx from block
 // wget 'http://localhost:8081/txid/11bcd81b9c0d9082799e83b29617c1d3e2d663ef4351754c40c5efa0f33e2e91?block=00000000000000000a62b5c6a75e5c24f8bdb1f21501ee5651a09d11ecaaadca&len=173&pos=81'
@@ -155,13 +154,13 @@ invalidBlocks = [
 ## Tests
 
 ```js
-node ./tests/cluster.js
+ts-node ./tests/cluster.js
 ```
 
 ```js
-node ./tests/listener.js
+ts-node ./tests/listener.js
 ```
 
 ```js
-node ./tests/server.js
+ts-node ./tests/server.js
 ```
