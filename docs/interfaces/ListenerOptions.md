@@ -6,6 +6,7 @@
 
 ### Properties
 
+- [DEBUG\_MEMORY](ListenerOptions.md#debug_memory)
 - [blockHeight](ListenerOptions.md#blockheight)
 - [dataDir](ListenerOptions.md#datadir)
 - [disableInterval](ListenerOptions.md#disableinterval)
@@ -13,6 +14,16 @@
 - [ticker](ListenerOptions.md#ticker)
 
 ## Properties
+
+### DEBUG\_MEMORY
+
+• `Optional` **DEBUG\_MEMORY**: `boolean`
+
+#### Defined in
+
+[src/listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L18)
+
+___
 
 ### blockHeight
 

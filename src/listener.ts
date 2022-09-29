@@ -15,6 +15,7 @@ export interface ListenerOptions {
   dataDir: string;
   ticker: string;
   disableInterval?: boolean;
+  DEBUG_MEMORY?: boolean;
 }
 
 export default class Listener extends EventEmitter {
@@ -46,9 +47,20 @@ export default class Listener extends EventEmitter {
     dataDir,
     ticker,
     disableInterval = false,
+    DEBUG_MEMORY = false,
   }: ListenerOptions) {
     super();
     this.setMaxListeners(0);
+    if (DEBUG_MEMORY) {
+      setInterval(() => {
+        const m: any = process.memoryUsage();
+        console.log(
+          `Memory: ${Object.keys(m)
+            .map((key: string) => `${key}: ${Helpers.formatBytes(m[key])}`)
+            .join(", ")}`
+        );
+      }, 1000 * 60);
+    }
     if (!name) throw Error(`Missing plugin name`);
     if (!ticker) throw Error(`Missing ticker!`);
     if (!dataDir) throw Error(`Missing dataDir`);

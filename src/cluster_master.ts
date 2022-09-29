@@ -1,5 +1,6 @@
 import cluster, { Worker } from "cluster";
 import { SpvOptions } from "./spv";
+import * as Helpers from "./helpers";
 import Net from "net";
 
 process.on("unhandledRejection", (reason, p) => {
@@ -23,6 +24,7 @@ export interface MasterOptions {
   blocks: boolean;
   MEMPOOL_PRUNE_AFTER: number;
   DEBUG_LOG?: boolean;
+  DEBUG_MEMORY?: boolean;
 }
 
 export default class Master {
@@ -43,6 +45,7 @@ export default class Master {
     blocks,
     MEMPOOL_PRUNE_AFTER,
     DEBUG_LOG,
+    DEBUG_MEMORY,
   }: MasterOptions) {
     this.sockets = {};
     this.workers = {};
@@ -68,6 +71,7 @@ export default class Master {
         blockHeight,
         MEMPOOL_PRUNE_AFTER,
         DEBUG_LOG,
+        DEBUG_MEMORY,
       };
       if (blocks) {
         worker = cluster.fork();
@@ -95,6 +99,17 @@ export default class Master {
         this.workers[`mempool-${node}`] = worker;
         console.log(`Forked mempool-${node}`);
       }
+    }
+
+    if (DEBUG_MEMORY) {
+      setInterval(() => {
+        const m: any = process.memoryUsage();
+        console.log(
+          `Master Memory: ${Object.keys(m)
+            .map((key: string) => `${key}: ${Helpers.formatBytes(m[key])}`)
+            .join(", ")}`
+        );
+      }, 1000 * 60);
     }
   }
 

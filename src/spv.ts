@@ -7,6 +7,7 @@ import DbBlocks from "./db_blocks";
 import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
 import DbPlugin from "./db_plugin";
+import * as Helpers from "./helpers";
 import * as path from "path";
 
 export interface SpvOptions {
@@ -24,6 +25,7 @@ export interface SpvOptions {
   blockHeight?: number;
   MEMPOOL_PRUNE_AFTER?: number;
   DEBUG_LOG?: boolean;
+  DEBUG_MEMORY?: boolean;
 }
 
 export default class Spv extends EventEmitter {
