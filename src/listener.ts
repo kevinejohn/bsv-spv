@@ -15,7 +15,6 @@ export interface ListenerOptions {
   dataDir: string;
   ticker: string;
   disableInterval?: boolean;
-  keepHeadersOpen?: boolean;
   DEBUG_MEMORY?: boolean;
 }
 
@@ -49,7 +48,6 @@ export default class Listener extends EventEmitter {
     ticker,
     disableInterval = false,
     DEBUG_MEMORY = false,
-    keepHeadersOpen = false,
   }: ListenerOptions) {
     super();
     this.setMaxListeners(0);
@@ -89,7 +87,6 @@ export default class Listener extends EventEmitter {
     this.db_headers = new DbHeaders({
       headersDir,
       headers,
-      keepOpen: keepHeadersOpen,
     });
     this.db_plugin = new DbPlugin({ pluginDir });
 

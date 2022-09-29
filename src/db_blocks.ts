@@ -9,6 +9,9 @@ export default class DbBlocks {
   writeStream?: fs.WriteStream;
   env: any;
   dbi_blocks: lmdb.Dbi;
+  dbIsOpen: boolean;
+  dbPath: string;
+  readOnly: boolean;
 
   constructor({
     blocksDir,
@@ -21,10 +24,12 @@ export default class DbBlocks {
     this.blocksDir = blocksDir;
     fs.mkdirSync(blocksDir, { recursive: true });
     const dbPath = path.join(blocksDir, "meta");
+    this.dbPath = dbPath;
     let initialize = false;
     if (!fs.existsSync(dbPath)) initialize = true;
     fs.mkdirSync(dbPath, { recursive: true });
 
+    this.readOnly = readOnly;
     this.env = new lmdb.Env();
     this.env.open({
       path: dbPath,
@@ -37,6 +42,7 @@ export default class DbBlocks {
       create: !readOnly,
       keyIsBuffer: true,
     });
+    this.dbIsOpen = true;
 
     if (initialize && !readOnly) {
       const hashes = this.getSavedBlocksSync();
@@ -50,9 +56,39 @@ export default class DbBlocks {
       });
       txn.commit();
     }
+    if (readOnly) this.close();
+  }
+
+  open() {
+    if (this.dbIsOpen) return;
+    this.env = new lmdb.Env();
+    this.env.open({
+      path: this.dbPath,
+      mapSize: 1 * 1024 * 1024 * 1024, // 1 GB max
+      maxDbs: 1,
+      readOnly: this.readOnly,
+    });
+    this.dbi_blocks = this.env.openDbi({
+      name: "blocks",
+      create: !this.readOnly,
+      keyIsBuffer: true,
+    });
+    this.dbIsOpen = true;
+  }
+
+  close() {
+    if (!this.dbIsOpen) return;
+    try {
+      this.dbi_blocks.close();
+    } catch (err) {}
+    try {
+      this.env.close();
+    } catch (err) {}
+    this.dbIsOpen = false;
   }
 
   getSavedBlocks() {
+    this.open();
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_blocks, {
       keyIsBuffer: true,
@@ -67,6 +103,7 @@ export default class DbBlocks {
     }
     cursor.close();
     txn.commit();
+    if (this.readOnly) this.close();
     return hashes;
   }
 
@@ -217,9 +254,11 @@ export default class DbBlocks {
   }
 
   blockExists(hash: string) {
+    this.open();
     const txn = this.env.beginTxn({ readOnly: true });
     const value = txn.getBinary(this.dbi_blocks, Buffer.from(hash, "hex"));
     txn.commit();
+    if (this.readOnly) this.close();
     return !!value;
   }
 

@@ -17,10 +17,21 @@ export default class DbPlugin {
   env: any;
   dbi_blocks: lmdb.Dbi;
   dbi_heights: lmdb.Dbi;
+  dbIsOpen: boolean;
+  pluginDir: string;
+  readOnly: boolean;
 
-  constructor({ pluginDir }: { pluginDir: string }) {
+  constructor({
+    pluginDir,
+    readOnly = false,
+  }: {
+    pluginDir: string;
+    readOnly?: boolean;
+  }) {
     if (!pluginDir) throw Error(`Missing pluginDir`);
     fs.mkdirSync(pluginDir, { recursive: true });
+    this.pluginDir = pluginDir;
+    this.readOnly = readOnly;
 
     this.processedBlocks = {};
     this.env = new lmdb.Env();
@@ -39,9 +50,33 @@ export default class DbPlugin {
       create: true,
       keyIsBuffer: true,
     });
+    this.dbIsOpen = true;
+    if (this.readOnly) this.close();
+  }
+
+  open() {
+    if (this.dbIsOpen) return;
+    this.env = new lmdb.Env();
+    this.env.open({
+      path: this.pluginDir,
+      mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
+      maxDbs: 3,
+    });
+    this.dbi_blocks = this.env.openDbi({
+      name: "block_info",
+      create: true,
+      keyIsBuffer: true,
+    });
+    this.dbi_heights = this.env.openDbi({
+      name: "block_heights",
+      create: true,
+      keyIsBuffer: true,
+    });
+    this.dbIsOpen = true;
   }
 
   close() {
+    if (!this.dbIsOpen) return;
     try {
       this.dbi_blocks.close();
     } catch (err) {}
@@ -51,6 +86,7 @@ export default class DbPlugin {
     try {
       this.env.close();
     } catch (err) {}
+    this.dbIsOpen = true;
   }
 
   markBlockProcessed({
@@ -95,7 +131,6 @@ export default class DbPlugin {
           operations.push([this.dbi_blocks, blockHash, value]);
           operations.push([this.dbi_heights, key, blockHash]);
         }
-
         this.env.batchWrite(
           operations,
           { keyIsBuffer: true },
@@ -111,6 +146,7 @@ export default class DbPlugin {
   }
 
   loadBlocks() {
+    this.open();
     const txn = this.env.beginTxn({ readOnly: true });
     const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_heights, {
       keyIsBuffer: true,
@@ -123,6 +159,7 @@ export default class DbPlugin {
     }
     cursor.close();
     txn.commit();
+    if (this.readOnly) this.close();
   }
 
   isProcessed(height: number) {
@@ -137,11 +174,13 @@ export default class DbPlugin {
 
   getBlockInfo(blockHash: string | Buffer) {
     if (!Buffer.isBuffer(blockHash)) blockHash = Buffer.from(blockHash, "hex");
+    this.open();
     const txn = this.env.beginTxn({ readOnly: true });
     const value = txn.getBinary(this.dbi_blocks, blockHash, {
       keyIsBuffer: true,
     });
     txn.commit();
+    if (this.readOnly) this.close();
     if (!value) throw Error(`Missing block info`);
     return JSON.parse(value.toString());
   }
@@ -150,9 +189,11 @@ export default class DbPlugin {
     const bw = new bsv.utils.BufferWriter();
     bw.writeUInt32LE(height);
     const key = bw.toBuffer();
+    this.open();
     const txn = this.env.beginTxn({ readOnly: true });
     const value = txn.getBinary(this.dbi_heights, key, { keyIsBuffer: true });
     txn.commit();
+    if (this.readOnly) this.close();
     if (!value) throw Error(`Missing block height`);
     return value.toString("hex");
   }

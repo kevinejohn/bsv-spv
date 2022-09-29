@@ -10,10 +10,13 @@
 
 ### Properties
 
+- [dbIsOpen](DbPlugin.md#dbisopen)
 - [dbi\_blocks](DbPlugin.md#dbi_blocks)
 - [dbi\_heights](DbPlugin.md#dbi_heights)
 - [env](DbPlugin.md#env)
+- [pluginDir](DbPlugin.md#plugindir)
 - [processedBlocks](DbPlugin.md#processedblocks)
+- [readOnly](DbPlugin.md#readonly)
 
 ### Methods
 
@@ -27,6 +30,7 @@
 - [isProcessed](DbPlugin.md#isprocessed)
 - [loadBlocks](DbPlugin.md#loadblocks)
 - [markBlockProcessed](DbPlugin.md#markblockprocessed)
+- [open](DbPlugin.md#open)
 
 ## Constructors
 
@@ -40,12 +44,23 @@
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.pluginDir` | `string` |
+| `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
-[src/db_plugin.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L21)
+[src/db_plugin.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L24)
 
 ## Properties
+
+### dbIsOpen
+
+• **dbIsOpen**: `boolean`
+
+#### Defined in
+
+[src/db_plugin.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L20)
+
+___
 
 ### dbi\_blocks
 
@@ -77,6 +92,16 @@ ___
 
 ___
 
+### pluginDir
+
+• **pluginDir**: `string`
+
+#### Defined in
+
+[src/db_plugin.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L21)
+
+___
+
 ### processedBlocks
 
 • **processedBlocks**: `Object`
@@ -88,6 +113,16 @@ ___
 #### Defined in
 
 [src/db_plugin.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L16)
+
+___
+
+### readOnly
+
+• **readOnly**: `boolean`
+
+#### Defined in
+
+[src/db_plugin.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L22)
 
 ## Methods
 
@@ -107,7 +142,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L80)
+[src/db_plugin.ts:116](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L116)
 
 ___
 
@@ -121,7 +156,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:131](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L131)
+[src/db_plugin.ts:168](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L168)
 
 ___
 
@@ -135,7 +170,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L44)
+[src/db_plugin.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L78)
 
 ___
 
@@ -156,7 +191,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:160](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L160)
+[src/db_plugin.ts:201](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L201)
 
 ___
 
@@ -176,7 +211,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:149](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L149)
+[src/db_plugin.ts:188](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L188)
 
 ___
 
@@ -196,7 +231,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:138](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L138)
+[src/db_plugin.ts:175](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L175)
 
 ___
 
@@ -216,7 +251,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:134](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L134)
+[src/db_plugin.ts:171](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L171)
 
 ___
 
@@ -236,7 +271,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:128](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L128)
+[src/db_plugin.ts:165](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L165)
 
 ___
 
@@ -250,7 +285,7 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L113)
+[src/db_plugin.ts:148](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L148)
 
 ___
 
@@ -270,4 +305,18 @@ ___
 
 #### Defined in
 
-[src/db_plugin.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L56)
+[src/db_plugin.ts:92](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L92)
+
+___
+
+### open
+
+▸ **open**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/db_plugin.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_plugin.ts#L57)

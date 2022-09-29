@@ -9,19 +9,16 @@ export default class DbHeaders {
   dbi_headers: lmdb.Dbi;
   headersDir: string;
   readOnly: boolean;
-  keepOpen: boolean;
   dbIsOpen: boolean;
 
   constructor({
     headersDir,
     headers,
     readOnly = true,
-    keepOpen = true,
   }: {
     headersDir: string;
     headers: any;
     readOnly?: boolean;
-    keepOpen?: boolean;
   }) {
     if (!headersDir) throw Error(`Missing headersDir`);
     if (!headers) throw Error(`Missing headers param`);
@@ -29,7 +26,6 @@ export default class DbHeaders {
     this.headers = headers;
     this.headersDir = headersDir;
     this.readOnly = readOnly;
-    this.keepOpen = keepOpen;
 
     this.env = new lmdb.Env();
     this.env.open({
@@ -45,6 +41,7 @@ export default class DbHeaders {
     });
     this.dbIsOpen = true;
     this.loadHeaders();
+    if (this.readOnly) this.close();
   }
 
   open() {
@@ -79,7 +76,6 @@ export default class DbHeaders {
     return new Promise((resolve, reject) => {
       try {
         if (this.readOnly) throw Error(`Headers opened as readOnly`);
-        this.open();
         const hashes: Buffer[] = [];
         if (headerArray.length === 0) return resolve(hashes);
         const operations: any = [];
@@ -99,7 +95,6 @@ export default class DbHeaders {
             headerArray.map(
               (header, i) => results[i] === 0 && hashes.push(header.getHash())
             );
-            if (!this.keepOpen) this.close();
             resolve(hashes);
           }
         );
@@ -118,7 +113,7 @@ export default class DbHeaders {
     const txn = this.env.beginTxn({ readOnly: true });
     const buf = txn.getBinary(this.dbi_headers, hash, { keyIsBuffer: true });
     txn.commit();
-    if (!this.keepOpen) this.close();
+    if (this.readOnly) this.close();
     if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;
@@ -142,7 +137,7 @@ export default class DbHeaders {
     }
     cursor.close();
     txn.commit();
-    if (!this.keepOpen) this.close();
+    if (this.readOnly) this.close();
     this.headers.process();
   }
 }

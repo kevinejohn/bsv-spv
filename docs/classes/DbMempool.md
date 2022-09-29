@@ -10,10 +10,13 @@
 
 ### Properties
 
+- [dbIsOpen](DbMempool.md#dbisopen)
 - [dbi\_tx\_times](DbMempool.md#dbi_tx_times)
 - [dbi\_txs](DbMempool.md#dbi_txs)
 - [env](DbMempool.md#env)
+- [mempoolDir](DbMempool.md#mempooldir)
 - [pruneAfter](DbMempool.md#pruneafter)
+- [readOnly](DbMempool.md#readonly)
 
 ### Methods
 
@@ -22,6 +25,7 @@
 - [getTx](DbMempool.md#gettx)
 - [getTxids](DbMempool.md#gettxids)
 - [getTxs](DbMempool.md#gettxs)
+- [open](DbMempool.md#open)
 - [pruneTxs](DbMempool.md#prunetxs)
 - [saveTimes](DbMempool.md#savetimes)
 - [saveTxs](DbMempool.md#savetxs)
@@ -43,9 +47,19 @@
 
 #### Defined in
 
-[src/db_mempool.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L11)
+[src/db_mempool.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L14)
 
 ## Properties
+
+### dbIsOpen
+
+• **dbIsOpen**: `boolean`
+
+#### Defined in
+
+[src/db_mempool.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L12)
+
+___
 
 ### dbi\_tx\_times
 
@@ -77,6 +91,16 @@ ___
 
 ___
 
+### mempoolDir
+
+• **mempoolDir**: `string`
+
+#### Defined in
+
+[src/db_mempool.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L10)
+
+___
+
 ### pruneAfter
 
 • **pruneAfter**: `number`
@@ -84,6 +108,16 @@ ___
 #### Defined in
 
 [src/db_mempool.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L6)
+
+___
+
+### readOnly
+
+• **readOnly**: `boolean`
+
+#### Defined in
+
+[src/db_mempool.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L11)
 
 ## Methods
 
@@ -97,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L43)
+[src/db_mempool.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L72)
 
 ___
 
@@ -117,7 +151,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:111](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L111)
+[src/db_mempool.ts:152](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L152)
 
 ___
 
@@ -144,7 +178,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:174](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L174)
+[src/db_mempool.ts:222](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L222)
 
 ___
 
@@ -166,7 +200,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:132](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L132)
+[src/db_mempool.ts:178](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L178)
 
 ___
 
@@ -193,7 +227,21 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:181](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L181)
+[src/db_mempool.ts:229](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L229)
+
+___
+
+### open
+
+▸ **open**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/db_mempool.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L50)
 
 ___
 
@@ -213,7 +261,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:235](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L235)
+[src/db_mempool.ts:285](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L285)
 
 ___
 
@@ -233,7 +281,7 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:87](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L87)
+[src/db_mempool.ts:123](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L123)
 
 ___
 
@@ -253,4 +301,4 @@ ___
 
 #### Defined in
 
-[src/db_mempool.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L55)
+[src/db_mempool.ts:86](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L86)

@@ -14,14 +14,14 @@ export default class Server extends Listener {
     dataDir,
     MAX_FILE_SIZE = 1024 * 1024 * 500, // 500MB
     disableInterval = true,
-    keepHeadersOpen = true,
+    DEBUG_MEMORY = false,
   }: {
     name: string;
     ticker: string;
     dataDir: string;
     MAX_FILE_SIZE?: number;
     disableInterval?: boolean;
-    keepHeadersOpen?: boolean;
+    DEBUG_MEMORY?: boolean;
   }) {
     super({
       name,
@@ -29,7 +29,7 @@ export default class Server extends Listener {
       blockHeight: -1,
       dataDir,
       disableInterval,
-      keepHeadersOpen,
+      DEBUG_MEMORY,
     });
 
     this.SHOW_LOGS = true;

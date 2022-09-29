@@ -15,7 +15,6 @@
 - [env](DbHeaders.md#env)
 - [headers](DbHeaders.md#headers)
 - [headersDir](DbHeaders.md#headersdir)
-- [keepOpen](DbHeaders.md#keepopen)
 - [readOnly](DbHeaders.md#readonly)
 
 ### Methods
@@ -39,12 +38,11 @@
 | `__namedParameters` | `Object` |
 | `__namedParameters.headers` | `any` |
 | `__namedParameters.headersDir` | `string` |
-| `__namedParameters.keepOpen?` | `boolean` |
 | `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
-[src/db_headers.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L15)
+[src/db_headers.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L14)
 
 ## Properties
 
@@ -54,7 +52,7 @@
 
 #### Defined in
 
-[src/db_headers.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L13)
+[src/db_headers.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L12)
 
 ___
 
@@ -98,16 +96,6 @@ ___
 
 ___
 
-### keepOpen
-
-• **keepOpen**: `boolean`
-
-#### Defined in
-
-[src/db_headers.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L12)
-
-___
-
 ### readOnly
 
 • **readOnly**: `boolean`
@@ -128,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L67)
+[src/db_headers.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L64)
 
 ___
 
@@ -148,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L112)
+[src/db_headers.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L107)
 
 ___
 
@@ -162,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:127](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L127)
+[src/db_headers.ts:122](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L122)
 
 ___
 
@@ -176,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L50)
+[src/db_headers.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L47)
 
 ___
 
@@ -196,4 +184,4 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L78)
+[src/db_headers.ts:75](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L75)
