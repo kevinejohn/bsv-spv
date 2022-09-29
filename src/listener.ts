@@ -87,7 +87,6 @@ export default class Listener extends EventEmitter {
   }
 
   reconnect() {
-    delete this.promiseSyncBlock;
     this.disconnect();
     this.reconnectTimeout = setTimeout(
       () => this.connect({ host: this.host, port: this.port }),
@@ -110,6 +109,7 @@ export default class Listener extends EventEmitter {
       }
     } catch (err) {}
     this.client = undefined;
+    delete this.promiseSyncBlock;
     clearInterval(this.interval);
     clearTimeout(this.reconnectTimeout);
   }
