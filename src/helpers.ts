@@ -1,5 +1,7 @@
 export function formatBytes(bytes: number) {
-  if (bytes >= 1000000000) {
+  if (bytes === 0) {
+    return ``;
+  } else if (bytes >= 1000000000) {
     return `${Number(bytes / 1000000000).toFixed(1)}GB`;
   } else if (bytes >= 1000000) {
     return `${Number(bytes / 1000000).toFixed(1)}MB`;
