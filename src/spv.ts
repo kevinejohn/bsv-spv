@@ -7,7 +7,6 @@ import DbBlocks from "./db_blocks";
 import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
 import DbPlugin from "./db_plugin";
-import * as Helpers from "./helpers";
 import * as path from "path";
 
 export interface SpvOptions {
@@ -29,6 +28,7 @@ export interface SpvOptions {
 }
 
 export default class Spv extends EventEmitter {
+  id: string;
   ticker: string;
   node: string;
   saveBlocks: boolean;
@@ -46,7 +46,8 @@ export default class Spv extends EventEmitter {
   syncingHeaders?: Promise<number>;
   syncingBlocks: boolean;
   connecting: boolean;
-  mempoolInterval: any;
+  mempoolInterval?: NodeJS.Timer;
+  pingInterval?: NodeJS.Timer;
   mempoolTxCache: bsvMin.Transaction[];
 
   constructor({
@@ -68,6 +69,7 @@ export default class Spv extends EventEmitter {
     super();
     this.setMaxListeners(0);
     if (!dataDir) throw Error(`Missing dataDir`);
+    this.id = `${mempool ? "mempool-" : ""}${blocks ? "blocks-" : ""}${node}`;
     this.saveBlocks = blocks;
     this.saveMempool = mempool;
     this.pruneBlocks = pruneBlocks;
@@ -88,6 +90,7 @@ export default class Spv extends EventEmitter {
       mempoolTxs: mempool,
       DEBUG_LOG,
     });
+    console.log(`${this.id} Loading headers from disk...`);
     const headers = new Headers({ invalidBlocks });
     this.headers = headers;
     dataDir = path.join(dataDir, ticker);
@@ -295,10 +298,31 @@ export default class Spv extends EventEmitter {
       }
     });
     await this.peer.connect(options);
+    clearInterval(this.pingInterval);
+    let pingFails = 0;
+    this.pingInterval = setInterval(async () => {
+      if (!this.peer.buffers.downloadingBlock) {
+        try {
+          const ms = await this.peer.ping(15);
+          // console.log(`${this.id} Ping in ${ms}`);
+          pingFails = 0;
+        } catch (err) {
+          console.warn(`${this.id} Ping failed ${pingFails + 1} times!`);
+          if (pingFails++ >= 2) {
+            console.error(`${this.node} not responding. Reconnecting...`);
+            this.disconnect();
+            this.connect(options);
+          }
+        }
+      } else {
+        pingFails = 0;
+      }
+    }, 1000 * 30);
   }
   disconnect() {
     this.connecting = false;
     this.peer.disconnect();
+    clearInterval(this.pingInterval);
     clearInterval(this.mempoolInterval);
     this.mempoolTxCache = [];
   }
@@ -369,6 +393,7 @@ export default class Spv extends EventEmitter {
   onMempoolTx() {
     if (this.saveMempool) {
       this.mempoolTxCache = [];
+      clearInterval(this.mempoolInterval);
       this.mempoolInterval = setInterval(async () => {
         if (this.mempoolTxCache.length > 0) {
           const txs = this.mempoolTxCache;
@@ -462,7 +487,9 @@ export default class Spv extends EventEmitter {
     try {
       if (this.db_plugin.blocksProcessed() === 0) {
         const startDate = +new Date();
-        console.log(`Finding which blocks are already saved to disk...`);
+        console.log(
+          `${this.id} Finding which blocks are already saved to disk...`
+        );
         // Quicker initialization to figure out which blocks are saved
         const hashes = this.db_blocks.getSavedBlocks();
         const arr = [];
@@ -473,10 +500,10 @@ export default class Spv extends EventEmitter {
             arr.push({ height, blockHash });
           } catch (err) {}
         }
-        console.log(`Found ${arr.length} already saved blocks.`);
+        console.log(`${this.id} Found ${arr.length} already saved blocks.`);
         await this.db_plugin.batchBlocksProcessed(arr);
         console.log(
-          `${arr.length} blocks have already been saved. Took ${
+          `${this.id} ${arr.length} blocks have already been saved. Took ${
             (+new Date() - startDate) / 1000
           } seconds to determine.`
         );

@@ -34,7 +34,7 @@ export default class Worker {
   }
 
   async start(config: SpvOptions) {
-    const { node, mempool, blocks, MEMPOOL_PRUNE_AFTER, DEBUG_MEMORY } = config;
+    const { mempool, blocks, MEMPOOL_PRUNE_AFTER, DEBUG_MEMORY } = config;
     const REFRESH = 10; // console.log status every 10 seconds
     let interval: NodeJS.Timer;
     // let txsSeen = 0;
@@ -42,8 +42,10 @@ export default class Worker {
     let txsSize = 0;
     let blockInterval: NodeJS.Timer;
 
-    const id = `${mempool ? "mempool " : ""}${blocks ? "blocks " : ""}${node}`;
-    console.log(`${id} Loading headers from disk...`);
+    let date = +new Date();
+    const spv = new Spv(config);
+    this.spv = spv;
+    const id = spv.id;
 
     if (DEBUG_MEMORY) {
       setInterval(() => {
@@ -55,10 +57,6 @@ export default class Worker {
         );
       }, 1000 * 60);
     }
-
-    let date = +new Date();
-    const spv = new Spv(config);
-    this.spv = spv;
 
     let { height, hash } = spv.getTip();
     console.log(
