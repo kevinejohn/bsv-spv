@@ -16,15 +16,22 @@ export interface ListenerOptions {
   ticker: string;
   disableInterval?: boolean;
   DEBUG_MEMORY?: boolean;
+  multithread?: {
+    // Optional. Sync only blocks that equals: (((height + index) % threads) === 0). Used for speeding up block syncing using multi-threading
+    threads: number; // Number of threads
+    index: number; // #0-#(threads - 1) index of thread
+  };
 }
 
 export default class Listener extends EventEmitter {
-  ticker: string;
-  host?: string;
-  port?: number;
-  blockHeight: number;
+  ticker: ListenerOptions["ticker"];
+  name: ListenerOptions["name"];
+  blockHeight: ListenerOptions["blockHeight"];
+  disableInterval: ListenerOptions["disableInterval"];
+  multithread?: ListenerOptions["multithread"];
+  host: string;
+  port: number;
   reconnectTime: number;
-  disableInterval: boolean;
   db_mempool: DbMempool;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
@@ -47,6 +54,7 @@ export default class Listener extends EventEmitter {
     dataDir,
     ticker,
     disableInterval = false,
+    multithread,
     DEBUG_MEMORY = false,
   }: ListenerOptions) {
     super();
@@ -65,21 +73,23 @@ export default class Listener extends EventEmitter {
     if (!ticker) throw Error(`Missing ticker!`);
     if (!dataDir) throw Error(`Missing dataDir`);
     this.ticker = ticker;
+    this.name = name;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
+    this.host = "localhost";
+    this.port = 8080;
     this.disableInterval = disableInterval;
     this.txsSeen = 0;
     this.txsSize = 0;
+    this.multithread = multithread;
     const startDate = +new Date();
 
+    const mempoolDir = path.join(dataDir, ticker, "mempool");
+    const blocksDir = path.join(dataDir, ticker, "blocks");
+    const headersDir = path.join(dataDir, ticker, "headers");
+    const pluginDir = path.join(dataDir, ticker, "listeners", name);
+
     console.log(`Loading headers from disk....`);
-
-    dataDir = path.join(dataDir, ticker);
-    const mempoolDir = path.join(dataDir, "mempool");
-    const blocksDir = path.join(dataDir, "blocks");
-    const headersDir = path.join(dataDir, "headers");
-    const pluginDir = path.join(dataDir, "listeners", name);
-
     const headers = new Headers();
     this.headers = headers;
     this.db_mempool = new DbMempool({ mempoolDir });
@@ -166,7 +176,13 @@ export default class Listener extends EventEmitter {
     this.emit(command, data);
   }
 
-  connect({ host = "localhost", port = 8080 }) {
+  connect({
+    host = this.host,
+    port = this.port,
+  }: {
+    host?: string;
+    port: number;
+  }) {
     if (this.client) return;
     this.host = host;
     this.port = port;
@@ -252,6 +268,14 @@ export default class Listener extends EventEmitter {
           const date = +new Date();
           let tip = this.headers.getTip();
           for (let height = this.blockHeight; height <= tip.height; height++) {
+            if (this.multithread) {
+              if (
+                (height + this.multithread.index) % this.multithread.threads !==
+                0
+              ) {
+                continue;
+              }
+            }
             const hash = this.headers.getHash(height);
             if (
               this.db_plugin.isProcessed(height) &&

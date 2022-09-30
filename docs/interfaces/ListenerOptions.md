@@ -10,6 +10,7 @@
 - [blockHeight](ListenerOptions.md#blockheight)
 - [dataDir](ListenerOptions.md#datadir)
 - [disableInterval](ListenerOptions.md#disableinterval)
+- [multithread](ListenerOptions.md#multithread)
 - [name](ListenerOptions.md#name)
 - [ticker](ListenerOptions.md#ticker)
 
@@ -52,6 +53,23 @@ ___
 #### Defined in
 
 [src/listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L17)
+
+___
+
+### multithread
+
+• `Optional` **multithread**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `index` | `number` |
+| `threads` | `number` |
+
+#### Defined in
+
+[src/listener.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L19)
 
 ___
 
