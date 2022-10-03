@@ -47,7 +47,6 @@ export default class Spv extends EventEmitter {
   syncingBlocks: boolean;
   connecting: boolean;
   mempoolInterval?: NodeJS.Timer;
-  pingInterval?: NodeJS.Timer;
   mempoolTxCache: bsvMin.Transaction[];
 
   constructor({
@@ -298,32 +297,10 @@ export default class Spv extends EventEmitter {
       }
     });
     await this.peer.connect(options);
-    clearInterval(this.pingInterval);
-    let pingFails = 0;
-    this.pingInterval = setInterval(async () => {
-      if (!this.peer.buffers.downloadingBlock) {
-        try {
-          const ms = await this.peer.ping(15);
-          // console.log(`${this.id} Ping in ${ms}`);
-          pingFails = 0;
-        } catch (err) {
-          console.warn(`${this.id} Ping failed ${pingFails + 1} times!`);
-          if (pingFails++ >= 2) {
-            console.error(`${this.node} not responding. Reconnecting...`);
-            this.disconnect();
-            this.connect(options);
-          }
-        }
-      } else {
-        pingFails = 0;
-      }
-    }, 1000 * 30);
   }
   disconnect() {
     this.connecting = false;
     this.peer.disconnect();
-    clearInterval(this.pingInterval);
-    clearInterval(this.mempoolInterval);
     this.mempoolTxCache = [];
   }
   getHeight(hash?: string) {
@@ -401,7 +378,7 @@ export default class Spv extends EventEmitter {
           const { txids, size } = await this.db_mempool.saveTxs(txs);
           if (txids.length > 0) this.emit(`mempool_txs_saved`, { txids, size });
         }
-      }, 200); // Batch mempool txs
+      }, 300); // Batch mempool txs
     }
     this.peer.on("transactions", ({ header, transactions }) => {
       if (header) return;
