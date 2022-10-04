@@ -288,7 +288,7 @@ export default class Listener extends EventEmitter {
               let errors = 0;
               let matches = 0;
 
-              // console.log(`Syncing block: ${height} ${hash}...`);
+              // console.log(`Syncing block: ${height}/${tip.height} ${hash}...`);
               await this.readBlock(
                 { height, hash },
                 async (params: BlockStream) => {
@@ -332,7 +332,7 @@ export default class Listener extends EventEmitter {
               );
             } catch (err: any) {
               // console.error(
-              //   `Block ${height} ${hash} not saved: ${err.message}`
+              //   `Block ${height}/${tip.height} ${hash} not saved: ${err.message}`
               // );
               // Block not saved
               skipped++;

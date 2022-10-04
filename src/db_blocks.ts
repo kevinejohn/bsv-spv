@@ -169,10 +169,14 @@ export default class DbBlocks {
           try {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
-            stream.pause();
+
             if (height >= 0) result.height = height;
-            await callback(result);
-            stream.resume();
+            const promise = callback(result);
+            if (promise instanceof Promise) {
+              stream.pause();
+              await promise;
+              stream.resume();
+            }
           } catch (err) {
             stream.destroy();
             reject(err);
