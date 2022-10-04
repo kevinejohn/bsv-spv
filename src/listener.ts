@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import DbMempool from "./db_mempool";
 import DbBlocks from "./db_blocks";
 import DbHeaders from "./db_headers";
-import DbPlugin from "./db_plugin";
+import DbListener from "./db_listener";
 import Headers from "bsv-headers";
 import Net from "net";
 import path from "path";
@@ -35,7 +35,7 @@ export default class Listener extends EventEmitter {
   db_mempool: DbMempool;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
-  db_plugin: DbPlugin;
+  db_listener: DbListener;
   headers: Headers; // Fix
   reconnectTimeout?: NodeJS.Timeout;
   interval?: NodeJS.Timer;
@@ -87,7 +87,7 @@ export default class Listener extends EventEmitter {
     const mempoolDir = path.join(dataDir, ticker, "mempool");
     const blocksDir = path.join(dataDir, ticker, "blocks");
     const headersDir = path.join(dataDir, ticker, "headers");
-    const pluginDir = path.join(dataDir, ticker, "listeners", name);
+    const listenerDir = path.join(dataDir, ticker, "listeners", name);
 
     console.log(`Loading headers from disk....`);
     const headers = new Headers();
@@ -98,10 +98,9 @@ export default class Listener extends EventEmitter {
       headersDir,
       headers,
     });
-    this.db_plugin = new DbPlugin({ pluginDir });
+    this.db_listener = new DbListener({ listenerDir });
 
     this.db_headers.loadHeaders();
-    this.db_plugin.loadBlocks();
     const { height, hash } = this.headers.getTip();
     if (blockHeight < 0) this.blockHeight = height + blockHeight;
     console.log(
@@ -164,7 +163,7 @@ export default class Listener extends EventEmitter {
       );
       const from = height + 1;
       const to = this.headers.getHeight();
-      this.db_plugin.delBlocks(from, to);
+      this.db_listener.delBlocks(from, to);
     } else if (command === "block_saved") {
       const { height, hash } = data;
       console.log(
@@ -278,8 +277,8 @@ export default class Listener extends EventEmitter {
             }
             const hash = this.headers.getHash(height);
             if (
-              this.db_plugin.isProcessed(height) &&
-              hash === this.db_plugin.getHash(height)
+              this.db_listener.isProcessed(height) &&
+              hash === this.db_listener.getHash(height)
             )
               continue;
             try {
@@ -306,7 +305,7 @@ export default class Listener extends EventEmitter {
                     const { header, size, txCount, startDate } = params;
                     const blockHash = header ? header.getHash(true) : "";
                     const timer = +new Date() - startDate;
-                    this.db_plugin.markBlockProcessed({
+                    this.db_listener.markBlockProcessed({
                       blockHash,
                       height,
                       matches,
@@ -339,7 +338,7 @@ export default class Listener extends EventEmitter {
             `Synced ${processed} blocks (${Helpers.formatSpeeds(
               blockSize,
               seconds
-            )} in ${seconds} seconds. ${skipped} blocks missing. ${this.db_plugin.blocksProcessed()}/${
+            )} in ${seconds} seconds. ${skipped} blocks missing. ${this.db_listener.blocksProcessed()}/${
               tip.height
             } blocks processed at ${new Date().toLocaleString()}`
           );
@@ -354,7 +353,7 @@ export default class Listener extends EventEmitter {
   }
   getBlockInfo({ height, hash }: { height: number; hash: string }) {
     if (!hash) hash = this.headers.getHash(height);
-    return this.db_plugin.getBlockInfo(hash);
+    return this.db_listener.getBlockInfo(hash);
   }
 
   readBlock(

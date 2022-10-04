@@ -1,17 +1,15 @@
 import * as bsv from "bsv-minimal";
 import path from "path";
-import lmdb from "node-lmdb";
+import * as lmdb from "lmdb";
 import fs from "fs";
 
 export default class DbBlocks {
   blocksDir: string;
   writeDir?: string;
   writeStream?: fs.WriteStream;
-  env: any;
-  dbi_blocks: lmdb.Dbi;
-  dbIsOpen: boolean;
+  dbi_blocks: lmdb.Database<Buffer>;
+  dbi_root: lmdb.RootDatabase<Buffer>;
   dbPath: string;
-  readOnly: boolean;
 
   constructor({
     blocksDir,
@@ -29,81 +27,35 @@ export default class DbBlocks {
     if (!fs.existsSync(dbPath)) initialize = true;
     fs.mkdirSync(dbPath, { recursive: true });
 
-    this.readOnly = readOnly;
-    this.env = new lmdb.Env();
-    this.env.open({
-      path: dbPath,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1 GB max
-      maxDbs: 1,
-      readOnly,
-    });
-    this.dbi_blocks = this.env.openDbi({
+    this.dbi_root = lmdb.open({ path: dbPath, readOnly });
+    this.dbi_blocks = this.dbi_root.openDB({
       name: "blocks",
-      create: !readOnly,
-      keyIsBuffer: true,
+      encoding: "binary",
+      keyEncoding: "binary",
     });
-    this.dbIsOpen = true;
 
     if (initialize && !readOnly) {
       const hashes = this.getSavedBlocksSync();
-      const txn = this.env.beginTxn({ readOnly: false });
       hashes.forEach((hash: string) => {
-        txn.putBinary(
-          this.dbi_blocks,
-          Buffer.from(hash, "hex"),
-          Buffer.from("")
-        );
+        this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
       });
-      txn.commit();
     }
-    if (readOnly) this.close();
   }
 
-  open() {
-    if (this.dbIsOpen) return;
-    this.env = new lmdb.Env();
-    this.env.open({
-      path: this.dbPath,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1 GB max
-      maxDbs: 1,
-      readOnly: this.readOnly,
-    });
-    this.dbi_blocks = this.env.openDbi({
-      name: "blocks",
-      create: !this.readOnly,
-      keyIsBuffer: true,
-    });
-    this.dbIsOpen = true;
-  }
-
-  close() {
-    if (!this.dbIsOpen) return;
+  async close() {
     try {
-      this.dbi_blocks.close();
+      await this.dbi_blocks.close();
     } catch (err) {}
     try {
-      this.env.close();
+      await this.dbi_root.close();
     } catch (err) {}
-    this.dbIsOpen = false;
   }
 
   getSavedBlocks() {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_blocks, {
-      keyIsBuffer: true,
-    });
     const hashes: string[] = [];
-    for (
-      let hashBuf = cursor.goToFirst();
-      hashBuf !== null;
-      hashBuf = cursor.goToNext()
-    ) {
-      if (hashBuf) hashes.push(hashBuf.toString("hex"));
+    for (const key of this.dbi_blocks.getKeys()) {
+      if (Buffer.isBuffer(key)) hashes.push(key.toString("hex"));
     }
-    cursor.close();
-    txn.commit();
-    if (this.readOnly) this.close();
     return hashes;
   }
 
@@ -174,9 +126,7 @@ export default class DbBlocks {
             if (!fileExists) {
               // Save block to disk
               await fs.promises.rename(`${dir}.${process.pid}`, dir);
-              const txn = this.env.beginTxn({ readOnly: false });
-              txn.putBinary(this.dbi_blocks, blockHash, Buffer.from(""));
-              txn.commit();
+              await this.dbi_blocks.put(blockHash, Buffer.from(""));
               return resolve(true);
             } else {
               // Block already saved. Delete copy
@@ -246,20 +196,11 @@ export default class DbBlocks {
     }
     await fs.promises.unlink(dir);
     hash = hash.split(".")[0];
-    const txn = this.env.beginTxn({ readOnly: false });
-    try {
-      txn.del(this.dbi_blocks, Buffer.from(hash, "hex"), { keyIsBuffer: true });
-    } catch (err) {}
-    txn.commit();
+    await this.dbi_blocks.remove(Buffer.from(hash, "hex"));
   }
 
   blockExists(hash: string) {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const value = txn.getBinary(this.dbi_blocks, Buffer.from(hash, "hex"));
-    txn.commit();
-    if (this.readOnly) this.close();
-    return !!value;
+    return !!this.dbi_blocks.get(Buffer.from(hash, "hex"));
   }
 
   blockExistsSync(hash: string) {

@@ -1,15 +1,14 @@
 import * as bsv from "bsv-minimal";
-import lmdb from "node-lmdb";
+import * as lmdb from "lmdb";
 import Headers from "bsv-headers";
 import fs from "fs";
 
 export default class DbHeaders {
   headers: Headers;
   env: any;
-  dbi_headers: lmdb.Dbi;
+  dbi_root: lmdb.RootDatabase;
+  dbi_headers: lmdb.Database<Buffer>;
   headersDir: string;
-  readOnly: boolean;
-  dbIsOpen: boolean;
 
   constructor({
     headersDir,
@@ -25,83 +24,33 @@ export default class DbHeaders {
     fs.mkdirSync(headersDir, { recursive: true });
     this.headers = headers;
     this.headersDir = headersDir;
-    this.readOnly = readOnly;
 
-    this.env = new lmdb.Env();
-    this.env.open({
-      path: this.headersDir,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1GB max
-      maxDbs: 1,
-      readOnly,
-    });
-    this.dbi_headers = this.env.openDbi({
+    this.dbi_root = lmdb.open({ path: headersDir, readOnly });
+    this.dbi_headers = this.dbi_root.openDB({
       name: "headers",
-      create: !readOnly,
-      keyIsBuffer: true,
+      encoding: "binary",
+      keyEncoding: "binary",
     });
-    this.dbIsOpen = true;
     this.loadHeaders();
-    if (this.readOnly) this.close();
   }
 
-  open() {
-    if (this.dbIsOpen) return;
-    this.env = new lmdb.Env();
-    this.env.open({
-      path: this.headersDir,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1GB max
-      maxDbs: 1,
-      readOnly: this.readOnly,
-    });
-    this.dbi_headers = this.env.openDbi({
-      name: "headers",
-      create: !this.readOnly,
-      keyIsBuffer: true,
-    });
-    this.dbIsOpen = true;
-  }
-
-  close() {
-    if (!this.dbIsOpen) return;
+  async close() {
     try {
-      this.dbi_headers.close();
+      await this.dbi_headers.close();
     } catch (err) {}
     try {
-      this.env.close();
+      await this.dbi_root.close();
     } catch (err) {}
-    this.dbIsOpen = false;
   }
 
-  saveHeaders(headerArray: bsv.Header[]): Promise<Buffer[]> {
-    return new Promise((resolve, reject) => {
-      try {
-        if (this.readOnly) throw Error(`Headers opened as readOnly`);
-        const hashes: Buffer[] = [];
-        if (headerArray.length === 0) return resolve(hashes);
-        const operations: any = [];
-        headerArray.map((header) => {
-          operations.push([
-            this.dbi_headers,
-            header.getHash(),
-            header.toBuffer(),
-            null,
-          ]);
-        });
-        this.env.batchWrite(
-          operations,
-          { keyIsBuffer: true },
-          (err: any, results: number[]) => {
-            if (err) return reject(err);
-            headerArray.map(
-              (header, i) => results[i] === 0 && hashes.push(header.getHash())
-            );
-            resolve(hashes);
-          }
-        );
-      } catch (err) {
-        reject(err);
-      }
-    });
+  async saveHeaders(headerArray: bsv.Header[]): Promise<Buffer[]> {
+    const hashes: Buffer[] = [];
+    for (const header of headerArray) {
+      const hash = header.getHash();
+      if (this.dbi_headers.get(hash)) hashes.push(hash);
+      this.dbi_headers.put(hash, header.toBuffer());
+    }
+    return hashes;
   }
 
   getHeader(hash: string | Buffer): bsv.Header {
@@ -109,35 +58,17 @@ export default class DbHeaders {
     if (hash.toString("hex") === this.headers.genesis) {
       return this.headers.genesisHeader;
     }
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const buf = txn.getBinary(this.dbi_headers, hash, { keyIsBuffer: true });
-    txn.commit();
-    if (this.readOnly) this.close();
+    const buf = this.dbi_headers.getBinary(hash);
     if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;
   }
 
   loadHeaders() {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_headers, {
-      keyIsBuffer: true,
-    });
-    for (
-      let hash = cursor.goToFirst();
-      hash !== null;
-      hash = cursor.goToNext()
-    ) {
-      if (!this.headers.headers[hash.toString("hex")]) {
-        const buf = cursor.getCurrentBinary();
-        if (buf) this.headers.addHeader({ buf, hash });
-      }
+    for (const { key: hash, value: buf } of this.dbi_headers.getRange()) {
+      if (Buffer.isBuffer(hash) && Buffer.isBuffer(buf))
+        this.headers.addHeader({ buf, hash });
     }
-    cursor.close();
-    txn.commit();
-    if (this.readOnly) this.close();
     this.headers.process();
   }
 }

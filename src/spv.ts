@@ -6,7 +6,7 @@ import DbHeaders from "./db_headers";
 import DbBlocks from "./db_blocks";
 import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
-import DbPlugin from "./db_plugin";
+import DbListener from "./db_listener";
 import * as path from "path";
 
 export interface SpvOptions {
@@ -42,7 +42,7 @@ export default class Spv extends EventEmitter {
   db_headers: DbHeaders;
   db_mempool: DbMempool;
   db_nodes: DbNodes;
-  db_plugin: DbPlugin;
+  db_listener: DbListener;
   syncingHeaders?: Promise<number>;
   syncingBlocks: boolean;
   connecting: boolean;
@@ -92,12 +92,17 @@ export default class Spv extends EventEmitter {
     console.log(`${this.id} Loading headers from disk...`);
     const headers = new Headers({ invalidBlocks });
     this.headers = headers;
-    dataDir = path.join(dataDir, ticker);
-    const headersDir = path.join(dataDir, "headers");
-    const blocksDir = path.join(dataDir, "blocks");
-    const mempoolDir = path.join(dataDir, "mempool");
-    const nodesDir = path.join(dataDir, "nodes");
-    const pluginDir = path.join(dataDir, "history", `node-${node}`);
+    const headersDir = path.join(dataDir, ticker, "headers");
+    const blocksDir = path.join(dataDir, ticker, "blocks");
+    const mempoolDir = path.join(dataDir, ticker, "mempool");
+    const nodesDir = path.join(dataDir, ticker, "nodes");
+    const listenerDir = path.join(
+      dataDir,
+      ticker,
+      "history",
+      `node-${node.replace(":", "-")}`,
+      "/data"
+    );
     this.db_blocks = new DbBlocks({ blocksDir, readOnly: false });
     this.db_headers = new DbHeaders({ headersDir, headers, readOnly: false });
     this.db_mempool = new DbMempool({
@@ -106,9 +111,8 @@ export default class Spv extends EventEmitter {
       readOnly: false,
     });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
-    this.db_plugin = new DbPlugin({ pluginDir });
+    this.db_listener = new DbListener({ listenerDir });
     if (this.saveBlocks) {
-      this.db_plugin.loadBlocks();
       this.peer.on(
         "block_chunk",
         async ({
@@ -149,7 +153,7 @@ export default class Spv extends EventEmitter {
                 // More reliable if we calculate the height
                 blockHeight = headers.getHeight(hash);
               } catch (err) {}
-              this.db_plugin.markBlockProcessed({
+              this.db_listener.markBlockProcessed({
                 blockHash,
                 height: blockHeight,
                 txCount,
@@ -350,7 +354,7 @@ export default class Spv extends EventEmitter {
       await this.peer.getBlock(hash);
       return true;
     } else {
-      this.db_plugin.markBlockProcessed({ height, blockHash: hash });
+      this.db_listener.markBlockProcessed({ height, blockHash: hash });
     }
     return false;
   }
@@ -462,7 +466,7 @@ export default class Spv extends EventEmitter {
     }
 
     try {
-      if (this.db_plugin.blocksProcessed() === 0) {
+      if (this.db_listener.blocksProcessed() === 0) {
         const startDate = +new Date();
         console.log(
           `${this.id} Finding which blocks are already saved to disk...`
@@ -478,7 +482,7 @@ export default class Spv extends EventEmitter {
           } catch (err) {}
         }
         console.log(`${this.id} Found ${arr.length} already saved blocks.`);
-        await this.db_plugin.batchBlocksProcessed(arr);
+        await this.db_listener.batchBlocksProcessed(arr);
         console.log(
           `${this.id} ${arr.length} blocks have already been saved. Took ${
             (+new Date() - startDate) / 1000
@@ -490,7 +494,7 @@ export default class Spv extends EventEmitter {
     }
 
     for (let height = this.blockHeight; height <= tipHeight; height++) {
-      if (this.db_plugin.isProcessed(height)) continue;
+      if (this.db_listener.isProcessed(height)) continue;
       try {
         const hash = this.headers.getHash(height);
         const blockDownloaded = await this.downloadBlock({ height, hash });

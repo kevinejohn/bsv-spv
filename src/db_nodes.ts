@@ -1,15 +1,13 @@
-import * as bsv from "bsv-minimal";
-import lmdb from "node-lmdb";
+import * as lmdb from "lmdb";
 import fs from "fs";
 
 export default class DbNodes {
   blacklistTime: number;
   env: any;
-  dbi_seen: lmdb.Dbi;
-  dbi_connected: lmdb.Dbi;
-  dbi_blacklisted: lmdb.Dbi;
-  dbIsOpen: boolean;
-  readOnly: boolean;
+  dbi_root: lmdb.RootDatabase;
+  dbi_seen: lmdb.Database<number>;
+  dbi_connected: lmdb.Database<number>;
+  dbi_blacklisted: lmdb.Database<number>;
   nodesDir: string;
 
   constructor({
@@ -25,222 +23,93 @@ export default class DbNodes {
     fs.mkdirSync(nodesDir, { recursive: true });
     this.nodesDir = nodesDir;
     this.blacklistTime = blacklistTime;
-    this.readOnly = readOnly;
 
-    this.env = new lmdb.Env();
-    this.env.open({
+    this.dbi_root = lmdb.open({
       path: nodesDir,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
-      maxDbs: 5,
       readOnly,
     });
-    this.dbi_seen = this.env.openDbi({
+    this.dbi_seen = this.dbi_root.openDB({
       name: "peers_seen",
-      create: !readOnly,
-      keyIsString: true,
     });
-    this.dbi_connected = this.env.openDbi({
+    this.dbi_connected = this.dbi_root.openDB({
       name: "peers_connected",
-      create: !readOnly,
-      keyIsString: true,
     });
-    this.dbi_blacklisted = this.env.openDbi({
+    this.dbi_blacklisted = this.dbi_root.openDB({
       name: "peers_blacklisted",
-      create: !readOnly,
-      keyIsString: true,
     });
-    this.dbIsOpen = true;
-    if (this.readOnly) this.close();
   }
 
-  open() {
-    if (this.dbIsOpen) return;
-    this.env = new lmdb.Env();
-    this.env.open({
-      path: this.nodesDir,
-      mapSize: 1 * 1024 * 1024 * 1024, // 1GB node info max
-      maxDbs: 5,
-      readOnly: this.readOnly,
-    });
-    this.dbi_seen = this.env.openDbi({
-      name: "peers_seen",
-      create: !this.readOnly,
-      keyIsString: true,
-    });
-    this.dbi_connected = this.env.openDbi({
-      name: "peers_connected",
-      create: !this.readOnly,
-      keyIsString: true,
-    });
-    this.dbi_blacklisted = this.env.openDbi({
-      name: "peers_blacklisted",
-      create: !this.readOnly,
-      keyIsString: true,
-    });
-    this.dbIsOpen = true;
+  async close() {
+    try {
+      await this.dbi_seen.close();
+    } catch (err) {}
+    try {
+      await this.dbi_connected.close();
+    } catch (err) {}
+    try {
+      await this.dbi_blacklisted.close();
+    } catch (err) {}
+    try {
+      await this.dbi_root.close();
+    } catch (err) {}
   }
 
-  close() {
-    if (!this.dbIsOpen) return;
-    try {
-      this.dbi_seen.close();
-    } catch (err) {}
-    try {
-      this.dbi_connected.close();
-    } catch (err) {}
-    try {
-      this.dbi_blacklisted.close();
-    } catch (err) {}
-    try {
-      this.env.close();
-    } catch (err) {}
-    this.dbIsOpen = false;
-  }
-
-  saveSeenNodes(addrArray: any[]): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-      try {
-        const nodes: string[] = [];
-        if (addrArray.length === 0) return resolve(nodes);
-        const operations: any = [];
-        const bw = new bsv.utils.BufferWriter();
-        const date = Math.round(+new Date() / 1000);
-        bw.writeUInt32LE(date);
-        const time = bw.toBuffer();
-        const nodeArray = addrArray
-          .filter(({ ipv4, port }) => ipv4 && port < 20000)
-          .map(({ ipv4, port }) => `${ipv4}:${port}`);
-        nodeArray.map((node) => {
-          operations.push([this.dbi_seen, node, time, null]);
-        });
-        this.env.batchWrite(
-          operations,
-          { keyIsString: true },
-          (err: any, results: number[]) => {
-            if (err) return reject(err);
-            nodeArray.map((node, i) => results[i] === 0 && nodes.push(node));
-            resolve(nodes);
-          }
-        );
-      } catch (err) {
-        reject(err);
+  saveSeenNodes(addrArray: any[]): string[] {
+    const nodes: string[] = [];
+    const time = +new Date();
+    const nodeArray = addrArray
+      .filter(({ ipv4, port }) => ipv4 && port < 20000)
+      .map(({ ipv4, port }) => `${ipv4}:${port}`);
+    for (const node of nodeArray) {
+      if (!this.dbi_seen.get(node)) {
+        this.dbi_seen.put(node, time);
+        nodes.push(node);
       }
-    });
+    }
+    return nodes;
   }
 
   connected(node: string) {
-    const txn = this.env.beginTxn({ readOnly: false });
-    let num = txn.getNumber(this.dbi_connected, node);
-    num = num > 0 ? num + 1 : 1;
-    txn.putNumber(this.dbi_connected, node, num);
-    txn.commit();
+    let count = this.dbi_connected.get(node) || 0;
+    this.dbi_connected.put(node, count + 1);
   }
 
   blacklist(node: string) {
-    const txn = this.env.beginTxn({ readOnly: false });
     const date = Math.round(+new Date() / 1000);
-    txn.putNumber(this.dbi_blacklisted, node, date);
-    txn.commit();
+    this.dbi_blacklisted.put(node, date);
   }
 
-  isBlacklisted(node: string) {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: false });
-    const date = txn.getNumber(this.dbi_blacklisted, node);
-    let blacklisted = false;
-    if (date) {
-      if (date > this.blacklistTime) {
-        blacklisted = true;
-      } else {
-        try {
-          txn.del(this.dbi_blacklisted, node, { keyIsString: true });
-        } catch (err) {}
-      }
-    }
-    txn.commit();
-    if (this.readOnly) this.close();
-    return blacklisted;
+  isBlacklisted(node: string): boolean {
+    const date = this.dbi_blacklisted.get(node);
+    return typeof date === "number" && date > this.blacklistTime;
   }
 
-  async getBlacklistedNodes() {
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor: lmdb.Cursor<string> = new lmdb.Cursor(
-      txn,
-      this.dbi_blacklisted,
-      {
-        keyIsString: true,
-      }
-    );
+  getBlacklistedNodes() {
     const nodes = [];
-    const expired: any[] = [];
-    for (
-      let node = cursor.goToFirst();
-      node !== null;
-      node = cursor.goToNext()
-    ) {
-      const date = cursor.getCurrentNumber();
-      if (date) {
-        if (date > this.blacklistTime) {
-          nodes.push(node);
-        } else {
-          expired.push(this.dbi_blacklisted, node);
-        }
+    for (const { key: node, value: date } of this.dbi_blacklisted.getRange()) {
+      if (typeof node !== "string" || typeof date !== "number") continue;
+      if (date > this.blacklistTime) {
+        nodes.push(node);
       }
-    }
-    cursor.close();
-    txn.commit();
-    if (expired.length > 0) {
-      await new Promise((resolve, reject) => {
-        this.env.batchWrite(
-          expired,
-          { keyIsString: true },
-          (err: any, results: number[]) => {
-            if (err) return reject(err);
-            resolve(results);
-          }
-        );
-      });
     }
     return nodes;
   }
 
   getConnectedNodes() {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor = new lmdb.Cursor(txn, this.dbi_connected, {
-      keyIsString: true,
-    });
     const nodes: string[] = [];
-    for (
-      let node = cursor.goToFirst();
-      node !== null;
-      node = cursor.goToNext()
-    ) {
+    for (const node of this.dbi_connected.getKeys()) {
+      if (typeof node !== "string") continue;
       nodes.push(node);
     }
-    cursor.close();
-    txn.commit();
-    if (this.readOnly) this.close();
     return nodes;
   }
 
   getSeenNodes() {
-    this.open();
-    const txn = this.env.beginTxn({ readOnly: true });
-    const cursor: lmdb.Cursor<string> = new lmdb.Cursor(txn, this.dbi_seen, {
-      keyIsString: true,
-    });
-    const nodes = [];
-    for (
-      let node = cursor.goToFirst();
-      node !== null;
-      node = cursor.goToNext()
-    ) {
+    const nodes: string[] = [];
+    for (const node of this.dbi_seen.getKeys()) {
+      if (typeof node !== "string") continue;
       nodes.push(node);
     }
-    cursor.close();
-    txn.commit();
-    if (this.readOnly) this.close();
     return nodes;
   }
 }

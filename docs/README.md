@@ -8,9 +8,9 @@ bsv-spv
 
 - [DbBlocks](classes/DbBlocks.md)
 - [DbHeaders](classes/DbHeaders.md)
+- [DbListener](classes/DbListener.md)
 - [DbMempool](classes/DbMempool.md)
 - [DbNodes](classes/DbNodes.md)
-- [DbPlugin](classes/DbPlugin.md)
 - [Listener](classes/Listener.md)
 - [Master](classes/Master.md)
 - [Server](classes/Server.md)
