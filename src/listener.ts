@@ -266,6 +266,9 @@ export default class Listener extends EventEmitter {
           let blockSize = 0;
           const date = +new Date();
           let tip = this.headers.getTip();
+          console.log(
+            `Syncing blocks from ${this.blockHeight} to ${tip.height}...`
+          );
           for (let height = this.blockHeight; height <= tip.height; height++) {
             if (this.multithread) {
               if (
@@ -275,16 +278,17 @@ export default class Listener extends EventEmitter {
                 continue;
               }
             }
+
             const hash = this.headers.getHash(height);
-            if (
-              this.db_listener.isProcessed(height) &&
-              hash === this.db_listener.getHash(height)
-            )
-              continue;
+            if (this.db_listener.isProcessed(height)) {
+              if (height < tip.height - 1000) continue;
+              if (hash === this.db_listener.getHash(height)) continue;
+            }
             try {
               let errors = 0;
               let matches = 0;
 
+              // console.log(`Syncing block: ${height} ${hash}...`);
               await this.readBlock(
                 { height, hash },
                 async (params: BlockStream) => {
@@ -326,8 +330,10 @@ export default class Listener extends EventEmitter {
                   }
                 }
               );
-            } catch (err) {
-              // console.error(err);
+            } catch (err: any) {
+              // console.error(
+              //   `Block ${height} ${hash} not saved: ${err.message}`
+              // );
               // Block not saved
               skipped++;
             }
@@ -344,6 +350,7 @@ export default class Listener extends EventEmitter {
           );
           resolve({ skipped, processed, blockSize });
         } catch (err) {
+          console.error(err);
           reject(err);
         }
         delete this.promiseSyncBlock;

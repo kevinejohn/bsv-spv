@@ -353,8 +353,6 @@ export default class Spv extends EventEmitter {
       this.emit(`block_downloading`, { hash, height });
       await this.peer.getBlock(hash);
       return true;
-    } else {
-      this.db_listener.markBlockProcessed({ height, blockHash: hash });
     }
     return false;
   }
@@ -465,36 +463,7 @@ export default class Spv extends EventEmitter {
       this.blockHeight += tipHeight;
     }
 
-    try {
-      if (this.db_listener.blocksProcessed() === 0) {
-        const startDate = +new Date();
-        console.log(
-          `${this.id} Finding which blocks are already saved to disk...`
-        );
-        // Quicker initialization to figure out which blocks are saved
-        const hashes = this.db_blocks.getSavedBlocks();
-        const arr = [];
-        for (const hash of hashes) {
-          try {
-            const height = this.headers.getHeight(hash);
-            const blockHash = Buffer.from(hash, "hex");
-            arr.push({ height, blockHash });
-          } catch (err) {}
-        }
-        console.log(`${this.id} Found ${arr.length} already saved blocks.`);
-        await this.db_listener.batchBlocksProcessed(arr);
-        console.log(
-          `${this.id} ${arr.length} blocks have already been saved. Took ${
-            (+new Date() - startDate) / 1000
-          } seconds to determine.`
-        );
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
     for (let height = this.blockHeight; height <= tipHeight; height++) {
-      if (this.db_listener.isProcessed(height)) continue;
       try {
         const hash = this.headers.getHash(height);
         const blockDownloaded = await this.downloadBlock({ height, hash });

@@ -35,10 +35,10 @@ export default class DbBlocks {
     });
 
     if (initialize && !readOnly) {
-      const hashes = this.getSavedBlocksSync();
-      hashes.forEach((hash: string) => {
-        this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
-      });
+      const hashes = Array.from(this.getSavedBlocksSync());
+      for (const hash of hashes) {
+        this.dbi_blocks.putSync(Buffer.from(hash, "hex"), Buffer.from(""));
+      }
     }
   }
 
@@ -200,7 +200,7 @@ export default class DbBlocks {
   }
 
   blockExists(hash: string) {
-    return !!this.dbi_blocks.get(Buffer.from(hash, "hex"));
+    return this.dbi_blocks.doesExist(Buffer.from(hash, "hex"));
   }
 
   blockExistsSync(hash: string) {
