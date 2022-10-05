@@ -149,7 +149,7 @@ export default class DbBlocks {
 
   streamBlock(
     { hash, height }: { hash: string | Buffer; height: number },
-    callback: (params: bsv.BlockStream) => Promise<void> | void
+    callback: (params: bsv.BlockStream) => Promise<any> | any
   ): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       try {
