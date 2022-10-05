@@ -365,8 +365,8 @@ export default class Listener extends EventEmitter {
 
   readBlock(
     { hash, height }: { height: number; hash: string },
-    callback: (params: any) => Promise<void>
-  ) {
+    callback: (params: BlockStream) => Promise<any>
+  ): Promise<boolean> {
     if (!hash) hash = this.headers.getHash(height);
     if (typeof height !== "number") {
       try {

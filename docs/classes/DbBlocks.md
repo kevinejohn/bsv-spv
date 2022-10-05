@@ -288,7 +288,7 @@ ___
 
 ### streamBlock
 
-▸ **streamBlock**(`__namedParameters`, `callback`): `Promise`<`unknown`\>
+▸ **streamBlock**(`__namedParameters`, `callback`): `Promise`<`boolean`\>
 
 #### Parameters
 
@@ -301,7 +301,7 @@ ___
 
 #### Returns
 
-`Promise`<`unknown`\>
+`Promise`<`boolean`\>
 
 #### Defined in
 

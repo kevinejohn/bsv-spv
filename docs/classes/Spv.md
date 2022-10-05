@@ -1154,7 +1154,7 @@ ___
 
 ### readBlock
 
-▸ **readBlock**(`__namedParameters`, `callback`): `Promise`<`unknown`\>
+▸ **readBlock**(`__namedParameters`, `callback`): `Promise`<`boolean`\>
 
 #### Parameters
 
@@ -1167,7 +1167,7 @@ ___
 
 #### Returns
 
-`Promise`<`unknown`\>
+`Promise`<`boolean`\>
 
 #### Defined in
 

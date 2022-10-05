@@ -1126,7 +1126,7 @@ ___
 
 ### readBlock
 
-▸ **readBlock**(`__namedParameters`, `callback`): `Promise`<`unknown`\>
+▸ **readBlock**(`__namedParameters`, `callback`): `Promise`<`boolean`\>
 
 #### Parameters
 
@@ -1135,11 +1135,11 @@ ___
 | `__namedParameters` | `Object` |
 | `__namedParameters.hash` | `string` |
 | `__namedParameters.height` | `number` |
-| `callback` | (`params`: `any`) => `Promise`<`void`\> |
+| `callback` | (`params`: `BlockStream`) => `Promise`<`any`\> |
 
 #### Returns
 
-`Promise`<`unknown`\>
+`Promise`<`boolean`\>
 
 #### Inherited from
 
