@@ -1,13 +1,15 @@
 import * as bsv from "bsv-minimal";
-import * as lmdb from "lmdb";
+import lmdb from "node-lmdb";
 import fs from "fs";
 
 export default class DbMempool {
   pruneAfter: number;
-  dbi_root: lmdb.RootDatabase;
-  dbi_txs: lmdb.Database<Buffer>;
-  dbi_tx_times: lmdb.Database<Buffer>;
+  env: any;
+  dbi_txs: lmdb.Dbi;
+  dbi_tx_times: lmdb.Dbi;
   mempoolDir: string;
+  readOnly: boolean;
+  dbIsOpen: boolean;
 
   constructor({
     mempoolDir,
@@ -22,73 +24,155 @@ export default class DbMempool {
     fs.mkdirSync(mempoolDir, { recursive: true });
     this.mempoolDir = mempoolDir;
     this.pruneAfter = pruneAfter;
+    this.readOnly = readOnly;
 
-    this.dbi_root = lmdb.open({ path: mempoolDir, readOnly });
-    this.dbi_txs = this.dbi_root.openDB({
+    this.env = new lmdb.Env();
+    this.env.open({
+      path: mempoolDir,
+      mapSize: 1 * 1024 * 1024 * 1024 * 1024, // 1TB mempool max
+      maxDbs: 3,
+      readOnly,
+    });
+    this.dbi_txs = this.env.openDbi({
       name: "txs",
-      encoding: "binary",
-      keyEncoding: "binary",
+      create: !readOnly,
+      keyIsBuffer: true,
     });
-    this.dbi_tx_times = this.dbi_root.openDB({
+    this.dbi_tx_times = this.env.openDbi({
       name: "tx_times",
-      encoding: "binary",
-      keyEncoding: "binary",
+      create: !readOnly,
+      keyIsBuffer: true,
     });
+    this.dbIsOpen = true;
+    if (this.readOnly) this.close();
   }
 
-  async close() {
-    try {
-      await this.dbi_txs.close();
-    } catch (err) {}
-    try {
-      await this.dbi_tx_times.close();
-    } catch (err) {}
-    try {
-      await this.dbi_root.close();
-    } catch (err) {}
+  open() {
+    if (this.dbIsOpen) return;
+    this.env = new lmdb.Env();
+    this.env.open({
+      path: this.mempoolDir,
+      mapSize: 1 * 1024 * 1024 * 1024 * 1024, // 1TB mempool max
+      maxDbs: 3,
+      readOnly: this.readOnly,
+    });
+    this.dbi_txs = this.env.openDbi({
+      name: "txs",
+      create: !this.readOnly,
+      keyIsBuffer: true,
+    });
+    this.dbi_tx_times = this.env.openDbi({
+      name: "tx_times",
+      create: !this.readOnly,
+      keyIsBuffer: true,
+    });
+    this.dbIsOpen = true;
   }
 
-  async saveTxs(
+  close() {
+    if (!this.dbIsOpen) return;
+    try {
+      this.dbi_txs.close();
+    } catch (err) {}
+    try {
+      this.dbi_tx_times.close();
+    } catch (err) {}
+    try {
+      this.env.close();
+    } catch (err) {}
+    this.dbIsOpen = false;
+  }
+
+  saveTxs(
     txsArray: bsv.Transaction[]
   ): Promise<{ txids: Buffer[]; size: number }> {
-    const txids: Buffer[] = [];
-    let size = 0;
-    const bw = new bsv.utils.BufferWriter();
-    const date = Math.round(+new Date() / 1000);
-    bw.writeUInt32LE(date);
-    const time = bw.toBuffer();
-    for (const tx of txsArray) {
-      const txid = tx.getHash();
-      txids.push(txid);
-      size += tx.toBuffer().length;
-
-      this.dbi_txs.put(txid, tx.toBuffer());
-      if (!this.dbi_tx_times.get(txid)) this.dbi_tx_times.put(txid, time);
-    }
-    return { txids, size };
-  }
-
-  saveTimes(txidArr: Buffer[]): Buffer[] {
-    const txids: Buffer[] = [];
-    const bw = new bsv.utils.BufferWriter();
-    const date = Math.round(+new Date() / 1000);
-    bw.writeUInt32LE(date);
-    const time = bw.toBuffer();
-    for (const txid of txidArr) {
-      if (!this.dbi_tx_times.get(txid)) {
-        this.dbi_tx_times.put(txid, time);
-        txids.push(txid);
+    return new Promise((resolve, reject) => {
+      try {
+        if (this.readOnly) throw Error(`DbMempool is set to readOnly`);
+        const txids: Buffer[] = [];
+        let size = 0;
+        if (txsArray.length === 0) return resolve({ txids, size });
+        const operations: any = [];
+        const bw = new bsv.utils.BufferWriter();
+        const date = Math.round(+new Date() / 1000);
+        bw.writeUInt32LE(date);
+        const time = bw.toBuffer();
+        txsArray.map((tx) => {
+          const txid = tx.getHash();
+          size += tx.toBuffer().length;
+          operations.push([this.dbi_txs, txid, tx.toBuffer(), null]);
+          operations.push([this.dbi_tx_times, txid, time, null]);
+        });
+        this.env.batchWrite(
+          operations,
+          { keyIsBuffer: true },
+          (err: any, results: number[]) => {
+            if (err) return reject(err);
+            txsArray.map(
+              (tx, i) => results[i * 2] === 0 && txids.push(tx.getHash())
+            );
+            resolve({ txids, size });
+          }
+        );
+      } catch (err) {
+        reject(err);
       }
-    }
-    return txids;
+    });
   }
 
-  delTxs(txidArr: Buffer[]): Buffer[] {
-    for (const txid of txidArr) {
-      this.dbi_txs.remove(txid);
-      this.dbi_tx_times.remove(txid);
-    }
-    return txidArr;
+  saveTimes(txidArr: Buffer[]): Promise<Buffer[]> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (this.readOnly) throw Error(`DbMempool is set to readOnly`);
+        const txids: Buffer[] = [];
+        if (txidArr.length === 0) return resolve(txids);
+        const operations: any = [];
+        const bw = new bsv.utils.BufferWriter();
+        const date = Math.round(+new Date() / 1000);
+        bw.writeUInt32LE(date);
+        const time = bw.toBuffer();
+        txidArr.map((txid) => {
+          operations.push([this.dbi_tx_times, txid, time, null]);
+        });
+        this.env.batchWrite(
+          operations,
+          { keyIsBuffer: true },
+          (err: any, results: number[]) => {
+            if (err) return reject(err);
+            txidArr.map((txid, i) => results[i] === 0 && txids.push(txid));
+            resolve(txids);
+          }
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  delTxs(txidArr: Buffer[]): Promise<Buffer[]> {
+    return new Promise((resolve, reject) => {
+      try {
+        if (this.readOnly) throw Error(`DbMempool is set to readOnly`);
+        const txids: Buffer[] = [];
+        if (txidArr.length === 0) return resolve(txids);
+        const operations: any = [];
+        txidArr.map((txid) => {
+          operations.push([this.dbi_txs, txid]);
+          operations.push([this.dbi_tx_times, txid]);
+        });
+        this.env.batchWrite(
+          operations,
+          { keyIsBuffer: true },
+          (err: any, results: number[]) => {
+            if (err) return reject(err);
+            txidArr.map((txid, i) => results[i * 2] === 0 && txids.push(txid));
+            resolve(txids);
+          }
+        );
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   getTxids({
@@ -98,23 +182,40 @@ export default class DbMempool {
     olderThan?: number;
     newerThan?: number;
   }) {
+    this.open();
+    const txn = this.env.beginTxn({ readOnly: true });
+    const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(
+      txn,
+      this.dbi_tx_times,
+      {
+        keyIsBuffer: true,
+      }
+    );
     const txids: Buffer[] = [];
-    for (const { key: txid, value: buf } of this.dbi_tx_times.getRange()) {
-      if (!Buffer.isBuffer(txid) || !Buffer.isBuffer(buf)) continue;
-
+    for (
+      let txid = cursor.goToFirst();
+      txid !== null;
+      txid = cursor.goToNext()
+    ) {
       if ((olderThan && olderThan >= 0) || (newerThan && newerThan >= 0)) {
-        const br = new bsv.utils.BufferReader(buf);
-        const time = br.readUInt32LE() * 1000;
-        if (
-          (olderThan && olderThan > time) ||
-          (newerThan && newerThan < time)
-        ) {
-          txids.push(Buffer.from(txid));
+        const buf = cursor.getCurrentBinary();
+        if (buf) {
+          const br = new bsv.utils.BufferReader(buf);
+          const time = br.readUInt32LE() * 1000;
+          if (
+            (olderThan && olderThan > time) ||
+            (newerThan && newerThan < time)
+          ) {
+            txids.push(Buffer.from(txid));
+          }
         }
       } else {
         txids.push(Buffer.from(txid));
       }
     }
+    cursor.close();
+    txn.commit();
+    if (this.readOnly) this.close();
     return txids;
   }
 
@@ -132,11 +233,12 @@ export default class DbMempool {
     const txs = [];
     const times = [];
     let size = 0;
-
+    this.open();
+    const txn = this.env.beginTxn({ readOnly: true });
     if (txids) {
       for (let txid of txids) {
         const key = Buffer.isBuffer(txid) ? txid : Buffer.from(txid, "hex");
-        const buf = this.dbi_txs.getBinary(key);
+        const buf = txn.getBinary(this.dbi_txs, key, { keyIsBuffer: true });
         if (buf) {
           const tx = bsv.Transaction.fromBuffer(buf);
           txs.push(tx);
@@ -144,16 +246,28 @@ export default class DbMempool {
         }
       }
     } else {
-      for (const { key: txid, value: buf } of this.dbi_txs.getRange()) {
-        if (!Buffer.isBuffer(txid) || !Buffer.isBuffer(buf)) continue;
-        const tx = bsv.Transaction.fromBuffer(buf);
-        txs.push(tx);
-        size += buf.length;
+      const cursor: lmdb.Cursor<Buffer> = new lmdb.Cursor(txn, this.dbi_txs, {
+        keyIsBuffer: true,
+      });
+      for (
+        let txid = cursor.goToFirst();
+        txid !== null;
+        txid = cursor.goToNext()
+      ) {
+        const buf = cursor.getCurrentBinary();
+        if (buf) {
+          const tx = bsv.Transaction.fromBuffer(buf);
+          txs.push(tx);
+          size += buf.length;
+        }
       }
+      cursor.close();
     }
     if (getTime) {
       for (const tx of txs) {
-        const buf = this.dbi_tx_times.getBinary(tx.getHash());
+        const buf = txn.getBinary(this.dbi_tx_times, tx.getHash(), {
+          keyIsBuffer: true,
+        });
         if (buf) {
           const br = new bsv.utils.BufferReader(buf);
           const time = br.readUInt32LE() * 1000;
@@ -163,6 +277,8 @@ export default class DbMempool {
         }
       }
     }
+    txn.commit();
+    if (this.readOnly) this.close();
     return { txs, size, times };
   }
 

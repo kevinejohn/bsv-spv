@@ -16,6 +16,7 @@ export interface SpvOptions {
   forceUserAgent?: string;
   user_agent?: string;
   start_height?: number;
+  version?: number;
   blocks?: boolean;
   mempool?: boolean;
   autoReconnect?: boolean;
@@ -55,7 +56,8 @@ export default class Spv extends EventEmitter {
     dataDir,
     forceUserAgent,
     user_agent,
-    start_height = 0,
+    start_height,
+    version,
     blocks = false,
     mempool = false,
     autoReconnect = true,
@@ -80,15 +82,6 @@ export default class Spv extends EventEmitter {
     this.syncingBlocks = false;
     this.mempoolTxCache = [];
     this.forceUserAgent = forceUserAgent;
-    this.peer = new Peer({
-      node,
-      ticker,
-      autoReconnect,
-      start_height,
-      user_agent,
-      mempoolTxs: mempool,
-      DEBUG_LOG,
-    });
     console.log(`${this.id} Loading headers from disk...`);
     const headers = new Headers({ invalidBlocks });
     this.headers = headers;
@@ -112,6 +105,17 @@ export default class Spv extends EventEmitter {
     });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
     this.db_listener = new DbListener({ listenerDir });
+    if (typeof start_height !== 'number') start_height = headers.getHeight()
+    this.peer = new Peer({
+      node,
+      ticker,
+      autoReconnect,
+      start_height,
+      user_agent,
+      version,
+      mempoolTxs: mempool,
+      DEBUG_LOG,
+    });
     if (this.saveBlocks) {
       this.peer.on(
         "block_chunk",

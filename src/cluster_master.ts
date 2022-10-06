@@ -16,6 +16,7 @@ export interface MasterOptions {
   nodes: string[];
   forceUserAgent?: string;
   user_agent?: string;
+  version?: number;
   invalidBlocks?: string[];
   dataDir: string;
   pruneBlocks: number;
@@ -37,6 +38,7 @@ export default class Master {
     nodes,
     forceUserAgent,
     user_agent,
+    version,
     invalidBlocks,
     dataDir,
     pruneBlocks,
@@ -65,6 +67,7 @@ export default class Master {
         node,
         forceUserAgent,
         user_agent,
+        version,
         invalidBlocks,
         dataDir,
         pruneBlocks,

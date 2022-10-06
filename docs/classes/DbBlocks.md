@@ -297,7 +297,7 @@ ___
 | `__namedParameters` | `Object` |
 | `__namedParameters.hash` | `string` \| `Buffer` |
 | `__namedParameters.height` | `number` |
-| `callback` | (`params`: `BlockStream`) => `void` \| `Promise`<`void`\> |
+| `callback` | (`params`: `BlockStream`) => `any` |
 
 #### Returns
 

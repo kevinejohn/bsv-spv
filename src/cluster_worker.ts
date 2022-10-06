@@ -37,7 +37,7 @@ export default class Worker {
     const { mempool, blocks, MEMPOOL_PRUNE_AFTER, DEBUG_MEMORY } = config;
     const REFRESH = 10; // console.log status every 10 seconds
     let interval: NodeJS.Timer;
-    // let txsSeen = 0;
+    let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
     let blockInterval: NodeJS.Timer;
@@ -114,9 +114,9 @@ export default class Worker {
             `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatSpeeds(
               txsSize,
               REFRESH
-            )}`
+            )} (seen ${txsSeen})`
           );
-          // txsSeen = 0;
+          txsSeen = 0;
           txsSaved = 0;
           txsSize = 0;
         }, REFRESH * 1000);
@@ -196,10 +196,10 @@ export default class Worker {
       //     `${id} tx ${transaction.getTxid()} downloaded from mempool`
       //   );
       // });
-      // spv.on("mempool_txs_seen", ({ txids }) => {
-      //   // console.log(`${id} ${txids.length} txs seen in mempool`);
-      //   txsSeen += txids.length;
-      // });
+      spv.on("mempool_txs_seen", ({ txids }) => {
+        // console.log(`${id} ${txids.length} txs seen in mempool`);
+        txsSeen += txids.length;
+      });
       spv.on("mempool_txs_saved", ({ txids, size }) => {
         // console.log(`${id} ${txids.length} new txs saved from mempool`);
         txsSaved += txids.length;
