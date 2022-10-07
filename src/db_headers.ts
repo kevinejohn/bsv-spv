@@ -47,8 +47,10 @@ export default class DbHeaders {
     const hashes: Buffer[] = [];
     for (const header of headerArray) {
       const hash = header.getHash();
-      if (!this.dbi_headers.get(hash)) hashes.push(hash);
-      this.dbi_headers.put(hash, header.toBuffer());
+      if (!this.dbi_headers.get(hash)) {
+        this.dbi_headers.put(hash, header.toBuffer());
+        hashes.push(hash);
+      }
     }
     return hashes;
   }
