@@ -23,7 +23,6 @@
 - [db\_blocks](Listener.md#db_blocks)
 - [db\_headers](Listener.md#db_headers)
 - [db\_listener](Listener.md#db_listener)
-- [db\_mempool](Listener.md#db_mempool)
 - [disableInterval](Listener.md#disableinterval)
 - [headers](Listener.md#headers)
 - [host](Listener.md#host)
@@ -51,7 +50,6 @@
 - [eventNames](Listener.md#eventnames)
 - [getBlockInfo](Listener.md#getblockinfo)
 - [getMaxListeners](Listener.md#getmaxlisteners)
-- [getMempoolTxs](Listener.md#getmempooltxs)
 - [listenerCount](Listener.md#listenercount)
 - [listeners](Listener.md#listeners)
 - [off](Listener.md#off)
@@ -142,16 +140,6 @@ ___
 #### Defined in
 
 [src/listener.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L38)
-
-___
-
-### db\_mempool
-
-• **db\_mempool**: [`DbMempool`](DbMempool.md)
-
-#### Defined in
-
-[src/listener.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L35)
 
 ___
 
@@ -399,6 +387,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.host?` | `string` |
+| `__namedParameters.mempool_txs?` | `boolean` |
 | `__namedParameters.port` | `number` |
 
 #### Returns
@@ -407,7 +396,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:178](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L178)
+[src/listener.ts:181](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L181)
 
 ___
 
@@ -548,7 +537,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:361](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L361)
+[src/listener.ts:369](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L369)
 
 ___
 
@@ -574,33 +563,6 @@ EventEmitter.getMaxListeners
 #### Defined in
 
 node_modules/@types/node/ts4.8/events.d.ts:489
-
-___
-
-### getMempoolTxs
-
-▸ **getMempoolTxs**(`txids`, `getTime`): `Object`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `txids` | `string`[] |
-| `getTime` | `boolean` |
-
-#### Returns
-
-`Object`
-
-| Name | Type |
-| :------ | :------ |
-| `size` | `number` |
-| `times` | (``null`` \| `number`)[] |
-| `txs` | `default`[] |
-
-#### Defined in
-
-[src/listener.ts:379](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L379)
 
 ___
 
@@ -989,7 +951,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:366](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L366)
+[src/listener.ts:374](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L374)
 
 ___
 
@@ -1200,7 +1162,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:253](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L253)
+[src/listener.ts:261](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L261)
 
 ___
 

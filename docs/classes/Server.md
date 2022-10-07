@@ -23,7 +23,6 @@
 - [db\_blocks](Server.md#db_blocks)
 - [db\_headers](Server.md#db_headers)
 - [db\_listener](Server.md#db_listener)
-- [db\_mempool](Server.md#db_mempool)
 - [disableInterval](Server.md#disableinterval)
 - [headers](Server.md#headers)
 - [host](Server.md#host)
@@ -52,7 +51,6 @@
 - [eventNames](Server.md#eventnames)
 - [getBlockInfo](Server.md#getblockinfo)
 - [getMaxListeners](Server.md#getmaxlisteners)
-- [getMempoolTxs](Server.md#getmempooltxs)
 - [listen](Server.md#listen)
 - [listenerCount](Server.md#listenercount)
 - [listeners](Server.md#listeners)
@@ -190,20 +188,6 @@ ___
 #### Defined in
 
 [src/listener.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L38)
-
-___
-
-### db\_mempool
-
-• **db\_mempool**: [`DbMempool`](DbMempool.md)
-
-#### Inherited from
-
-[Listener](Listener.md).[db_mempool](Listener.md#db_mempool)
-
-#### Defined in
-
-[src/listener.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L35)
 
 ___
 
@@ -513,6 +497,7 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.host?` | `string` |
+| `__namedParameters.mempool_txs?` | `boolean` |
 | `__namedParameters.port` | `number` |
 
 #### Returns
@@ -525,7 +510,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:178](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L178)
+[src/listener.ts:181](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L181)
 
 ___
 
@@ -674,7 +659,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:361](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L361)
+[src/listener.ts:369](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L369)
 
 ___
 
@@ -703,37 +688,6 @@ node_modules/@types/node/ts4.8/events.d.ts:489
 
 ___
 
-### getMempoolTxs
-
-▸ **getMempoolTxs**(`txids`, `getTime`): `Object`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `txids` | `string`[] |
-| `getTime` | `boolean` |
-
-#### Returns
-
-`Object`
-
-| Name | Type |
-| :------ | :------ |
-| `size` | `number` |
-| `times` | (``null`` \| `number`)[] |
-| `txs` | `default`[] |
-
-#### Inherited from
-
-[Listener](Listener.md).[getMempoolTxs](Listener.md#getmempooltxs)
-
-#### Defined in
-
-[src/listener.ts:379](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L379)
-
-___
-
 ### listen
 
 ▸ **listen**(`__namedParameters`): `void`
@@ -750,7 +704,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L112)
+[src/server.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L113)
 
 ___
 
@@ -1147,7 +1101,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:366](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L366)
+[src/listener.ts:374](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L374)
 
 ___
 
@@ -1366,7 +1320,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:253](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L253)
+[src/listener.ts:261](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L261)
 
 ___
 

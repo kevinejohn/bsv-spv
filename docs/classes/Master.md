@@ -10,12 +10,14 @@
 
 ### Properties
 
+- [mempool\_sockets](Master.md#mempool_sockets)
 - [server](Master.md#server)
 - [sockets](Master.md#sockets)
 - [workers](Master.md#workers)
 
 ### Methods
 
+- [onMempoolTxMessage](Master.md#onmempooltxmessage)
 - [onMessage](Master.md#onmessage)
 - [startServer](Master.md#startserver)
 
@@ -33,9 +35,23 @@
 
 #### Defined in
 
-[src/cluster_master.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L36)
+[src/cluster_master.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L37)
 
 ## Properties
+
+### mempool\_sockets
+
+• **mempool\_sockets**: `Object`
+
+#### Index signature
+
+▪ [key: `string`]: `Net.Socket`
+
+#### Defined in
+
+[src/cluster_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
+
+___
 
 ### server
 
@@ -43,7 +59,7 @@
 
 #### Defined in
 
-[src/cluster_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
+[src/cluster_master.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L35)
 
 ___
 
@@ -71,9 +87,29 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
+[src/cluster_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
 
 ## Methods
+
+### onMempoolTxMessage
+
+▸ **onMempoolTxMessage**(`data`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `data` | `any` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/cluster_master.ts:213](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L213)
+
+___
 
 ### onMessage
 
@@ -91,7 +127,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:168](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L168)
+[src/cluster_master.ts:202](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L202)
 
 ___
 
@@ -113,4 +149,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:119](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L119)
+[src/cluster_master.ts:130](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L130)

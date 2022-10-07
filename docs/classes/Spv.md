@@ -21,13 +21,10 @@
 - [db\_blocks](Spv.md#db_blocks)
 - [db\_headers](Spv.md#db_headers)
 - [db\_listener](Spv.md#db_listener)
-- [db\_mempool](Spv.md#db_mempool)
 - [db\_nodes](Spv.md#db_nodes)
 - [forceUserAgent](Spv.md#forceuseragent)
 - [headers](Spv.md#headers)
 - [id](Spv.md#id)
-- [mempoolInterval](Spv.md#mempoolinterval)
-- [mempoolTxCache](Spv.md#mempooltxcache)
 - [node](Spv.md#node)
 - [peer](Spv.md#peer)
 - [pruneBlocks](Spv.md#pruneblocks)
@@ -55,7 +52,6 @@
 - [getHeader](Spv.md#getheader)
 - [getHeight](Spv.md#getheight)
 - [getMaxListeners](Spv.md#getmaxlisteners)
-- [getMempoolTxs](Spv.md#getmempooltxs)
 - [getNodePeers](Spv.md#getnodepeers)
 - [getTip](Spv.md#gettip)
 - [listenerCount](Spv.md#listenercount)
@@ -67,7 +63,6 @@
 - [once](Spv.md#once)
 - [prependListener](Spv.md#prependlistener)
 - [prependOnceListener](Spv.md#prependoncelistener)
-- [pruneMempool](Spv.md#prunemempool)
 - [rawListeners](Spv.md#rawlisteners)
 - [readBlock](Spv.md#readblock)
 - [removeAllListeners](Spv.md#removealllisteners)
@@ -154,16 +149,6 @@ ___
 
 ___
 
-### db\_mempool
-
-• **db\_mempool**: [`DbMempool`](DbMempool.md)
-
-#### Defined in
-
-[src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L44)
-
-___
-
 ### db\_nodes
 
 • **db\_nodes**: [`DbNodes`](DbNodes.md)
@@ -201,26 +186,6 @@ ___
 #### Defined in
 
 [src/spv.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L32)
-
-___
-
-### mempoolInterval
-
-• `Optional` **mempoolInterval**: `Timer`
-
-#### Defined in
-
-[src/spv.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L50)
-
-___
-
-### mempoolTxCache
-
-• **mempoolTxCache**: `default`[]
-
-#### Defined in
-
-[src/spv.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L51)
 
 ___
 
@@ -694,32 +659,6 @@ node_modules/@types/node/ts4.8/events.d.ts:489
 
 ___
 
-### getMempoolTxs
-
-▸ **getMempoolTxs**(`txids`, `getTime?`): `Object`
-
-#### Parameters
-
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `txids` | `Buffer`[] | `undefined` |
-| `getTime` | `boolean` | `true` |
-
-#### Returns
-
-`Object`
-
-| Name | Type |
-| :------ | :------ |
-| `times` | (``null`` \| `number`)[] |
-| `txs` | `default`[] |
-
-#### Defined in
-
-[src/spv.ts:334](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L334)
-
-___
-
 ### getNodePeers
 
 ▸ **getNodePeers**(): `Promise`<{ `addrs`: `ReadAddress`[] ; `node`: `string` ; `ticker`: `string`  }\>
@@ -924,7 +863,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:408](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L408)
+[src/spv.ts:409](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L409)
 
 ___
 
@@ -1074,26 +1013,6 @@ EventEmitter.prependOnceListener
 #### Defined in
 
 node_modules/@types/node/ts4.8/events.d.ts:613
-
-___
-
-### pruneMempool
-
-▸ **pruneMempool**(`olderThan?`): `Promise`<{ `txids`: `Buffer`[]  }\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `olderThan?` | `number` |
-
-#### Returns
-
-`Promise`<{ `txids`: `Buffer`[]  }\>
-
-#### Defined in
-
-[src/spv.ts:511](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L511)
 
 ___
 
@@ -1362,7 +1281,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:458](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L458)
+[src/spv.ts:459](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L459)
 
 ___
 
@@ -1390,7 +1309,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:489](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L489)
+[src/spv.ts:490](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L490)
 
 ___
 
