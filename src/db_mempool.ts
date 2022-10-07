@@ -57,10 +57,10 @@ export default class DbMempool {
       if (this.batch.length === 0) return resolve(null);
       const operations = this.batch;
       this.batch = [];
-      this.txs = {};
       this.db.batch(operations, (err: any) => {
         if (err) return reject(err);
         resolve(null);
+        operations.map(({ key }) => delete this.txs[key.toString("hex")]);
       });
     });
   }
