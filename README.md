@@ -71,19 +71,13 @@ const onBlock = ({
   }
 };
 
-const onMempool = ({ txids }) => {
-  const { txs, size } = listener.getMempoolTxs(txids);
-  console.log(
-    `${txids.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
-  );
-  for (const tx of txs) {
-    console.log(`Mempool tx ${tx.getTxid()}`);
-  }
-};
-
 listener.on("headers_saved", ({ hashes }) => {});
-listener.on("mempool_txs_saved", ({ txids }) => {
-  onMempool({ txids });
+listener.on("mempool_tx", ({ transaction, size }) => {
+  console.log(
+    `new mempool tx ${transaction.getTxid()} ${size.toLocaleString(
+      "en-US"
+    )} bytes.`
+  );
 });
 listener.on("block_reorg", ({ height, hash }) => {
   // Re-org after height

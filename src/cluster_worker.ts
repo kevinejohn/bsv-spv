@@ -111,7 +111,7 @@ export default class Worker {
       if (mempool) {
         interval = setInterval(() => {
           console.log(
-            `${id} ${txsSaved} txs saved in ${REFRESH} seconds. ${Helpers.formatSpeeds(
+            `${id} ${txsSaved} mempool txs in ${REFRESH} seconds. ${Helpers.formatSpeeds(
               txsSize,
               REFRESH
             )} (seen ${txsSeen})`
@@ -190,12 +190,6 @@ export default class Worker {
     // });
 
     if (mempool) {
-      // Mempool events
-      // spv.on("mempool_tx", ({ transaction }) => {
-      //   console.log(
-      //     `${id} tx ${transaction.getTxid()} downloaded from mempool`
-      //   );
-      // });
       spv.on("mempool_txs_seen", ({ txids }) => {
         // console.log(`${id} ${txids.length} txs seen in mempool`);
         txsSeen += txids.length;
@@ -211,15 +205,6 @@ export default class Worker {
           },
         });
       });
-      // spv.on("mempool_txs_saved", ({ txids, size }) => {
-      //   // console.log(`${id} ${txids.length} new txs saved from mempool`);
-      //   txsSaved += txids.length;
-      //   txsSize += size;
-      //   this.sendToMaster({
-      //     command: `mempool_txs_saved`,
-      //     data: { txids: txids.map((h: Buffer) => h.toString("hex")), size },
-      //   });
-      // });
     }
 
     if (blocks) {

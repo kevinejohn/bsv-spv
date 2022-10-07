@@ -27,6 +27,7 @@
 - [headers](Listener.md#headers)
 - [host](Listener.md#host)
 - [interval](Listener.md#interval)
+- [mempool\_txs](Listener.md#mempool_txs)
 - [multithread](Listener.md#multithread)
 - [name](Listener.md#name)
 - [port](Listener.md#port)
@@ -183,6 +184,16 @@ ___
 
 ___
 
+### mempool\_txs
+
+• **mempool\_txs**: `boolean`
+
+#### Defined in
+
+[src/listener.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L34)
+
+___
+
 ### multithread
 
 • `Optional` **multithread**: `Object`
@@ -236,7 +247,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L34)
+[src/listener.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L35)
 
 ___
 
@@ -387,7 +398,6 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.host?` | `string` |
-| `__namedParameters.mempool_txs?` | `boolean` |
 | `__namedParameters.port` | `number` |
 
 #### Returns
@@ -537,7 +547,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:369](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L369)
+[src/listener.ts:367](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L367)
 
 ___
 
@@ -951,7 +961,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:374](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L374)
+[src/listener.ts:372](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L372)
 
 ___
 
@@ -1162,7 +1172,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:261](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L261)
+[src/listener.ts:259](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L259)
 
 ___
 

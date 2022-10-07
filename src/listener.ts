@@ -1,5 +1,4 @@
 import EventEmitter from "events";
-// import DbMempool from "./db_mempool";
 import DbBlocks from "./db_blocks";
 import DbHeaders from "./db_headers";
 import DbListener from "./db_listener";
@@ -14,6 +13,7 @@ export interface ListenerOptions {
   blockHeight: number;
   dataDir: string;
   ticker: string;
+  mempool_txs?: boolean;
   disableInterval?: boolean;
   DEBUG_MEMORY?: boolean;
   multithread?: {
@@ -31,8 +31,8 @@ export default class Listener extends EventEmitter {
   multithread?: ListenerOptions["multithread"];
   host: string;
   port: number;
+  mempool_txs: boolean;
   reconnectTime: number;
-  // db_mempool: DbMempool;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
   db_listener: DbListener;
@@ -53,6 +53,7 @@ export default class Listener extends EventEmitter {
     blockHeight = 0, // Number. Block height you want to start reading from
     dataDir,
     ticker,
+    mempool_txs = true,
     disableInterval = false,
     multithread,
     DEBUG_MEMORY = false,
@@ -74,6 +75,7 @@ export default class Listener extends EventEmitter {
     if (!dataDir) throw Error(`Missing dataDir`);
     this.ticker = ticker;
     this.name = name;
+    this.mempool_txs = mempool_txs;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
     this.host = "localhost";
@@ -84,7 +86,6 @@ export default class Listener extends EventEmitter {
     this.multithread = multithread;
     const startDate = +new Date();
 
-    // const mempoolDir = path.join(dataDir, ticker, "mempool");
     const blocksDir = path.join(dataDir, ticker, "blocks");
     const headersDir = path.join(dataDir, ticker, "headers");
     const listenerDir = path.join(dataDir, ticker, "listeners", name);
@@ -92,7 +93,6 @@ export default class Listener extends EventEmitter {
     console.log(`Loading headers from disk....`);
     const headers = new Headers();
     this.headers = headers;
-    // this.db_mempool = new DbMempool({ mempoolDir });
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({
       headersDir,
@@ -181,11 +181,9 @@ export default class Listener extends EventEmitter {
   connect({
     host = this.host,
     port = this.port,
-    mempool_txs = true,
   }: {
     host?: string;
     port: number;
-    mempool_txs?: boolean;
   }) {
     if (this.client) return;
     this.host = host;
@@ -200,7 +198,7 @@ export default class Listener extends EventEmitter {
       console.log(
         `Connected to ${host}:${port} at ${new Date().toLocaleString()}!`
       );
-      if (mempool_txs)
+      if (this.mempool_txs)
         client.write(`${JSON.stringify({ command: "mempool_txs" })}\n\n`);
       this.db_headers.loadHeaders();
     });
@@ -384,8 +382,4 @@ export default class Listener extends EventEmitter {
     if (!this.db_blocks.blockExists(hash)) throw Error(`Block not saved`);
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
-  // getMempoolTxs(txids: string[], getTime: boolean) {
-  //   if (!Array.isArray(txids)) txids = [txids];
-  //   return this.db_mempool.getTxs(txids, getTime);
-  // }
 }

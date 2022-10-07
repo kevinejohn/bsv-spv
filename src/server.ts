@@ -2,23 +2,29 @@ import express from "express";
 import Http from "http";
 import * as Helpers from "./helpers";
 import Listener from "./listener";
+import * as bsv from "bsv-minimal";
+import DbMempool from "./db_mempool";
+import path from "path";
 
 export default class Server extends Listener {
   app: any;
   server: any;
   SHOW_LOGS: boolean;
+  db_mempool?: DbMempool;
 
   constructor({
     name,
     ticker,
     dataDir,
     MAX_FILE_SIZE = 1024 * 1024 * 500, // 500MB
-    disableInterval = true,
+    disableInterval = false,
+    mempool = true,
     DEBUG_MEMORY = false,
   }: {
     name: string;
     ticker: string;
     dataDir: string;
+    mempool?: boolean;
     MAX_FILE_SIZE?: number;
     disableInterval?: boolean;
     DEBUG_MEMORY?: boolean;
@@ -31,6 +37,17 @@ export default class Server extends Listener {
       disableInterval,
       DEBUG_MEMORY,
     });
+
+    if (mempool) {
+      const mempoolDir = path.join(dataDir, ticker, "mempools", name);
+      this.db_mempool = new DbMempool({ mempoolDir });
+      this.on(
+        "mempool_tx",
+        ({ transaction }: { transaction: bsv.Transaction }) => {
+          this.db_mempool && this.db_mempool.saveTx(transaction);
+        }
+      );
+    }
 
     this.SHOW_LOGS = true;
     const app = express();
@@ -46,17 +63,16 @@ export default class Server extends Listener {
 
         try {
           if (!pos) {
-            throw Error(`Mempool txs not available`);
-            // const { tx, time } = this.db_mempool.getTx(txid, true);
-            // const size = tx.toBuffer().length;
-            // res.setHeader("x-mempool-time", `${time}`);
-            // res.send(tx.toBuffer());
-            // this.SHOW_LOGS &&
-            //   console.log(
-            //     `${req.ip} /txid/${txid} ${Helpers.formatBytes(
-            //       size
-            //     )} from mempool`
-            //   );
+            if (!this.db_mempool) throw Error(`Mempool txs not available`);
+            const { tx, size, time } = await this.db_mempool.getTx(txid);
+            res.setHeader("x-mempool-time", `${time}`);
+            res.send(tx.toBuffer());
+            this.SHOW_LOGS &&
+              console.log(
+                `${req.ip} /txid/${txid} ${Helpers.formatBytes(
+                  size
+                )} from mempool`
+              );
           } else {
             let heightInt = parseInt(`${height}`);
             let lenInt = parseInt(`${len}`);

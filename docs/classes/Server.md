@@ -23,10 +23,12 @@
 - [db\_blocks](Server.md#db_blocks)
 - [db\_headers](Server.md#db_headers)
 - [db\_listener](Server.md#db_listener)
+- [db\_mempool](Server.md#db_mempool)
 - [disableInterval](Server.md#disableinterval)
 - [headers](Server.md#headers)
 - [host](Server.md#host)
 - [interval](Server.md#interval)
+- [mempool\_txs](Server.md#mempool_txs)
 - [multithread](Server.md#multithread)
 - [name](Server.md#name)
 - [port](Server.md#port)
@@ -88,6 +90,7 @@
 | `__namedParameters.MAX_FILE_SIZE?` | `number` |
 | `__namedParameters.dataDir` | `string` |
 | `__namedParameters.disableInterval?` | `boolean` |
+| `__namedParameters.mempool?` | `boolean` |
 | `__namedParameters.name` | `string` |
 | `__namedParameters.ticker` | `string` |
 
@@ -97,7 +100,7 @@
 
 #### Defined in
 
-[src/server.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L11)
+[src/server.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L15)
 
 ## Properties
 
@@ -107,7 +110,7 @@
 
 #### Defined in
 
-[src/server.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L9)
+[src/server.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L12)
 
 ___
 
@@ -117,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L7)
+[src/server.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L10)
 
 ___
 
@@ -191,6 +194,16 @@ ___
 
 ___
 
+### db\_mempool
+
+• `Optional` **db\_mempool**: [`DbMempool`](DbMempool.md)
+
+#### Defined in
+
+[src/server.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L13)
+
+___
+
 ### disableInterval
 
 • **disableInterval**: `undefined` \| `boolean`
@@ -244,6 +257,20 @@ ___
 #### Defined in
 
 [src/listener.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L41)
+
+___
+
+### mempool\_txs
+
+• **mempool\_txs**: `boolean`
+
+#### Inherited from
+
+[Listener](Listener.md).[mempool_txs](Listener.md#mempool_txs)
+
+#### Defined in
+
+[src/listener.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L34)
 
 ___
 
@@ -320,7 +347,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L34)
+[src/listener.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L35)
 
 ___
 
@@ -344,7 +371,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L8)
+[src/server.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L11)
 
 ___
 
@@ -497,7 +524,6 @@ ___
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.host?` | `string` |
-| `__namedParameters.mempool_txs?` | `boolean` |
 | `__namedParameters.port` | `number` |
 
 #### Returns
@@ -659,7 +685,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:369](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L369)
+[src/listener.ts:367](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L367)
 
 ___
 
@@ -704,7 +730,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L113)
+[src/server.ts:129](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L129)
 
 ___
 
@@ -1101,7 +1127,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:374](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L374)
+[src/listener.ts:372](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L372)
 
 ___
 
@@ -1320,7 +1346,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:261](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L261)
+[src/listener.ts:259](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L259)
 
 ___
 

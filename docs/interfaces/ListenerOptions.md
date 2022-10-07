@@ -10,6 +10,7 @@
 - [blockHeight](ListenerOptions.md#blockheight)
 - [dataDir](ListenerOptions.md#datadir)
 - [disableInterval](ListenerOptions.md#disableinterval)
+- [mempool\_txs](ListenerOptions.md#mempool_txs)
 - [multithread](ListenerOptions.md#multithread)
 - [name](ListenerOptions.md#name)
 - [ticker](ListenerOptions.md#ticker)
@@ -32,7 +33,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L14)
+[src/listener.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L13)
 
 ___
 
@@ -42,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L15)
+[src/listener.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L14)
 
 ___
 
@@ -53,6 +54,16 @@ ___
 #### Defined in
 
 [src/listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L17)
+
+___
+
+### mempool\_txs
+
+• `Optional` **mempool\_txs**: `boolean`
+
+#### Defined in
+
+[src/listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L16)
 
 ___
 
@@ -79,7 +90,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L13)
+[src/listener.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L12)
 
 ___
 
@@ -89,4 +100,4 @@ ___
 
 #### Defined in
 
-[src/listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L16)
+[src/listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L15)
