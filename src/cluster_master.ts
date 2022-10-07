@@ -30,6 +30,7 @@ export interface MasterOptions {
 
 export default class Master {
   sockets: { [key: string]: Net.Socket };
+  mempool_sockets: { [key: string]: Net.Socket };
   workers: { [key: string]: Worker };
   server?: Net.Server;
 
@@ -50,6 +51,7 @@ export default class Master {
     DEBUG_MEMORY,
   }: MasterOptions) {
     this.sockets = {};
+    this.mempool_sockets = {};
     this.workers = {};
 
     cluster.on("exit", (worker, code, signal) => {
@@ -91,7 +93,16 @@ export default class Master {
       }
       if (mempool) {
         worker = cluster.fork();
-        worker.on("message", (data) => this.onMessage(data));
+        worker.on("message", (data) => {
+          try {
+            const { command } = JSON.parse(data.toString());
+            if (command === "mempool_tx") {
+              this.onMempoolTxMessage(data);
+            }
+          } catch (err) {
+            this.onMessage(data);
+          }
+        });
         worker.send(
           `${JSON.stringify({
             ...workerConfig,
@@ -137,8 +148,29 @@ export default class Master {
         `master A new listener has connected at ${new Date().toLocaleString()}`
       );
 
-      socket.on("data", (chunk) => {
-        // const obj = JSON.parse(chunk.toString());
+      let messageBuffer = "";
+      socket.on("data", (message) => {
+        try {
+          const msgs = `${messageBuffer}${message.toString()}`
+            .toString()
+            .split("\n\n");
+          messageBuffer = msgs[msgs.length - 1];
+          for (let i = 0; i < msgs.length - 1; i++) {
+            const msg = msgs[i];
+            try {
+              if (!msg.trim()) continue;
+              const obj = JSON.parse(msg.trim());
+              const { command } = obj;
+              if (command === "mempool_txs") {
+                this.mempool_sockets[uid] = socket;
+              }
+            } catch (err) {
+              console.error(err, message.length, message.toString(), msg);
+            }
+          }
+        } catch (err) {
+          console.error(err, message.length, message.toString());
+        }
       });
 
       socket.on("end", () => {
@@ -151,6 +183,7 @@ export default class Master {
           console.error(err);
         }
         delete this.sockets[uid];
+        delete this.mempool_sockets[uid];
       });
 
       socket.on("error", (err) => {
@@ -161,6 +194,7 @@ export default class Master {
           console.error(err);
         }
         delete this.sockets[uid];
+        delete this.mempool_sockets[uid];
       });
     });
   }
@@ -170,6 +204,17 @@ export default class Master {
     try {
       for (const key in this.sockets) {
         this.sockets[key].write(data);
+      }
+    } catch (err) {
+      console.log(`master Could not send message`, err, typeof data, data);
+    }
+  }
+
+  onMempoolTxMessage(data: any) {
+    if (typeof data !== "string") return;
+    try {
+      for (const key in this.mempool_sockets) {
+        this.mempool_sockets[key].write(data);
       }
     } catch (err) {
       console.log(`master Could not send message`, err, typeof data, data);

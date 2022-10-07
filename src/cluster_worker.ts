@@ -76,13 +76,13 @@ export default class Worker {
         console.log(`${id} Synced ${newBlocks} new blocks.`);
       }
     });
-    spv.once("version", () => {
-      const seenNodes = spv.db_nodes.getSeenNodes();
-      if (seenNodes.length === 0) {
-        console.log(`${id} Getting node peers...`);
-        spv.getNodePeers();
-      }
-    });
+    // spv.once("version", () => {
+    //   const seenNodes = spv.db_nodes.getSeenNodes();
+    //   if (seenNodes.length === 0) {
+    //     console.log(`${id} Getting node peers...`);
+    //     spv.getNodePeers();
+    //   }
+    // });
     spv.on("version_invalid", ({ user_agent, expected_user_agent }) => {
       console.error(
         `${id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${expected_user_agent}"`
@@ -179,15 +179,15 @@ export default class Worker {
     spv.on("block_downloading", ({ hash, height }) => {
       // console.log(`${id} Downloading block: ${height}, ${hash}...`);
     });
-    spv.on("mempool_pruned", ({ header, height, finished, txCount }) => {
-      if (!header) {
-        console.log(`${id} Pruned ${txCount} mempool txs`);
-      } else {
-        console.log(
-          `${id} Pruned ${txCount} mempool txs included in block ${height}`
-        );
-      }
-    });
+    // spv.on("mempool_pruned", ({ header, height, finished, txCount }) => {
+    //   if (!header) {
+    //     console.log(`${id} Pruned ${txCount} mempool txs`);
+    //   } else {
+    //     console.log(
+    //       `${id} Pruned ${txCount} mempool txs included in block ${height}`
+    //     );
+    //   }
+    // });
 
     if (mempool) {
       // Mempool events
@@ -200,15 +200,26 @@ export default class Worker {
         // console.log(`${id} ${txids.length} txs seen in mempool`);
         txsSeen += txids.length;
       });
-      spv.on("mempool_txs_saved", ({ txids, size }) => {
-        // console.log(`${id} ${txids.length} new txs saved from mempool`);
-        txsSaved += txids.length;
-        txsSize += size;
+      spv.on("mempool_tx", ({ transaction }) => {
+        txsSaved++;
+        txsSize += transaction.length;
         this.sendToMaster({
-          command: `mempool_txs_saved`,
-          data: { txids: txids.map((h: Buffer) => h.toString("hex")), size },
+          command: `mempool_tx`,
+          data: {
+            transaction: transaction.toBuffer().toString("base64"),
+            size: transaction.length,
+          },
         });
       });
+      // spv.on("mempool_txs_saved", ({ txids, size }) => {
+      //   // console.log(`${id} ${txids.length} new txs saved from mempool`);
+      //   txsSaved += txids.length;
+      //   txsSize += size;
+      //   this.sendToMaster({
+      //     command: `mempool_txs_saved`,
+      //     data: { txids: txids.map((h: Buffer) => h.toString("hex")), size },
+      //   });
+      // });
     }
 
     if (blocks) {
@@ -277,15 +288,15 @@ export default class Worker {
     await spv.connect();
 
     if (mempool) {
-      await spv.pruneMempool(); // Delete old mempool txs if they exist
+      // await spv.pruneMempool(); // Delete old mempool txs if they exist
       spv.onMempoolTx(); // Download mempool txs
       console.log(`${id} Listening for mempool txs...`);
 
-      if (MEMPOOL_PRUNE_AFTER) {
-        setInterval(() => {
-          spv.pruneMempool().catch((err) => console.error(err));
-        }, MEMPOOL_PRUNE_AFTER);
-      }
+      // if (MEMPOOL_PRUNE_AFTER) {
+      //   setInterval(() => {
+      //     spv.pruneMempool().catch((err) => console.error(err));
+      //   }, MEMPOOL_PRUNE_AFTER);
+      // }
     }
     if (blocks) {
       await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip

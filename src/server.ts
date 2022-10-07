@@ -46,16 +46,17 @@ export default class Server extends Listener {
 
         try {
           if (!pos) {
-            const { tx, time } = this.db_mempool.getTx(txid, true);
-            const size = tx.toBuffer().length;
-            res.setHeader("x-mempool-time", `${time}`);
-            res.send(tx.toBuffer());
-            this.SHOW_LOGS &&
-              console.log(
-                `${req.ip} /txid/${txid} ${Helpers.formatBytes(
-                  size
-                )} from mempool`
-              );
+            throw Error(`Mempool txs not available`);
+            // const { tx, time } = this.db_mempool.getTx(txid, true);
+            // const size = tx.toBuffer().length;
+            // res.setHeader("x-mempool-time", `${time}`);
+            // res.send(tx.toBuffer());
+            // this.SHOW_LOGS &&
+            //   console.log(
+            //     `${req.ip} /txid/${txid} ${Helpers.formatBytes(
+            //       size
+            //     )} from mempool`
+            //   );
           } else {
             let heightInt = parseInt(`${height}`);
             let lenInt = parseInt(`${len}`);

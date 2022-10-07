@@ -1,5 +1,5 @@
 import EventEmitter from "events";
-import DbMempool from "./db_mempool";
+// import DbMempool from "./db_mempool";
 import DbBlocks from "./db_blocks";
 import DbHeaders from "./db_headers";
 import DbListener from "./db_listener";
@@ -7,7 +7,7 @@ import Headers from "bsv-headers";
 import Net from "net";
 import path from "path";
 import * as Helpers from "./helpers";
-import { BlockStream } from "bsv-minimal";
+import * as bsv from "bsv-minimal";
 
 export interface ListenerOptions {
   name: string;
@@ -32,7 +32,7 @@ export default class Listener extends EventEmitter {
   host: string;
   port: number;
   reconnectTime: number;
-  db_mempool: DbMempool;
+  // db_mempool: DbMempool;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
   db_listener: DbListener;
@@ -84,7 +84,7 @@ export default class Listener extends EventEmitter {
     this.multithread = multithread;
     const startDate = +new Date();
 
-    const mempoolDir = path.join(dataDir, ticker, "mempool");
+    // const mempoolDir = path.join(dataDir, ticker, "mempool");
     const blocksDir = path.join(dataDir, ticker, "blocks");
     const headersDir = path.join(dataDir, ticker, "headers");
     const listenerDir = path.join(dataDir, ticker, "listeners", name);
@@ -92,7 +92,7 @@ export default class Listener extends EventEmitter {
     console.log(`Loading headers from disk....`);
     const headers = new Headers();
     this.headers = headers;
-    this.db_mempool = new DbMempool({ mempoolDir });
+    // this.db_mempool = new DbMempool({ mempoolDir });
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({
       headersDir,
@@ -139,7 +139,7 @@ export default class Listener extends EventEmitter {
   }
 
   onMessage(obj: { command: string; data: any }) {
-    const { command, data } = obj;
+    let { command, data } = obj;
     if (command === "headers_saved") {
       const { hashes } = data;
       for (const hash of hashes) {
@@ -153,9 +153,12 @@ export default class Listener extends EventEmitter {
           tip.hash
         } at ${new Date().toLocaleString()}`
       );
-    } else if (command === "mempool_txs_saved") {
-      this.txsSeen += data.txids.length;
-      this.txsSize += data.size;
+    } else if (command === "mempool_tx") {
+      const buf = Buffer.from(data.transaction, "base64");
+      const transaction = bsv.Transaction.fromBuffer(buf);
+      this.txsSeen++;
+      this.txsSize += transaction.length;
+      data.transaction = transaction;
     } else if (command === "block_reorg") {
       const { height, hash } = data;
       console.warn(
@@ -178,9 +181,11 @@ export default class Listener extends EventEmitter {
   connect({
     host = this.host,
     port = this.port,
+    mempool_txs = true,
   }: {
     host?: string;
     port: number;
+    mempool_txs?: boolean;
   }) {
     if (this.client) return;
     this.host = host;
@@ -195,14 +200,17 @@ export default class Listener extends EventEmitter {
       console.log(
         `Connected to ${host}:${port} at ${new Date().toLocaleString()}!`
       );
-      // client.write("Hello World!");
+      if (mempool_txs)
+        client.write(`${JSON.stringify({ command: "mempool_txs" })}\n\n`);
       this.db_headers.loadHeaders();
     });
 
     let messageBuffer = "";
     client.on("data", (message) => {
       try {
-        const msgs = `${messageBuffer}${message}`.toString().split("\n\n");
+        const msgs = `${messageBuffer}${message.toString()}`
+          .toString()
+          .split("\n\n");
         messageBuffer = msgs[msgs.length - 1];
         for (let i = 0; i < msgs.length - 1; i++) {
           const msg = msgs[i];
@@ -252,7 +260,7 @@ export default class Listener extends EventEmitter {
 
   syncBlocks(
     callback: (
-      params: BlockStream
+      params: bsv.BlockStream
     ) =>
       | Promise<{ matches: number; errors?: number }>
       | { matches: number; errors?: number }
@@ -291,7 +299,7 @@ export default class Listener extends EventEmitter {
               // console.log(`Syncing block: ${height}/${tip.height} ${hash}...`);
               await this.readBlock(
                 { height, hash },
-                async (params: BlockStream) => {
+                async (params: bsv.BlockStream) => {
                   // Fix any
                   // if (params.started) {
                   //   console.log(
@@ -365,7 +373,7 @@ export default class Listener extends EventEmitter {
 
   readBlock(
     { hash, height }: { height: number; hash: string },
-    callback: (params: BlockStream) => Promise<any>
+    callback: (params: bsv.BlockStream) => Promise<any>
   ): Promise<boolean> {
     if (!hash) hash = this.headers.getHash(height);
     if (typeof height !== "number") {
@@ -376,8 +384,8 @@ export default class Listener extends EventEmitter {
     if (!this.db_blocks.blockExists(hash)) throw Error(`Block not saved`);
     return this.db_blocks.streamBlock({ hash, height }, callback);
   }
-  getMempoolTxs(txids: string[], getTime: boolean) {
-    if (!Array.isArray(txids)) txids = [txids];
-    return this.db_mempool.getTxs(txids, getTime);
-  }
+  // getMempoolTxs(txids: string[], getTime: boolean) {
+  //   if (!Array.isArray(txids)) txids = [txids];
+  //   return this.db_mempool.getTxs(txids, getTime);
+  // }
 }

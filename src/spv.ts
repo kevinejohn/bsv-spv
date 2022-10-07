@@ -4,7 +4,7 @@ import Headers from "bsv-headers";
 import { EventEmitter } from "events";
 import DbHeaders from "./db_headers";
 import DbBlocks from "./db_blocks";
-import DbMempool from "./db_mempool";
+// import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
 import DbListener from "./db_listener";
 import * as path from "path";
@@ -23,7 +23,7 @@ export interface SpvOptions {
   invalidBlocks?: string[];
   pruneBlocks?: number;
   blockHeight?: number;
-  MEMPOOL_PRUNE_AFTER?: number;
+  MEMPOOL_PRUNE_AFTER?: number; // TODO: Remove?
   DEBUG_LOG?: boolean;
   DEBUG_MEMORY?: boolean;
 }
@@ -41,14 +41,14 @@ export default class Spv extends EventEmitter {
   headers: Headers;
   db_blocks: DbBlocks;
   db_headers: DbHeaders;
-  db_mempool: DbMempool;
+  // db_mempool: DbMempool;
   db_nodes: DbNodes;
   db_listener: DbListener;
   syncingHeaders?: Promise<number>;
   syncingBlocks: boolean;
   connecting: boolean;
-  mempoolInterval?: NodeJS.Timer;
-  mempoolTxCache: bsvMin.Transaction[];
+  // mempoolInterval?: NodeJS.Timer;
+  // mempoolTxCache: bsvMin.Transaction[];
 
   constructor({
     ticker,
@@ -64,7 +64,7 @@ export default class Spv extends EventEmitter {
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
     blockHeight = -10, // Number. Lowest block height syncBlocks will sync to
-    MEMPOOL_PRUNE_AFTER,
+    // MEMPOOL_PRUNE_AFTER,
     DEBUG_LOG = false,
   }: SpvOptions) {
     super();
@@ -80,14 +80,14 @@ export default class Spv extends EventEmitter {
     this.node = node;
     this.syncingHeaders;
     this.syncingBlocks = false;
-    this.mempoolTxCache = [];
+    // this.mempoolTxCache = [];
     this.forceUserAgent = forceUserAgent;
     console.log(`${this.id} Loading headers from disk...`);
     const headers = new Headers({ invalidBlocks });
     this.headers = headers;
     const headersDir = path.join(dataDir, ticker, "headers");
     const blocksDir = path.join(dataDir, ticker, "blocks");
-    const mempoolDir = path.join(dataDir, ticker, "mempool");
+    // const mempoolDir = path.join(dataDir, ticker, "mempool");
     const nodesDir = path.join(dataDir, ticker, "nodes");
     const listenerDir = path.join(
       dataDir,
@@ -98,14 +98,14 @@ export default class Spv extends EventEmitter {
     );
     this.db_blocks = new DbBlocks({ blocksDir, readOnly: false });
     this.db_headers = new DbHeaders({ headersDir, headers, readOnly: false });
-    this.db_mempool = new DbMempool({
-      mempoolDir,
-      pruneAfter: MEMPOOL_PRUNE_AFTER,
-      readOnly: false,
-    });
+    // this.db_mempool = new DbMempool({
+    //   mempoolDir,
+    //   pruneAfter: MEMPOOL_PRUNE_AFTER,
+    //   readOnly: false,
+    // });
     this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
     this.db_listener = new DbListener({ listenerDir });
-    if (typeof start_height !== 'number') start_height = headers.getHeight()
+    if (typeof start_height !== "number") start_height = headers.getHeight();
     this.peer = new Peer({
       node,
       ticker,
@@ -309,7 +309,7 @@ export default class Spv extends EventEmitter {
   disconnect() {
     this.connecting = false;
     this.peer.disconnect();
-    this.mempoolTxCache = [];
+    // this.mempoolTxCache = [];
   }
   getHeight(hash?: string) {
     return this.headers.getHeight(hash);
@@ -331,10 +331,10 @@ export default class Spv extends EventEmitter {
     return this.peer.getAddr();
   }
 
-  getMempoolTxs(txids: Buffer[], getTime = true) {
-    const { txs, times } = this.db_mempool.getTxs(txids, getTime);
-    return { txs, times };
-  }
+  // getMempoolTxs(txids: Buffer[], getTime = true) {
+  //   const { txs, times } = this.db_mempool.getTxs(txids, getTime);
+  //   return { txs, times };
+  // }
 
   async getBlockTx({
     txid,
@@ -374,39 +374,40 @@ export default class Spv extends EventEmitter {
   }
 
   onMempoolTx() {
-    if (this.saveMempool) {
-      this.mempoolTxCache = [];
-      clearInterval(this.mempoolInterval);
-      this.mempoolInterval = setInterval(async () => {
-        if (this.mempoolTxCache.length > 0) {
-          const txs = this.mempoolTxCache;
-          this.mempoolTxCache = [];
-          const { txids, size } = await this.db_mempool.saveTxs(txs);
-          if (txids.length > 0) this.emit(`mempool_txs_saved`, { txids, size });
-        }
-      }, 300); // Batch mempool txs
-    }
+    // if (this.saveMempool) {
+    //   this.mempoolTxCache = [];
+    //   clearInterval(this.mempoolInterval);
+    //   this.mempoolInterval = setInterval(async () => {
+    //     if (this.mempoolTxCache.length > 0) {
+    //       const txs = this.mempoolTxCache;
+    //       this.mempoolTxCache = [];
+    //       const { txids, size } = await this.db_mempool.saveTxs(txs);
+    //       if (txids.length > 0) this.emit(`mempool_txs_saved`, { txids, size });
+    //     }
+    //   }, 300); // Batch mempool txs
+    // }
     this.peer.on("transactions", ({ header, transactions }) => {
       if (header) return;
       for (const [, transaction] of transactions) {
-        this.saveMempool && this.mempoolTxCache.push(transaction);
+        // this.saveMempool && this.mempoolTxCache.push(transaction);
+        this.emit(`mempool_tx`, { transaction });
       }
-      this.emit(`mempool_txs`, { transactions });
     });
     this.peer.fetchMempoolTxs(async (txids) => {
       this.emit(`mempool_txs_seen`, { txids });
-      if (this.saveMempool) {
-        // Only fetch txs we haven't already requested
-        const savedTxids = await this.db_mempool.saveTimes(txids);
-        return savedTxids;
-      } else {
-        return txids;
-      }
+      // if (this.saveMempool) {
+      //   // Only fetch txs we haven't already requested
+      //   const savedTxids = await this.db_mempool.saveTimes(txids);
+      //   return savedTxids;
+      // } else {
+      //   return txids;
+      // }
+      return txids;
     });
   }
 
   onBlockTx({ disableAutoDl = false }: { disableAutoDl?: boolean }) {
-    let prunedTxs: number;
+    // let prunedTxs: number;
     this.peer.on(
       "transactions",
       async ({
@@ -420,9 +421,9 @@ export default class Spv extends EventEmitter {
         startDate,
       }) => {
         if (!header) return;
-        if (started) {
-          prunedTxs = 0;
-        }
+        // if (started) {
+        //   prunedTxs = 0;
+        // }
         this.emit(`block_txs`, {
           header,
           started,
@@ -433,23 +434,23 @@ export default class Spv extends EventEmitter {
           startDate,
           txCount,
         });
-        const txidArr = transactions.map(
-          ([, tx]: [number, bsvMin.Transaction]) => tx.getHash()
-        );
-        txCount = prunedTxs;
-        const txids = await this.db_mempool.delTxs(txidArr);
-        txCount += txids.length;
-        if (txCount > 0 && finished) {
-          this.emit(`mempool_pruned`, {
-            txids,
-            height,
-            header,
-            started,
-            finished,
-            size,
-            txCount,
-          });
-        }
+        // const txidArr = transactions.map(
+        //   ([, tx]: [number, bsvMin.Transaction]) => tx.getHash()
+        // );
+        // txCount = prunedTxs;
+        // const txids = await this.db_mempool.delTxs(txidArr);
+        // txCount += txids.length;
+        // if (txCount > 0 && finished) {
+        //   this.emit(`mempool_pruned`, {
+        //     txids,
+        //     height,
+        //     header,
+        //     started,
+        //     finished,
+        //     size,
+        //     txCount,
+        //   });
+        // }
       }
     );
     if (!disableAutoDl) this.peer.fetchNewBlocks((hashes) => hashes);
@@ -508,10 +509,10 @@ export default class Spv extends EventEmitter {
     return prunedCount;
   }
 
-  async pruneMempool(olderThan?: number) {
-    const txids = await this.db_mempool.pruneTxs(olderThan);
-    if (txids.length > 0)
-      this.emit(`mempool_pruned`, { txids, txCount: txids.length });
-    return { txids };
-  }
+  // async pruneMempool(olderThan?: number) {
+  //   const txids = await this.db_mempool.pruneTxs(olderThan);
+  //   if (txids.length > 0)
+  //     this.emit(`mempool_pruned`, { txids, txCount: txids.length });
+  //   return { txids };
+  // }
 }
