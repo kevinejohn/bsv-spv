@@ -13,7 +13,6 @@ export interface ListenerOptions {
   blockHeight: number;
   dataDir: string;
   ticker: string;
-  mempool_txs?: boolean;
   disableInterval?: boolean;
   DEBUG_MEMORY?: boolean;
   multithread?: {
@@ -53,7 +52,6 @@ export default class Listener extends EventEmitter {
     blockHeight = 0, // Number. Block height you want to start reading from
     dataDir,
     ticker,
-    mempool_txs = true,
     disableInterval = false,
     multithread,
     DEBUG_MEMORY = false,
@@ -75,7 +73,7 @@ export default class Listener extends EventEmitter {
     if (!dataDir) throw Error(`Missing dataDir`);
     this.ticker = ticker;
     this.name = name;
-    this.mempool_txs = mempool_txs;
+    this.mempool_txs = true;
     this.blockHeight = blockHeight;
     this.reconnectTime = 1; // 1 second
     this.host = "localhost";
@@ -181,13 +179,16 @@ export default class Listener extends EventEmitter {
   connect({
     host = this.host,
     port = this.port,
+    mempool_txs = true,
   }: {
     host?: string;
     port: number;
+    mempool_txs?: boolean;
   }) {
     if (this.client) return;
     this.host = host;
     this.port = port;
+    this.mempool_txs = mempool_txs;
 
     this.txsSeen = 0;
     this.txsSize = 0;
@@ -198,7 +199,7 @@ export default class Listener extends EventEmitter {
       console.log(
         `Connected to ${host}:${port} at ${new Date().toLocaleString()}!`
       );
-      if (this.mempool_txs)
+      if (mempool_txs)
         client.write(`${JSON.stringify({ command: "mempool_txs" })}\n\n`);
       this.db_headers.loadHeaders();
     });
