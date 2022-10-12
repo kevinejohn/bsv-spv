@@ -291,11 +291,17 @@ export default class Listener extends EventEmitter {
               if (height < tip.height - 1000) continue;
               if (hash === this.db_listener.getHash(height)) continue;
             }
+            const blockDate = +new Date();
+            const interval = setInterval(() => {
+              console.log(
+                `Syncing block: ${height}/${tip.height} ${hash} in ${
+                  (+new Date() - blockDate) / 1000
+                } seconds...`
+              );
+            }, 1000 * 10);
             try {
               let errors = 0;
               let matches = 0;
-
-              // console.log(`Syncing block: ${height}/${tip.height} ${hash}...`);
               await this.readBlock(
                 { height, hash },
                 async (params: bsv.BlockStream) => {
@@ -345,6 +351,7 @@ export default class Listener extends EventEmitter {
               skipped++;
             }
             tip = this.headers.getTip();
+            clearInterval(interval);
           }
           const seconds = (+new Date() - date) / 1000;
           console.log(
