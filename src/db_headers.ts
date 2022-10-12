@@ -52,6 +52,7 @@ export default class DbHeaders {
         hashes.push(hash);
       }
     }
+    await this.dbi_headers.flushed;
     return hashes;
   }
 

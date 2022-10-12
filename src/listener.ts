@@ -141,8 +141,12 @@ export default class Listener extends EventEmitter {
     if (command === "headers_saved") {
       const { hashes } = data;
       for (const hash of hashes) {
-        const header = this.db_headers.getHeader(hash);
-        this.headers.addHeader({ header });
+        try {
+          const header = this.db_headers.getHeader(hash);
+          this.headers.addHeader({ header });
+        } catch (err) {
+          console.error(err);
+        }
       }
       this.headers.process();
       const tip = this.headers.getTip();
@@ -170,6 +174,12 @@ export default class Listener extends EventEmitter {
       console.log(
         `New block saved ${height}, ${hash} at ${new Date().toLocaleString()}`
       );
+      try {
+        const header = this.db_headers.getHeader(hash);
+        this.headers.addHeader({ header });
+      } catch (err) {
+        console.error(err);
+      }
     } else {
       console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
