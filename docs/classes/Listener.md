@@ -31,9 +31,9 @@
 - [multithread](Listener.md#multithread)
 - [name](Listener.md#name)
 - [port](Listener.md#port)
-- [promiseSyncBlock](Listener.md#promisesyncblock)
 - [reconnectTime](Listener.md#reconnecttime)
 - [reconnectTimeout](Listener.md#reconnecttimeout)
+- [syncingBlocks](Listener.md#syncingblocks)
 - [ticker](Listener.md#ticker)
 - [txsSeen](Listener.md#txsseen)
 - [txsSize](Listener.md#txssize)
@@ -90,7 +90,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/listener.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L50)
+[src/listener.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L46)
 
 ## Properties
 
@@ -231,16 +231,6 @@ ___
 
 ___
 
-### promiseSyncBlock
-
-• `Optional` **promiseSyncBlock**: `Promise`<{ `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
-
-#### Defined in
-
-[src/listener.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L44)
-
-___
-
 ### reconnectTime
 
 • **reconnectTime**: `number`
@@ -258,6 +248,16 @@ ___
 #### Defined in
 
 [src/listener.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L39)
+
+___
+
+### syncingBlocks
+
+• **syncingBlocks**: `boolean`
+
+#### Defined in
+
+[src/listener.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L44)
 
 ___
 
@@ -301,7 +301,7 @@ EventEmitter.captureRejectionSymbol
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:291
+node_modules/@types/node/ts4.8/events.d.ts:328
 
 ___
 
@@ -317,7 +317,7 @@ EventEmitter.captureRejections
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:296
+node_modules/@types/node/ts4.8/events.d.ts:333
 
 ___
 
@@ -331,7 +331,7 @@ EventEmitter.defaultMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:297
+node_modules/@types/node/ts4.8/events.d.ts:334
 
 ___
 
@@ -353,7 +353,7 @@ EventEmitter.errorMonitor
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:290
+node_modules/@types/node/ts4.8/events.d.ts:327
 
 ## Methods
 
@@ -384,7 +384,7 @@ EventEmitter.addListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:317
+node_modules/@types/node/ts4.8/events.d.ts:354
 
 ___
 
@@ -407,7 +407,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:179](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L179)
+[src/listener.ts:186](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L186)
 
 ___
 
@@ -421,7 +421,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:118](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L118)
+[src/listener.ts:115](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L115)
 
 ___
 
@@ -488,7 +488,7 @@ EventEmitter.emit
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:573
+node_modules/@types/node/ts4.8/events.d.ts:610
 
 ___
 
@@ -526,7 +526,7 @@ EventEmitter.eventNames
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:632
+node_modules/@types/node/ts4.8/events.d.ts:669
 
 ___
 
@@ -548,7 +548,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:368](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L368)
+[src/listener.ts:380](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L380)
 
 ___
 
@@ -573,7 +573,7 @@ EventEmitter.getMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:489
+node_modules/@types/node/ts4.8/events.d.ts:526
 
 ___
 
@@ -603,7 +603,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:579
+node_modules/@types/node/ts4.8/events.d.ts:616
 
 ___
 
@@ -641,7 +641,7 @@ EventEmitter.listeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:502
+node_modules/@types/node/ts4.8/events.d.ts:539
 
 ___
 
@@ -672,7 +672,7 @@ EventEmitter.off
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:462
+node_modules/@types/node/ts4.8/events.d.ts:499
 
 ___
 
@@ -727,7 +727,7 @@ EventEmitter.on
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:348
+node_modules/@types/node/ts4.8/events.d.ts:385
 
 ___
 
@@ -749,7 +749,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:139](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L139)
+[src/listener.ts:136](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L136)
 
 ___
 
@@ -802,7 +802,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:377
+node_modules/@types/node/ts4.8/events.d.ts:414
 
 ___
 
@@ -844,7 +844,7 @@ EventEmitter.prependListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:597
+node_modules/@types/node/ts4.8/events.d.ts:634
 
 ___
 
@@ -884,7 +884,7 @@ EventEmitter.prependOnceListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:613
+node_modules/@types/node/ts4.8/events.d.ts:650
 
 ___
 
@@ -939,7 +939,7 @@ EventEmitter.rawListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:532
+node_modules/@types/node/ts4.8/events.d.ts:569
 
 ___
 
@@ -962,7 +962,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:373](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L373)
+[src/listener.ts:385](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L385)
 
 ___
 
@@ -976,7 +976,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:111](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L111)
+[src/listener.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L108)
 
 ___
 
@@ -1012,7 +1012,7 @@ EventEmitter.removeAllListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:473
+node_modules/@types/node/ts4.8/events.d.ts:510
 
 ___
 
@@ -1118,7 +1118,7 @@ EventEmitter.removeListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:457
+node_modules/@types/node/ts4.8/events.d.ts:494
 
 ___
 
@@ -1153,13 +1153,13 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:483
+node_modules/@types/node/ts4.8/events.d.ts:520
 
 ___
 
 ### syncBlocks
 
-▸ **syncBlocks**(`callback`): `Promise`<{ `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
+▸ **syncBlocks**(`callback`): `Promise`<`undefined` \| { `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
 
 #### Parameters
 
@@ -1169,11 +1169,11 @@ ___
 
 #### Returns
 
-`Promise`<{ `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
+`Promise`<`undefined` \| { `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
 
 #### Defined in
 
-[src/listener.ts:260](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L260)
+[src/listener.ts:267](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L267)
 
 ___
 
@@ -1214,7 +1214,7 @@ v15.2.0, v14.17.0
 
 | Name | Type |
 | :------ | :------ |
-| `emitter` | `EventEmitter` \| `DOMEventTarget` |
+| `emitter` | `EventEmitter` \| `_DOMEventTarget` |
 | `name` | `string` \| `symbol` |
 
 #### Returns
@@ -1227,7 +1227,7 @@ EventEmitter.getEventListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:262
+node_modules/@types/node/ts4.8/events.d.ts:299
 
 ___
 
@@ -1271,7 +1271,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:234
+node_modules/@types/node/ts4.8/events.d.ts:271
 
 ___
 
@@ -1357,7 +1357,7 @@ EventEmitter.on
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:217
+node_modules/@types/node/ts4.8/events.d.ts:254
 
 ___
 
@@ -1453,7 +1453,7 @@ v11.13.0, v10.16.0
 
 | Name | Type |
 | :------ | :------ |
-| `emitter` | `NodeEventTarget` |
+| `emitter` | `_NodeEventTarget` |
 | `eventName` | `string` \| `symbol` |
 | `options?` | `StaticEventEmitterOptions` |
 
@@ -1467,7 +1467,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:157
+node_modules/@types/node/ts4.8/events.d.ts:194
 
 ▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
 
@@ -1475,7 +1475,7 @@ node_modules/@types/node/ts4.8/events.d.ts:157
 
 | Name | Type |
 | :------ | :------ |
-| `emitter` | `DOMEventTarget` |
+| `emitter` | `_DOMEventTarget` |
 | `eventName` | `string` |
 | `options?` | `StaticEventEmitterOptions` |
 
@@ -1489,7 +1489,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:158
+node_modules/@types/node/ts4.8/events.d.ts:195
 
 ___
 
@@ -1518,7 +1518,7 @@ v15.4.0
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `n?` | `number` | A non-negative number. The maximum number of listeners per `EventTarget` event. |
-| `...eventTargets` | (`EventEmitter` \| `DOMEventTarget`)[] | - |
+| `...eventTargets` | (`EventEmitter` \| `_DOMEventTarget`)[] | - |
 
 #### Returns
 
@@ -1530,4 +1530,4 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:280
+node_modules/@types/node/ts4.8/events.d.ts:317

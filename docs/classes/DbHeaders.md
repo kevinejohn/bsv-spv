@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L56)
+[src/db_headers.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L59)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[src/db_headers.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L67)
+[src/db_headers.ts:70](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L70)
 
 ___
 

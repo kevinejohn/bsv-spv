@@ -1,4 +1,5 @@
 import Peer from "bsv-p2p";
+import { VersionOptions } from "bsv-p2p/lib/messages/version";
 import * as bsvMin from "bsv-minimal";
 import Headers from "bsv-headers";
 import { EventEmitter } from "events";
@@ -264,7 +265,7 @@ export default class Spv extends EventEmitter {
     return this.syncingHeaders;
   }
 
-  async connect(options?: any) {
+  async connect(options?: VersionOptions) {
     if (this.connecting) return;
     this.connecting = true;
     this.peer.on("disconnected", (params) => {

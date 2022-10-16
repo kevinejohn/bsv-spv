@@ -207,67 +207,65 @@ export default class Worker {
       });
     }
 
-    if (blocks) {
-      spv.on("block_pruned", ({ height, hash }) => {
-        console.log(`${id} Pruned block ${height}, ${hash}`);
+    spv.on("block_pruned", ({ height, hash }) => {
+      console.log(`${id} Pruned block ${height}, ${hash}`);
+    });
+    spv.on("block_saved", ({ height, hash, size, txCount, startDate }) => {
+      const seconds = (+new Date() - startDate) / 1000;
+      console.log(
+        `${id} Downloaded block ${height}/${spv.getHeight()}, ${hash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
+          size,
+          seconds
+        )}. ${new Date().toLocaleString()}`
+      );
+      this.sendToMaster({
+        command: `block_saved`,
+        data: { hash, height, size, txCount },
       });
-      spv.on("block_saved", ({ height, hash, size, txCount, startDate }) => {
+    });
+    spv.on(
+      "block_already_saved",
+      ({ height, hash, size, txCount, startDate }) => {
         const seconds = (+new Date() - startDate) / 1000;
         console.log(
           `${id} Downloaded block ${height}/${spv.getHeight()}, ${hash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
             size,
             seconds
-          )}. ${new Date().toLocaleString()}`
+          )}. Block already saved. ${new Date().toLocaleString()}`
         );
-        this.sendToMaster({
-          command: `block_saved`,
-          data: { hash, height, size, txCount },
-        });
-      });
-      spv.on(
-        "block_already_saved",
-        ({ height, hash, size, txCount, startDate }) => {
+      }
+    );
+    let chunkParams: any;
+    spv.on("block_chunk", (params) => {
+      chunkParams = params;
+      if (params.started) {
+        clearInterval(blockInterval);
+        blockInterval = setInterval(() => {
+          const { blockHash, height, size, startDate } = chunkParams;
           const seconds = (+new Date() - startDate) / 1000;
           console.log(
-            `${id} Downloaded block ${height}/${spv.getHeight()}, ${hash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
-              size,
-              seconds
-            )}. Block already saved. ${new Date().toLocaleString()}`
+            `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
+              "hex"
+            )} taking ${Number(seconds).toFixed(
+              0
+            )} seconds so far. ${Helpers.formatSpeeds(size, seconds)}`
           );
-        }
-      );
-      let chunkParams: any;
-      spv.on("block_chunk", (params) => {
-        chunkParams = params;
-        if (params.started) {
-          clearInterval(blockInterval);
-          blockInterval = setInterval(() => {
-            const { blockHash, height, size, startDate } = chunkParams;
-            const seconds = (+new Date() - startDate) / 1000;
-            console.log(
-              `${id} downloading block ${height}/${spv.getHeight()} ${blockHash.toString(
-                "hex"
-              )} taking ${Number(seconds).toFixed(
-                0
-              )} seconds so far. ${Helpers.formatSpeeds(size, seconds)}`
-            );
-          }, 1000 * 10); // TODO: Change to 10 seconds
-        }
-        if (params.finished) clearInterval(blockInterval);
-      });
-      // spv.on(
-      //   "block_txs",
-      //   ({ transactions, header, started, finished, height, size }) => {
-      //     for (const [index, transaction] of transactions) {
-      //       console.log(
-      //         `tx ${transaction
-      //           .getHash()
-      //           .toString("hex")} in index ${index} of block ${height}`
-      //       );
-      //     }
-      //   }
-      // );
-    }
+        }, 1000 * 10); // TODO: Change to 10 seconds
+      }
+      if (params.finished) clearInterval(blockInterval);
+    });
+    // spv.on(
+    //   "block_txs",
+    //   ({ transactions, header, started, finished, height, size }) => {
+    //     for (const [index, transaction] of transactions) {
+    //       console.log(
+    //         `tx ${transaction
+    //           .getHash()
+    //           .toString("hex")} in index ${index} of block ${height}`
+    //       );
+    //     }
+    //   }
+    // );
 
     console.log(`${id} Connecting to node...`);
     await spv.connect();
