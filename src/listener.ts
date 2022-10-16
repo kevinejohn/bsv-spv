@@ -41,11 +41,7 @@ export default class Listener extends EventEmitter {
   client?: Net.Socket;
   txsSeen: number;
   txsSize: number;
-  promiseSyncBlock?: Promise<{
-    skipped: number;
-    processed: number;
-    blockSize: number;
-  }>;
+  syncingBlocks: boolean;
 
   constructor({
     name, // Name of plugin
@@ -81,6 +77,7 @@ export default class Listener extends EventEmitter {
     this.disableInterval = disableInterval;
     this.txsSeen = 0;
     this.txsSize = 0;
+    this.syncingBlocks = false;
     this.multithread = multithread;
     const startDate = +new Date();
 
@@ -131,7 +128,7 @@ export default class Listener extends EventEmitter {
       }
     } catch (err) {}
     this.client = undefined;
-    delete this.promiseSyncBlock;
+    this.syncingBlocks = false;
     clearInterval(this.interval);
     clearTimeout(this.reconnectTimeout);
   }
@@ -267,7 +264,7 @@ export default class Listener extends EventEmitter {
     }
   }
 
-  syncBlocks(
+  async syncBlocks(
     callback: (
       params: bsv.BlockStream
     ) =>
@@ -275,112 +272,110 @@ export default class Listener extends EventEmitter {
       | { matches: number; errors?: number }
       | void
   ) {
-    if (!this.promiseSyncBlock) {
-      this.promiseSyncBlock = new Promise(async (resolve, reject) => {
-        try {
-          let processed = 0;
-          let skipped = 0;
-          let blockSize = 0;
-          const date = +new Date();
-          let tip = this.headers.getTip();
+    if (this.syncingBlocks) return;
+    this.syncingBlocks = true;
+    try {
+      let processed = 0;
+      let skipped = 0;
+      let blockSize = 0;
+      const date = +new Date();
+      let tip = this.headers.getTip();
+      console.log(
+        `Syncing blocks from ${this.blockHeight} to ${tip.height}...`
+      );
+      for (let height = this.blockHeight; height <= tip.height; height++) {
+        if (this.multithread) {
+          if (
+            (height + this.multithread.index) % this.multithread.threads !==
+            0
+          ) {
+            continue;
+          }
+        }
+
+        const hash = this.headers.getHash(height);
+        if (this.db_listener.isProcessed(height)) {
+          if (height < tip.height - 1000) continue;
+          if (hash === this.db_listener.getHash(height)) continue;
+        }
+        const blockDate = +new Date();
+        const interval = setInterval(() => {
           console.log(
-            `Syncing blocks from ${this.blockHeight} to ${tip.height}...`
+            `Syncing block: ${height}/${tip.height} ${hash} in ${
+              (+new Date() - blockDate) / 1000
+            } seconds...`
           );
-          for (let height = this.blockHeight; height <= tip.height; height++) {
-            if (this.multithread) {
-              if (
-                (height + this.multithread.index) % this.multithread.threads !==
-                0
-              ) {
-                continue;
+        }, 1000 * 10);
+        try {
+          let errors = 0;
+          let matches = 0;
+          await this.readBlock(
+            { height, hash },
+            async (params: bsv.BlockStream) => {
+              // Fix any
+              // if (params.started) {
+              //   console.log(
+              //     `Streaming block ${height}, ${params.header
+              //       .getHash()
+              //       .toString("hex")}...`
+              //   );
+              // }
+              const result = await callback(params);
+              if (result) {
+                if (result.matches) matches += result.matches;
+                if (result.errors) errors += result.errors;
+              }
+              if (params.finished) {
+                const { header, size, txCount, startDate } = params;
+                const blockHash = header ? header.getHash(true) : "";
+                const timer = +new Date() - startDate;
+                this.db_listener.markBlockProcessed({
+                  blockHash,
+                  height,
+                  matches,
+                  errors,
+                  size,
+                  txCount,
+                  timer,
+                });
+                processed++;
+                blockSize += size;
+                const seconds = (+new Date() - startDate) / 1000;
+                console.log(
+                  `Streamed block ${height}/${this.headers.getHeight()} ${blockHash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
+                    size,
+                    seconds
+                  )} at ${new Date().toLocaleString()}.`
+                );
               }
             }
-
-            const hash = this.headers.getHash(height);
-            if (this.db_listener.isProcessed(height)) {
-              if (height < tip.height - 1000) continue;
-              if (hash === this.db_listener.getHash(height)) continue;
-            }
-            const blockDate = +new Date();
-            const interval = setInterval(() => {
-              console.log(
-                `Syncing block: ${height}/${tip.height} ${hash} in ${
-                  (+new Date() - blockDate) / 1000
-                } seconds...`
-              );
-            }, 1000 * 10);
-            try {
-              let errors = 0;
-              let matches = 0;
-              await this.readBlock(
-                { height, hash },
-                async (params: bsv.BlockStream) => {
-                  // Fix any
-                  // if (params.started) {
-                  //   console.log(
-                  //     `Streaming block ${height}, ${params.header
-                  //       .getHash()
-                  //       .toString("hex")}...`
-                  //   );
-                  // }
-                  const result = await callback(params);
-                  if (result) {
-                    if (result.matches) matches += result.matches;
-                    if (result.errors) errors += result.errors;
-                  }
-                  if (params.finished) {
-                    const { header, size, txCount, startDate } = params;
-                    const blockHash = header ? header.getHash(true) : "";
-                    const timer = +new Date() - startDate;
-                    this.db_listener.markBlockProcessed({
-                      blockHash,
-                      height,
-                      matches,
-                      errors,
-                      size,
-                      txCount,
-                      timer,
-                    });
-                    processed++;
-                    blockSize += size;
-                    const seconds = (+new Date() - startDate) / 1000;
-                    console.log(
-                      `Streamed block ${height}/${this.headers.getHeight()} ${blockHash}, ${txCount} txs in ${seconds} seconds. ${Helpers.formatSpeeds(
-                        size,
-                        seconds
-                      )} at ${new Date().toLocaleString()}.`
-                    );
-                  }
-                }
-              );
-            } catch (err: any) {
-              // console.error(
-              //   `Block ${height}/${tip.height} ${hash} not saved: ${err.message}`
-              // );
-              // Block not saved
-              skipped++;
-            }
-            tip = this.headers.getTip();
-            clearInterval(interval);
-          }
-          const seconds = (+new Date() - date) / 1000;
-          console.log(
-            `Synced ${processed} blocks (${Helpers.formatSpeeds(
-              blockSize,
-              seconds
-            )} in ${seconds} seconds. ${skipped} blocks missing. ${this.db_listener.blocksProcessed()}/${
-              tip.height
-            } blocks processed at ${new Date().toLocaleString()}`
           );
-          resolve({ skipped, processed, blockSize });
-        } catch (err) {
-          console.error(err);
-          reject(err);
+        } catch (err: any) {
+          // console.error(
+          //   `Block ${height}/${tip.height} ${hash} not saved: ${err.message}`
+          // );
+          // Block not saved
+          skipped++;
         }
-        delete this.promiseSyncBlock;
-      });
+        tip = this.headers.getTip();
+        clearInterval(interval);
+      }
+      const seconds = (+new Date() - date) / 1000;
+      console.log(
+        `Synced ${processed} blocks (${Helpers.formatSpeeds(
+          blockSize,
+          seconds
+        )} in ${seconds} seconds. ${skipped} blocks missing. ${
+          this.db_listener.blocksProcessed() - 1
+        }/${tip.height} blocks processed at ${new Date().toLocaleString()}`
+      );
+      this.syncingBlocks = false;
+      return { skipped, processed, blockSize };
+    } catch (err) {
+      console.error(err);
+      this.syncingBlocks = false;
+      throw err;
     }
-    return this.promiseSyncBlock;
   }
   getBlockInfo({ height, hash }: { height: number; hash: string }) {
     if (!hash) hash = this.headers.getHash(height);
