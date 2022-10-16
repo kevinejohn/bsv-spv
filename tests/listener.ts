@@ -16,29 +16,22 @@ const onBlock = ({
   size,
   height,
   txCount,
+  txRead,
   transactions,
   startDate,
 }: BlockStream) => {
-  // for (const [index, tx, pos, len] of transactions) {
-  //   console.log(
-  //     `#${index} tx ${tx.getTxid()} in block ${height}`
-  //   );
-  // }
-};
-
-const onMempool = ({ txids }: { txids: string[] }) => {
-  const { txs, size } = listener.getMempoolTxs(txids, false);
-  console.log(
-    `${txids.length} new mempool txs. ${size.toLocaleString("en-US")} bytes.`
-  );
-  for (const tx of txs) {
-    console.log(`Mempool tx ${tx.getTxid()}`);
+  for (const [index, tx, pos, len] of transactions) {
+    console.log(`#${index} tx ${tx.getTxid()} in block ${height}`);
   }
 };
 
 listener.on("headers_saved", ({ hashes }: { hashes: string[] }) => {});
-listener.on("mempool_txs_saved", ({ txids }: { txids: string[] }) => {
-  // onMempool({ txids });
+listener.on("mempool_tx", ({ transaction, size }) => {
+  console.log(
+    `new mempool tx ${transaction.getTxid()} ${size.toLocaleString(
+      "en-US"
+    )} bytes.`
+  );
 });
 listener.on(
   "block_reorg",
