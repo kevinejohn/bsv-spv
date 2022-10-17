@@ -73,7 +73,6 @@ const onBlock = ({
   }
 };
 
-listener.on("headers_saved", ({ hashes }) => {});
 listener.on("mempool_tx", ({ transaction, size }) => {
   console.log(
     `new mempool tx ${transaction.getTxid()} ${size.toLocaleString(
