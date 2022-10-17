@@ -65,8 +65,12 @@ export default class DbListener {
     const value = Buffer.from(
       JSON.stringify({ matches, errors, txCount, size, date, timer })
     );
-    this.dbi_heights.putSync(height, blockHash);
-    this.dbi_blocks.putSync(blockHash, value);
+    let buf = this.dbi_heights.get(height);
+    if (!buf || buf.toString("hex") !== blockHash.toString("hex")) {
+      this.dbi_heights.putSync(height, blockHash);
+    }
+    if (!this.dbi_blocks.get(blockHash))
+      this.dbi_blocks.putSync(blockHash, value);
   }
 
   batchBlocksProcessed(array: ListenerOptions[]): Promise<boolean> {
@@ -114,5 +118,41 @@ export default class DbListener {
       this.dbi_heights.remove(height);
     }
     return this.dbi_root.flushed;
+  }
+
+  getSize() {
+    console.log(`Calculating size...`);
+    console.log(`dbi_blocks: ${this.dbi_blocks.getCount()}`);
+    console.log(`dbi_heights: ${this.dbi_blocks.getCount()}`);
+    let count = 0;
+    let size = 0;
+    for (const { key, value } of this.dbi_blocks.getRange()) {
+      if (!Buffer.isBuffer(key) || !Buffer.isBuffer(value)) continue;
+      size += key.length + value.length;
+      count++;
+      if (count % 1000 === 0)
+        console.log(
+          `${count}: ${key.toString("hex")}. value: ${value.length} bytes`
+        );
+    }
+    console.log(
+      `Size of dbi_blocks: ${size.toLocaleString(
+        "en-US"
+      )} bytes. ${count} total`
+    );
+    count = 0;
+    size = 0;
+    for (const { key, value } of this.dbi_heights.getRange()) {
+      if (typeof key !== "number" || !Buffer.isBuffer(value)) continue;
+      size += value.length;
+      count++;
+      if (count % 1000 === 0)
+        console.log(`${count}: ${key} value: ${value.length} bytes`);
+    }
+    console.log(
+      `Size of dbi_heights: ${size.toLocaleString(
+        "en-US"
+      )} bytes. ${count} total`
+    );
   }
 }
