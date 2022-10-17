@@ -94,8 +94,7 @@ export default class Spv extends EventEmitter {
       dataDir,
       ticker,
       "history",
-      `node-${node.replace(":", "-")}`,
-      "/data"
+      `node-${node.replace(":", "-")}`
     );
     this.db_blocks = new DbBlocks({ blocksDir, readOnly: false });
     this.db_headers = new DbHeaders({ headersDir, headers, readOnly: false });
