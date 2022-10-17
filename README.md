@@ -94,7 +94,7 @@ listener.connect({ port });
 
 ### Serve txs from express server
 
-```js
+```ts
 const { Server } = require("bsv-spv");
 
 const name = "test-server";
@@ -118,7 +118,7 @@ server.listen({ port: 8081 }); // Express server to server txs
 
 Set `invalidBlocks` to the desired fork you wish to use. It will invalidate any other chain listed.
 
-```js
+```ts
 let invalidBlocks;
 
 // Use BSV only
@@ -149,14 +149,14 @@ invalidBlocks = [
 
 ## Tests
 
-```js
+```sh
 ts-node ./tests/cluster.js
 ```
 
-```js
+```sh
 ts-node ./tests/listener.js
 ```
 
-```js
+```sh
 ts-node ./tests/server.js
 ```
