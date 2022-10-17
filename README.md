@@ -2,7 +2,7 @@
 
 [![NPM Package](https://img.shields.io/npm/v/bsv-spv.svg?style=flat-square)](https://www.npmjs.org/package/bsv-spv)
 
-Stay in sync with latest bitcoin headers
+Stay in sync with latest bitcoin headers, blocks and mempool txs
 
 ## Install
 
@@ -16,6 +16,8 @@ npm i bsv-spv
 
 ## Use
 
+### Listen to Bitcoin P2P network
+
 ```ts
 const { Master, Worker } = require("bsv-spv");
 const cluster = require("cluster");
@@ -24,7 +26,7 @@ const port = 8080; // Server that new blocks nad mempool txs are announced on
 
 const config = {
   ticker: "BSV", // BTC, BCH, XEC, BSV
-  nodes: [`seed.satoshisvision.network:8333`], // Set to your favorite node IP addresses
+  nodes: [`95.217.197.54:8333`], // Set to your favorite node IP addresses
   forceUserAgent: `Bitcoin SV`, // Disconnects with nodes that do not string match with user agent
   // user_agent: 'Bitcoin SV',
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)
@@ -44,7 +46,7 @@ if (cluster.isWorker) {
 }
 ```
 
-### Listen to mempool and block transactions from other processes
+### Listener process to read downloaded data from the Master process
 
 ```ts
 const { Listener } = require("bsv-spv");
