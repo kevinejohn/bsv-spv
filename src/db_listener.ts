@@ -32,10 +32,12 @@ export default class DbListener {
     this.dbi_blocks = this.dbi_root.openDB({
       name: "block_info",
       keyEncoding: "binary",
+      encoding: "binary",
     });
     this.dbi_heights = this.dbi_root.openDB({
       name: "block_heights",
       keyEncoding: "uint32",
+      encoding: "binary",
     });
   }
 
@@ -69,8 +71,10 @@ export default class DbListener {
     if (!buf || buf.toString("hex") !== blockHash.toString("hex")) {
       this.dbi_heights.putSync(height, blockHash);
     }
-    if (!this.dbi_blocks.get(blockHash))
+    buf = this.dbi_blocks.get(blockHash);
+    if (!buf || buf.toString() !== value.toString()) {
       this.dbi_blocks.putSync(blockHash, value);
+    }
   }
 
   batchBlocksProcessed(array: ListenerOptions[]): Promise<boolean> {
