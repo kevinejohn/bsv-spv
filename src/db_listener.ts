@@ -28,7 +28,7 @@ export default class DbListener {
     fs.mkdirSync(listenerDir, { recursive: true });
     this.listenerDir = listenerDir;
 
-    this.dbi_root = lmdb.open({ path: listenerDir, readOnly });
+    this.dbi_root = lmdb.open({ path: listenerDir, noSubdir: false, readOnly });
     this.dbi_blocks = this.dbi_root.openDB({
       name: "block_info",
       keyEncoding: "binary",
