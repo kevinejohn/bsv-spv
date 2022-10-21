@@ -13,7 +13,9 @@ process.on("uncaughtException", (err) => {
 
 export interface MasterOptions {
   ticker: string;
-  nodes: string[];
+  nodes?: string[];
+  nodes_blocks?: string[];
+  nodes_mempool?: string[];
   forceUserAgent?: string;
   user_agent?: string;
   version?: number;
@@ -37,6 +39,8 @@ export default class Master {
   constructor({
     ticker,
     nodes,
+    nodes_blocks,
+    nodes_mempool,
     forceUserAgent,
     user_agent,
     version,
@@ -61,24 +65,32 @@ export default class Master {
       process.exit(code); // TODO: Recover instead of shutting down
     });
 
-    for (const node of nodes) {
-      let worker;
+    if (!nodes && !nodes_blocks && !nodes_mempool)
+      throw Error(`Missing nodes array`);
 
-      const workerConfig: SpvOptions = {
-        ticker,
-        node,
-        forceUserAgent,
-        user_agent,
-        version,
-        invalidBlocks,
-        dataDir,
-        pruneBlocks,
-        blockHeight,
-        MEMPOOL_PRUNE_AFTER,
-        DEBUG_LOG,
-        DEBUG_MEMORY,
-      };
-      if (blocks) {
+    if (blocks || nodes_blocks) {
+      const array =
+        nodes && nodes_blocks
+          ? [...nodes, ...nodes_blocks]
+          : nodes_blocks || nodes || [];
+      if (array.length === 0) throw Error(`No block nodes`);
+      for (const node of array) {
+        let worker;
+
+        const workerConfig: SpvOptions = {
+          ticker,
+          node,
+          forceUserAgent,
+          user_agent,
+          version,
+          invalidBlocks,
+          dataDir,
+          pruneBlocks,
+          blockHeight,
+          MEMPOOL_PRUNE_AFTER,
+          DEBUG_LOG,
+          DEBUG_MEMORY,
+        };
         worker = cluster.fork();
         worker.on("message", (data) => this.onMessage(data));
         worker.send(
@@ -91,16 +103,42 @@ export default class Master {
         this.workers[`blocks-${node}`] = worker;
         console.log(`master Forked blocks-${node}`);
       }
-      if (mempool) {
+    }
+    if (mempool || nodes_mempool) {
+      const array =
+        nodes && nodes_mempool
+          ? [...nodes, ...nodes_mempool]
+          : nodes_mempool || nodes || [];
+      if (array.length === 0) throw Error(`No mempool nodes`);
+      for (const node of array) {
+        let worker;
+
+        const workerConfig: SpvOptions = {
+          ticker,
+          node,
+          forceUserAgent,
+          user_agent,
+          version,
+          invalidBlocks,
+          dataDir,
+          pruneBlocks,
+          blockHeight,
+          MEMPOOL_PRUNE_AFTER,
+          DEBUG_LOG,
+          DEBUG_MEMORY,
+        };
+
         worker = cluster.fork();
         worker.on("message", (data) => {
           try {
             const { command } = JSON.parse(data.toString());
             if (command === "mempool_tx") {
               this.onMempoolTxMessage(data);
+            } else {
+              this.onMessage(data);
             }
           } catch (err) {
-            this.onMessage(data);
+            console.error(err);
           }
         });
         worker.send(

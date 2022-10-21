@@ -24,6 +24,7 @@
 - [getBlockHash](DbListener.md#getblockhash)
 - [getBlockInfo](DbListener.md#getblockinfo)
 - [getHash](DbListener.md#gethash)
+- [getSize](DbListener.md#getsize)
 - [isProcessed](DbListener.md#isprocessed)
 - [markBlockProcessed](DbListener.md#markblockprocessed)
 
@@ -103,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L72)
+[src/db_listener.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L80)
 
 ___
 
@@ -117,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:90](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L90)
+[src/db_listener.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L98)
 
 ___
 
@@ -131,7 +132,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L42)
+[src/db_listener.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L44)
 
 ___
 
@@ -152,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L112)
+[src/db_listener.ts:120](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L120)
 
 ___
 
@@ -172,7 +173,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:106](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L106)
+[src/db_listener.ts:114](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L114)
 
 ___
 
@@ -192,7 +193,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L99)
+[src/db_listener.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L107)
 
 ___
 
@@ -212,7 +213,21 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:93](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L93)
+[src/db_listener.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L101)
+
+___
+
+### getSize
+
+▸ **getSize**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/db_listener.ts:127](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L127)
 
 ___
 
@@ -232,7 +247,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:87](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L87)
+[src/db_listener.ts:95](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L95)
 
 ___
 
@@ -252,4 +267,4 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L54)
+[src/db_listener.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L56)

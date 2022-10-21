@@ -16,6 +16,8 @@
 - [invalidBlocks](MasterOptions.md#invalidblocks)
 - [mempool](MasterOptions.md#mempool)
 - [nodes](MasterOptions.md#nodes)
+- [nodes\_blocks](MasterOptions.md#nodes_blocks)
+- [nodes\_mempool](MasterOptions.md#nodes_mempool)
 - [pruneBlocks](MasterOptions.md#pruneblocks)
 - [ticker](MasterOptions.md#ticker)
 - [user\_agent](MasterOptions.md#user_agent)
@@ -29,7 +31,7 @@
 
 #### Defined in
 
-[src/cluster_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
+[src/cluster_master.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L29)
 
 ___
 
@@ -39,7 +41,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
+[src/cluster_master.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L30)
 
 ___
 
@@ -49,7 +51,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
+[src/cluster_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
 
 ___
 
@@ -59,7 +61,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:23](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L23)
+[src/cluster_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
 
 ___
 
@@ -69,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
+[src/cluster_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
 
 ___
 
@@ -79,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L21)
+[src/cluster_master.ts:23](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L23)
 
 ___
 
@@ -89,7 +91,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L17)
+[src/cluster_master.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L19)
 
 ___
 
@@ -99,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L20)
+[src/cluster_master.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L22)
 
 ___
 
@@ -109,17 +111,37 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L24)
+[src/cluster_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
 
 ___
 
 ### nodes
 
-• **nodes**: `string`[]
+• `Optional` **nodes**: `string`[]
 
 #### Defined in
 
 [src/cluster_master.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L16)
+
+___
+
+### nodes\_blocks
+
+• `Optional` **nodes\_blocks**: `string`[]
+
+#### Defined in
+
+[src/cluster_master.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L17)
+
+___
+
+### nodes\_mempool
+
+• `Optional` **nodes\_mempool**: `string`[]
+
+#### Defined in
+
+[src/cluster_master.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L18)
 
 ___
 
@@ -129,7 +151,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L22)
+[src/cluster_master.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L24)
 
 ___
 
@@ -149,7 +171,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L18)
+[src/cluster_master.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L20)
 
 ___
 
@@ -159,4 +181,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L19)
+[src/cluster_master.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L21)

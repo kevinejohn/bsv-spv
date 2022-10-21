@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/cluster_master.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L37)
+[src/cluster_master.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L39)
 
 ## Properties
 
@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/cluster_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
+[src/cluster_master.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L35)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L35)
+[src/cluster_master.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L37)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L32)
+[src/cluster_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
+[src/cluster_master.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L36)
 
 ## Methods
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:213](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L213)
+[src/cluster_master.ts:251](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L251)
 
 ___
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:202](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L202)
+[src/cluster_master.ts:240](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L240)
 
 ___
 
@@ -149,4 +149,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:130](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L130)
+[src/cluster_master.ts:168](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L168)
