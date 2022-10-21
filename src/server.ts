@@ -11,6 +11,7 @@ export default class Server extends Listener {
   server: Http.Server;
   SHOW_LOGS: boolean;
   db_mempool?: DbMempool;
+  MAX_FILE_SIZE: number;
 
   constructor({
     name,
@@ -50,6 +51,7 @@ export default class Server extends Listener {
     }
 
     this.SHOW_LOGS = true;
+    this.MAX_FILE_SIZE = MAX_FILE_SIZE;
     const app = express();
     this.app = app;
     this.server = Http.createServer(app);
@@ -77,7 +79,7 @@ export default class Server extends Listener {
             let heightInt = parseInt(`${height}`);
             let lenInt = parseInt(`${len}`);
             let posInt = parseInt(`${pos}`);
-            if (!(lenInt > 0 && lenInt <= MAX_FILE_SIZE))
+            if (!(lenInt > 0 && lenInt <= this.MAX_FILE_SIZE))
               throw Error(`Invalid len`);
             if (!(posInt > 0)) throw Error(`Invalid pos`);
             if (block && !`${block}`.match(/^[a-f0-9]{64}$/))

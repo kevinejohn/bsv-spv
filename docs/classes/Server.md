@@ -16,6 +16,7 @@
 
 ### Properties
 
+- [MAX\_FILE\_SIZE](Server.md#max_file_size)
 - [SHOW\_LOGS](Server.md#show_logs)
 - [app](Server.md#app)
 - [blockHeight](Server.md#blockheight)
@@ -100,9 +101,19 @@
 
 #### Defined in
 
-[src/server.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L15)
+[src/server.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L16)
 
 ## Properties
+
+### MAX\_FILE\_SIZE
+
+• **MAX\_FILE\_SIZE**: `number`
+
+#### Defined in
+
+[src/server.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L14)
+
+___
 
 ### SHOW\_LOGS
 
@@ -731,7 +742,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:129](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L129)
+[src/server.ts:131](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L131)
 
 ___
 
