@@ -130,15 +130,11 @@ export default class Master {
 
         worker = cluster.fork();
         worker.on("message", (data) => {
-          try {
-            const { command } = JSON.parse(data.toString());
-            if (command === "mempool_tx") {
-              this.onMempoolTxMessage(data);
-            } else {
-              this.onMessage(data);
-            }
-          } catch (err) {
-            console.error(err);
+          if (typeof data !== "string") return;
+          if (data.includes(`"mempool_tx"`)) {
+            this.onMempoolTxMessage(data);
+          } else {
+            this.onMessage(data);
           }
         });
         worker.send(
