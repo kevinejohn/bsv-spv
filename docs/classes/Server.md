@@ -742,7 +742,7 @@ ___
 
 #### Defined in
 
-[src/server.ts:131](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L131)
+[src/server.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/server.ts#L60)
 
 ___
 

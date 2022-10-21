@@ -55,8 +55,10 @@ export default class Server extends Listener {
     const app = express();
     this.app = app;
     this.server = Http.createServer(app);
+  }
 
-    app.get("/txid/:txid", async (req, res) => {
+  listen({ port = 8081, host = "localhost", SHOW_LOGS = true }) {
+    this.app.get("/txid/:txid", async (req, res) => {
       const { txid } = req.params;
       let { pos, len, block, height } = req.query;
       try {
@@ -126,9 +128,7 @@ export default class Server extends Listener {
         res.status(404).send(err.message);
       }
     });
-  }
 
-  listen({ port = 8081, host = "localhost", SHOW_LOGS = true }) {
     this.SHOW_LOGS = SHOW_LOGS;
     this.server.listen(port, host, () => {
       console.log(`Tx server listening on ${host}:${port}`);
