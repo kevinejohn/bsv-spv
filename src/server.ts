@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Express } from "express";
 import Http from "http";
 import * as Helpers from "./helpers";
 import Listener from "./listener";
@@ -7,8 +7,8 @@ import DbMempool from "./db_mempool";
 import path from "path";
 
 export default class Server extends Listener {
-  app: any;
-  server: any;
+  app: Express;
+  server: Http.Server;
   SHOW_LOGS: boolean;
   db_mempool?: DbMempool;
 

@@ -116,7 +116,7 @@ ___
 
 ### app
 
-• **app**: `any`
+• **app**: `Express`
 
 #### Defined in
 
@@ -353,7 +353,7 @@ ___
 
 ### server
 
-• **server**: `any`
+• **server**: `Server`<typeof `IncomingMessage`, typeof `ServerResponse`\>
 
 #### Defined in
 
