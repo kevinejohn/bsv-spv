@@ -168,15 +168,16 @@ export default class Listener extends EventEmitter {
       this.db_listener.delBlocks(from, to);
     } else if (command === "block_saved") {
       const { height, hash } = data;
-      console.log(
-        `New block saved ${height}, ${hash} at ${new Date().toLocaleString()}`
-      );
+      // console.log(
+      //   `New block saved ${height}, ${hash} at ${new Date().toLocaleString()}`
+      // );
       try {
         const header = this.db_headers.getHeader(hash);
         this.headers.addHeader({ header });
       } catch (err) {
         console.error(err);
       }
+      if (height < this.blockHeight) return; // Ignore event if block height is less than listeners start block
     } else {
       console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
@@ -280,9 +281,9 @@ export default class Listener extends EventEmitter {
       let blockSize = 0;
       const date = +new Date();
       let tip = this.headers.getTip();
-      console.log(
-        `Syncing blocks from ${this.blockHeight} to ${tip.height}...`
-      );
+      // console.log(
+      //   `Syncing blocks from ${this.blockHeight} to ${tip.height}...`
+      // );
       for (let height = this.blockHeight; height <= tip.height; height++) {
         if (this.multithread) {
           if (
