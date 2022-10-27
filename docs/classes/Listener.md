@@ -548,7 +548,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:381](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L381)
+[src/listener.ts:383](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L383)
 
 ___
 
@@ -962,7 +962,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:386](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L386)
+[src/listener.ts:388](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L388)
 
 ___
 

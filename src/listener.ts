@@ -362,14 +362,16 @@ export default class Listener extends EventEmitter {
         clearInterval(interval);
       }
       const seconds = (+new Date() - date) / 1000;
-      console.log(
-        `Synced ${processed} blocks (${Helpers.formatSpeeds(
-          blockSize,
-          seconds
-        )} in ${seconds} seconds. ${skipped} blocks missing. ${
-          this.db_listener.blocksProcessed() - 1
-        }/${tip.height} blocks processed at ${new Date().toLocaleString()}`
-      );
+      if (processed) {
+        console.log(
+          `Synced ${processed} blocks (${Helpers.formatSpeeds(
+            blockSize,
+            seconds
+          )} in ${seconds} seconds. ${skipped} blocks missing. ${
+            this.db_listener.blocksProcessed() - 1
+          }/${tip.height} blocks processed at ${new Date().toLocaleString()}`
+        );
+      }
       this.syncingBlocks = false;
       return { skipped, processed, blockSize };
     } catch (err) {
