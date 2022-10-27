@@ -9,7 +9,6 @@ export default class DbBlocks {
   writeStream?: fs.WriteStream;
   dbi_blocks: lmdb.Database<Buffer>;
   dbi_root: lmdb.RootDatabase<Buffer>;
-  dbPath: string;
 
   constructor({
     blocksDir,
@@ -22,11 +21,10 @@ export default class DbBlocks {
     this.blocksDir = blocksDir;
     fs.mkdirSync(blocksDir, { recursive: true });
     const dbPath = path.join(blocksDir, "meta");
-    this.dbPath = dbPath;
+    fs.mkdirSync(dbPath, { recursive: true });
 
-    fs.mkdirSync(this.dbPath, { recursive: true });
     this.dbi_root = lmdb.open({
-      path: this.dbPath,
+      path: dbPath,
       readOnly,
     });
     this.dbi_blocks = this.dbi_root.openDB({

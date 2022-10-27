@@ -179,7 +179,7 @@ export default class Listener extends EventEmitter {
       }
       if (height < this.blockHeight) return; // Ignore event if block height is less than listeners start block
     } else {
-      console.log(`Unknown command: ${JSON.stringify(obj)}`);
+      // console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
     this.emit(command, data);
   }
