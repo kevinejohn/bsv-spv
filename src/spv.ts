@@ -287,6 +287,7 @@ export default class Spv extends EventEmitter {
           if (!this.peer) return;
           if (this.syncingBlocks || this.syncingHeaders) return;
           await this.peer.ping(30);
+          failedPings = 0;
         } catch (err) {
           if (!this.peer) return;
           if (failedPings++ >= 2) {
