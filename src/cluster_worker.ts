@@ -109,10 +109,10 @@ export default class Worker {
 
       if (mempool) {
         try {
-          spv.onMempoolTx(); // Download mempool txs
-          console.log(`${spv.id} Listening for mempool txs...`);
           const newHeaders = await spv.syncHeaders();
-          console.log(`${spv.id} Synced ${newHeaders} new headers.`);
+          console.log(
+            `${spv.id} Synced ${newHeaders} new headers. Listening for mempool txs...`
+          );
         } catch (err) {
           console.error(err);
         }
@@ -120,14 +120,14 @@ export default class Worker {
       if (blocks) {
         try {
           await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
-          spv.onBlockTx({ disableAutoDl: true }); // Prune mempool txs on block downloads
-          console.log(`${spv.id} Listening for new blocks...`);
           const newHeaders = await spv.syncHeaders();
           console.log(
             `${spv.id} Synced ${newHeaders} new headers. Syncing blocks...`
           );
           const newBlocks = await spv.syncBlocks();
-          console.log(`${spv.id} Synced ${newBlocks} new blocks.`);
+          console.log(
+            `${spv.id} Synced ${newBlocks} new blocks. Listening for new blocks...`
+          );
         } catch (err) {
           console.error(err);
         }

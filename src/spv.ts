@@ -445,6 +445,50 @@ export default class Spv extends EventEmitter {
         }
       }
     );
+    this.peer.on(
+      "transactions",
+      ({
+        header,
+        started,
+        finished,
+        size,
+        height,
+        transactions,
+        txCount,
+        startDate,
+      }) => {
+        if (header) {
+          // Block transactions
+          this.emit(`block_txs`, {
+            header,
+            started,
+            finished,
+            size,
+            height,
+            transactions,
+            startDate,
+            txCount,
+          });
+        } else {
+          // Mempool transactions
+          for (const [, transaction] of transactions) {
+            this.emit(`mempool_tx`, { transaction });
+          }
+        }
+      }
+    );
+    if (mempool) {
+      this.peer.fetchMempoolTxs((txids) => {
+        this.emit(`mempool_txs_seen`, { txids });
+        return txids;
+      });
+    }
+    if (blocks) {
+      this.peer.fetchNewBlocks((hashes) => {
+        this.emit(`blocks_seen`, { hashes });
+        return hashes;
+      });
+    }
     try {
       await this.peer.connect(versionOptions);
     } catch (err) {
@@ -535,72 +579,6 @@ export default class Spv extends EventEmitter {
       } catch (err) {}
     }
     return this.db_blocks.streamBlock({ hash, height }, callback);
-  }
-
-  onMempoolTx() {
-    if (!this.peer) throw Error(`Peer not connected`);
-    this.peer.on("transactions", ({ header, transactions }) => {
-      if (header) return;
-      for (const [, transaction] of transactions) {
-        this.emit(`mempool_tx`, { transaction });
-      }
-    });
-    this.peer.fetchMempoolTxs((txids) => {
-      this.emit(`mempool_txs_seen`, { txids });
-      return txids;
-    });
-  }
-
-  onBlockTx({ disableAutoDl = false }: { disableAutoDl?: boolean }) {
-    // let prunedTxs: number;
-    if (!this.peer) throw Error(`Peer not connected`);
-    this.peer.on(
-      "transactions",
-      async ({
-        header,
-        started,
-        finished,
-        size,
-        height,
-        transactions,
-        txCount,
-        startDate,
-      }) => {
-        if (!header) return;
-        // if (started) {
-        //   prunedTxs = 0;
-        // }
-        this.emit(`block_txs`, {
-          header,
-          started,
-          finished,
-          size,
-          height,
-          transactions,
-          startDate,
-          txCount,
-        });
-        // const txidArr = transactions.map(
-        //   ([, tx]: [number, bsvMin.Transaction]) => tx.getHash()
-        // );
-        // txCount = prunedTxs;
-        // const txids = await this.db_mempool.delTxs(txidArr);
-        // txCount += txids.length;
-        // if (txCount > 0 && finished) {
-        //   this.emit(`mempool_pruned`, {
-        //     txids,
-        //     height,
-        //     header,
-        //     started,
-        //     finished,
-        //     size,
-        //     txCount,
-        //   });
-        // }
-      }
-    );
-    if (!disableAutoDl && this.peer)
-      this.peer.fetchNewBlocks((hashes) => hashes);
   }
 
   async syncBlocks() {

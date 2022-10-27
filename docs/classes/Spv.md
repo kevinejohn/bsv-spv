@@ -72,8 +72,6 @@
 - [listeners](Spv.md#listeners)
 - [off](Spv.md#off)
 - [on](Spv.md#on)
-- [onBlockTx](Spv.md#onblocktx)
-- [onMempoolTx](Spv.md#onmempooltx)
 - [once](Spv.md#once)
 - [prependListener](Spv.md#prependlistener)
 - [prependOnceListener](Spv.md#prependoncelistener)
@@ -562,7 +560,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:458](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L458)
+[src/spv.ts:502](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L502)
 
 ___
 
@@ -584,7 +582,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:517](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L517)
+[src/spv.ts:561](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L561)
 
 ___
 
@@ -713,7 +711,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:502](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L502)
+[src/spv.ts:546](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L546)
 
 ___
 
@@ -733,7 +731,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:479](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L479)
+[src/spv.ts:523](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L523)
 
 ___
 
@@ -755,7 +753,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:485](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L485)
+[src/spv.ts:529](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L529)
 
 ___
 
@@ -775,7 +773,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:476](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L476)
+[src/spv.ts:520](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L520)
 
 ___
 
@@ -814,7 +812,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:490](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L490)
+[src/spv.ts:534](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L534)
 
 ___
 
@@ -833,7 +831,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:482](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L482)
+[src/spv.ts:526](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L526)
 
 ___
 
@@ -847,7 +845,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:473](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L473)
+[src/spv.ts:517](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L517)
 
 ___
 
@@ -1002,41 +1000,6 @@ EventEmitter.on
 #### Defined in
 
 node_modules/@types/node/ts4.8/events.d.ts:385
-
-___
-
-### onBlockTx
-
-▸ **onBlockTx**(`__namedParameters`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.disableAutoDl?` | `boolean` |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[src/spv.ts:554](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L554)
-
-___
-
-### onMempoolTx
-
-▸ **onMempoolTx**(): `void`
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[src/spv.ts:540](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L540)
 
 ___
 
@@ -1249,7 +1212,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:527](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L527)
+[src/spv.ts:571](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L571)
 
 ___
 
@@ -1440,7 +1403,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:606](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L606)
+[src/spv.ts:584](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L584)
 
 ___
 
@@ -1482,7 +1445,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:638](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L638)
+[src/spv.ts:616](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L616)
 
 ___
 
