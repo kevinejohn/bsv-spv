@@ -17,7 +17,6 @@ export interface SpvOptions {
   dataDir: string;
   forceUserAgent?: string;
   user_agent?: string;
-  start_height?: number;
   version?: number;
   blocks?: boolean;
   mempool?: boolean;
@@ -54,7 +53,6 @@ export default class Spv extends EventEmitter {
   syncingBlocks: boolean;
   connecting: boolean;
   user_agent?: string;
-  start_height?: number;
   version?: number;
   mempool: boolean;
   blocks: boolean;
@@ -70,7 +68,6 @@ export default class Spv extends EventEmitter {
     dataDir,
     forceUserAgent,
     user_agent,
-    start_height,
     version,
     blocks = false,
     mempool = false,
@@ -93,7 +90,6 @@ export default class Spv extends EventEmitter {
     this.autoReconnect = autoReconnect;
     this.versionOptions = versionOptions;
     this.user_agent = user_agent;
-    this.start_height = start_height;
     this.version = version;
     this.timeoutConnect = timeoutConnect;
     this.DEBUG_LOG = DEBUG_LOG;
@@ -200,7 +196,6 @@ export default class Spv extends EventEmitter {
     this.node = node;
     let {
       ticker,
-      start_height,
       dataDir,
       versionOptions,
       autoReconnect,
@@ -223,13 +218,11 @@ export default class Spv extends EventEmitter {
       this.db_listener = new DbListener({ listenerDir });
     }
 
-    if (typeof start_height !== "number")
-      start_height = this.headers.getHeight();
     this.peer = new Peer({
       node,
       ticker,
       autoReconnect,
-      start_height,
+      start_height: this.headers.getHeight(),
       user_agent,
       version,
       mempoolTxs: mempool,
@@ -301,27 +294,48 @@ export default class Spv extends EventEmitter {
       this.updateId();
       this.emit("connected", params);
     });
-    this.peer.on("version", ({ node, version }) => {
-      try {
-        if (typeof this.forceUserAgent === "string") {
-          const { user_agent } = version;
-          const expected_user_agent = this.forceUserAgent.toLowerCase();
-          if (!user_agent.toLowerCase().includes(expected_user_agent)) {
+    this.peer.on(
+      "version",
+      ({ node, version }: { node: string; version: VersionOptions }) => {
+        try {
+          if (typeof this.forceUserAgent === "string") {
+            const { user_agent } = version;
+            const expected_user_agent = this.forceUserAgent.toLowerCase();
+            if (
+              !user_agent ||
+              !user_agent.toLowerCase().includes(expected_user_agent)
+            ) {
+              this.db_nodes.blacklist(node);
+              this.emit("version_invalid", {
+                error: `user_agent does not match ${expected_user_agent}: ${user_agent}`,
+                user_agent,
+                expected_user_agent,
+                version,
+                node,
+              });
+              return this.disconnect();
+            }
+          }
+          if (
+            !version.start_height ||
+            version.start_height < this.headers.getHeight() - 5
+          ) {
+            this.db_nodes.blacklist(node);
             this.emit("version_invalid", {
-              user_agent,
-              expected_user_agent,
+              error: `start_height (${
+                version.start_height
+              }) is less than our height ${this.headers.getHeight()}`,
               version,
               node,
             });
-            this.db_nodes.blacklist(node);
             return this.disconnect();
           }
+          this.emit("version", { version, node });
+        } catch (err) {
+          console.error(err);
         }
-        this.emit("version", { version, node });
-      } catch (err) {
-        console.error(err);
       }
-    });
+    );
     this.peer.on("block_hashes", async ({ hashes }) => {
       try {
         this.emit("block_seen", { hashes });
