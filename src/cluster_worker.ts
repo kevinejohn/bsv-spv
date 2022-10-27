@@ -291,7 +291,7 @@ export default class Worker {
         console.log(
           `${
             spv.id
-          } is connected. ${txsSaved}/${txsSeen} txs. ${Helpers.formatSpeeds(
+          } is connected. tip ${spv.headers.getHeight()}. ${txsSaved}/${txsSeen} txs. ${Helpers.formatSpeeds(
             txsSize,
             REFRESH
           )} `
@@ -300,7 +300,7 @@ export default class Worker {
         txsSaved = 0;
         txsSize = 0;
       } else if (blocks && !blockInterval) {
-        console.log(`${spv.id} is connected. tip ${spv.headers.getHeight()}`);
+        console.log(`${spv.id} is connected. tip ${spv.headers.getHeight()}.`);
       }
     }, REFRESH * 1000);
 
