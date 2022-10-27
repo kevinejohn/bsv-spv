@@ -6,8 +6,8 @@ const port = 8080;
 
 const config: MasterOptions = {
   ticker: "BSV",
-  nodes: [`18.192.253.59:8333`, `95.217.197.54:8333`],
-  // nodes: [`95.217.197.54:8333`],
+  // nodes: [`18.192.253.59:8333`, `95.217.197.54:8333`],
+  nodes: [`95.217.197.54:8333`],
   // nodes: [`18.192.253.59:8333`, `100.11.101.138:8333`, `100.25.248.168:8333`],
   forceUserAgent: `Bitcoin SV`,
   user_agent: "Bitcoin SV",
@@ -18,7 +18,7 @@ const config: MasterOptions = {
   dataDir: path.join(__dirname, "data"),
   pruneBlocks: 0, // 0 for no block pruning
   blockHeight: -1, // Sync to block height
-  mempool: 1, // Watch mempool
+  mempool: 0, // Watch mempool
   blocks: 1, // Watch blocks
   // DEBUG_LOG: true, // p2p network console.logs
 };

@@ -21,6 +21,7 @@ export interface SpvOptions {
   blocks?: boolean;
   mempool?: boolean;
   autoReconnect?: boolean;
+  autoReconnectWait?: number;
   timeoutConnect?: number;
   versionOptions?: VersionOptions;
   invalidBlocks?: string[];
@@ -42,6 +43,7 @@ export default class Spv extends EventEmitter {
   blockHeight: number;
   forceUserAgent?: string;
   autoReconnect: boolean;
+  autoReconnectWait?: number;
   timeoutConnect: number;
   peer?: Peer;
   headers: Headers;
@@ -72,6 +74,7 @@ export default class Spv extends EventEmitter {
     blocks = false,
     mempool = false,
     autoReconnect = true,
+    autoReconnectWait,
     timeoutConnect = 1000 * 5, // 5 seconds. Shorter than default
     versionOptions,
     invalidBlocks = [],
@@ -88,6 +91,7 @@ export default class Spv extends EventEmitter {
     this.pruneBlocks = pruneBlocks;
     this.blockHeight = blockHeight;
     this.autoReconnect = autoReconnect;
+    this.autoReconnectWait = autoReconnectWait;
     this.versionOptions = versionOptions;
     this.user_agent = user_agent;
     this.version = version;
@@ -161,7 +165,7 @@ export default class Spv extends EventEmitter {
           do {
             let lastHash = from[0];
 
-            if (!this.peer || !this.isConnected()) throw Error(`Not connected`);
+            if (!this.peer) throw Error(`Not connected`);
             const headers: bsvMin.Header[] = await this.peer.getHeaders({
               from,
             });
@@ -200,6 +204,7 @@ export default class Spv extends EventEmitter {
       dataDir,
       versionOptions,
       autoReconnect,
+      autoReconnectWait,
       user_agent,
       version,
       mempool,
@@ -223,6 +228,7 @@ export default class Spv extends EventEmitter {
       node,
       ticker,
       autoReconnect,
+      autoReconnectWait,
       start_height: this.headers.getHeight(),
       user_agent,
       version,

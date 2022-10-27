@@ -113,6 +113,7 @@ export default class Master {
       dataDir,
       pruneBlocks,
       blockHeight,
+      autoReconnectWait: 100,
       DEBUG_LOG,
       DEBUG_MEMORY,
     };

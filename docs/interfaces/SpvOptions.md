@@ -9,6 +9,7 @@
 - [DEBUG\_LOG](SpvOptions.md#debug_log)
 - [DEBUG\_MEMORY](SpvOptions.md#debug_memory)
 - [autoReconnect](SpvOptions.md#autoreconnect)
+- [autoReconnectWait](SpvOptions.md#autoreconnectwait)
 - [blockHeight](SpvOptions.md#blockheight)
 - [blocks](SpvOptions.md#blocks)
 - [dataDir](SpvOptions.md#datadir)
@@ -32,7 +33,7 @@
 
 #### Defined in
 
-[src/spv.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L29)
+[src/spv.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L30)
 
 ___
 
@@ -42,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L30)
+[src/spv.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L31)
 
 ___
 
@@ -56,13 +57,23 @@ ___
 
 ___
 
+### autoReconnectWait
+
+• `Optional` **autoReconnectWait**: `number`
+
+#### Defined in
+
+[src/spv.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L24)
+
+___
+
 ### blockHeight
 
 • `Optional` **blockHeight**: `number`
 
 #### Defined in
 
-[src/spv.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L28)
+[src/spv.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L29)
 
 ___
 
@@ -102,7 +113,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L26)
+[src/spv.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L27)
 
 ___
 
@@ -132,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L27)
+[src/spv.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L28)
 
 ___
 
@@ -152,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L24)
+[src/spv.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L25)
 
 ___
 
@@ -192,4 +203,4 @@ ___
 
 #### Defined in
 
-[src/spv.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L25)
+[src/spv.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L26)

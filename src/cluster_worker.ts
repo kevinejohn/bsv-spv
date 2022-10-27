@@ -80,7 +80,9 @@ export default class Worker {
           const newBlocks = await spv.syncBlocks();
           console.log(`${spv.id} Synced ${newBlocks} new blocks.`);
         }
-      } catch (err) {}
+      } catch (err) {
+        // console.error(err);
+      }
     });
     spv.on("version_invalid", ({ error }) => {
       // console.error(
