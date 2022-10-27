@@ -60,6 +60,8 @@ export default class Spv extends EventEmitter {
   blocks: boolean;
   dataDir: string;
   DEBUG_LOG: boolean;
+  getPeersTimeout?: NodeJS.Timeout;
+  peerPingInterval?: NodeJS.Timer;
 
   constructor({
     uid,
@@ -237,7 +239,6 @@ export default class Spv extends EventEmitter {
       DEBUG_LOG,
     });
     this.peer.timeoutConnect = this.timeoutConnect; // Shorted connect timeout
-    let getPeersTimeout: NodeJS.Timeout;
     let hasConnected = false;
     this.peer.on(
       "disconnected",
@@ -250,7 +251,8 @@ export default class Spv extends EventEmitter {
         ticker: string;
         disconnects: number;
       }) => {
-        clearTimeout(getPeersTimeout);
+        clearInterval(this.peerPingInterval);
+        clearTimeout(this.getPeersTimeout);
         if (
           disconnects >= 3 &&
           !hasConnected &&
@@ -268,8 +270,8 @@ export default class Spv extends EventEmitter {
 
     this.peer.on("connected", (params) => {
       hasConnected = true;
-      clearTimeout(getPeersTimeout);
-      getPeersTimeout = setTimeout(() => {
+      clearTimeout(this.getPeersTimeout);
+      this.getPeersTimeout = setTimeout(() => {
         try {
           this.db_nodes.connected(node); // Mark as connected
           if (!this.db_nodes.hasSavedSeen()) {
@@ -278,6 +280,24 @@ export default class Spv extends EventEmitter {
           }
         } catch (err) {}
       }, 1000 * 65);
+      clearInterval(this.peerPingInterval);
+      let failedPings = 0;
+      this.peerPingInterval = setInterval(async () => {
+        try {
+          if (!this.peer) return;
+          if (this.syncingBlocks || this.syncingHeaders) return;
+          await this.peer.ping(30);
+        } catch (err) {
+          if (!this.peer) return;
+          failedPings++;
+          if (failedPings >= 2) {
+            // Reconnect
+            this.peer.disconnects = 0; // Reset disconnects
+            this.disconnect();
+            this.connect();
+          }
+        }
+      }, 1000 * 60 * 1);
       this.updateId();
       this.emit("connected", params);
     });
@@ -411,6 +431,8 @@ export default class Spv extends EventEmitter {
     }
   }
   disconnect() {
+    clearInterval(this.peerPingInterval);
+    clearTimeout(this.getPeersTimeout);
     this.syncingBlocks = false;
     this.syncingHeaders = undefined;
     this.connecting = false;
