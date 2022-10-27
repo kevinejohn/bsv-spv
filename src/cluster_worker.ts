@@ -70,19 +70,6 @@ export default class Worker {
     );
     spv.on("version", async ({ node, version }) => {
       console.log(`${spv.id} ${node} version`, version);
-
-      try {
-        const newHeaders = await spv.syncHeaders();
-        console.log(`${spv.id} Synced ${newHeaders} new headers.`);
-
-        if (blocks) {
-          console.log(`${spv.id} Syncing blocks...`);
-          const newBlocks = await spv.syncBlocks();
-          console.log(`${spv.id} Synced ${newBlocks} new blocks.`);
-        }
-      } catch (err) {
-        // console.error(err);
-      }
     });
     spv.on("version_invalid", ({ error }) => {
       // console.error(
@@ -119,6 +106,32 @@ export default class Worker {
           spv.peer.disconnects = 0;
         }
       }, 1000 * 60);
+
+      if (mempool) {
+        try {
+          spv.onMempoolTx(); // Download mempool txs
+          console.log(`${spv.id} Listening for mempool txs...`);
+          const newHeaders = await spv.syncHeaders();
+          console.log(`${spv.id} Synced ${newHeaders} new headers.`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      if (blocks) {
+        try {
+          await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
+          spv.onBlockTx({ disableAutoDl: true }); // Prune mempool txs on block downloads
+          console.log(`${spv.id} Listening for new blocks...`);
+          const newHeaders = await spv.syncHeaders();
+          console.log(
+            `${spv.id} Synced ${newHeaders} new headers. Syncing blocks...`
+          );
+          const newBlocks = await spv.syncBlocks();
+          console.log(`${spv.id} Synced ${newBlocks} new blocks.`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
     });
     spv.on("could_not_connect", () => {
       this.sendToMaster({ command: `send_new_node` });
@@ -306,30 +319,5 @@ export default class Worker {
 
     console.log(`${spv.id} Connecting to node...`);
     await spv.connect();
-
-    if (mempool) {
-      // await spv.pruneMempool(); // Delete old mempool txs if they exist
-      try {
-        spv.onMempoolTx(); // Download mempool txs
-        console.log(`${spv.id} Listening for mempool txs...`);
-      } catch (err) {
-        console.error(err);
-      }
-
-      // if (MEMPOOL_PRUNE_AFTER) {
-      //   setInterval(() => {
-      //     spv.pruneMempool().catch((err) => console.error(err));
-      //   }, MEMPOOL_PRUNE_AFTER);
-      // }
-    }
-    if (blocks) {
-      try {
-        await spv.warningPruneBlocks(); // Delete blocks older that the number of `pruneBlocks` from the tip
-        spv.onBlockTx({ disableAutoDl: true }); // Prune mempool txs on block downloads
-        console.log(`${spv.id} Listening for new blocks...`);
-      } catch (err) {
-        console.error(err);
-      }
-    }
   }
 }
