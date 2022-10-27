@@ -22,6 +22,7 @@ export interface SpvOptions {
   blocks?: boolean;
   mempool?: boolean;
   autoReconnect?: boolean;
+  timeoutConnect?: number;
   versionOptions?: VersionOptions;
   invalidBlocks?: string[];
   pruneBlocks?: number;
@@ -42,6 +43,7 @@ export default class Spv extends EventEmitter {
   blockHeight: number;
   forceUserAgent?: string;
   autoReconnect: boolean;
+  timeoutConnect: number;
   peer?: Peer;
   headers: Headers;
   db_blocks: DbBlocks;
@@ -71,6 +73,7 @@ export default class Spv extends EventEmitter {
     blocks = false,
     mempool = false,
     autoReconnect = true,
+    timeoutConnect = 1000 * 5, // 5 seconds. Shorter than default
     versionOptions,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
@@ -90,6 +93,7 @@ export default class Spv extends EventEmitter {
     this.user_agent = user_agent;
     this.start_height = start_height;
     this.version = version;
+    this.timeoutConnect = timeoutConnect;
     this.DEBUG_LOG = DEBUG_LOG;
     this.connecting = false;
     this.ticker = ticker;
@@ -232,7 +236,7 @@ export default class Spv extends EventEmitter {
       mempoolTxs: mempool,
       DEBUG_LOG,
     });
-    this.peer.timeoutConnect = 1000 * 10; // Shorted connect timeout
+    this.peer.timeoutConnect = this.timeoutConnect; // Shorted connect timeout
     let getPeersTimeout: NodeJS.Timeout;
     let hasConnected = false;
     this.peer.on(

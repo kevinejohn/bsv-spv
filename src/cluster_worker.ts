@@ -295,7 +295,8 @@ export default class Worker {
         txsSaved = 0;
         txsSize = 0;
       } else if (blocks) {
-        if (!blockInterval) console.log(`${spv.id} is connected.`);
+        if (!blockInterval)
+          console.log(`${spv.id} is connected. tip ${spv.headers.getHeight()}`);
       }
     }, REFRESH * 1000);
 

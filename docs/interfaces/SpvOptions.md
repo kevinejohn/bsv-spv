@@ -19,6 +19,7 @@
 - [pruneBlocks](SpvOptions.md#pruneblocks)
 - [start\_height](SpvOptions.md#start_height)
 - [ticker](SpvOptions.md#ticker)
+- [timeoutConnect](SpvOptions.md#timeoutconnect)
 - [uid](SpvOptions.md#uid)
 - [user\_agent](SpvOptions.md#user_agent)
 - [version](SpvOptions.md#version)
@@ -32,7 +33,7 @@
 
 #### Defined in
 
-[src/spv.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L29)
+[src/spv.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L30)
 
 ___
 
@@ -42,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L30)
+[src/spv.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L31)
 
 ___
 
@@ -62,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L28)
+[src/spv.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L29)
 
 ___
 
@@ -102,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L26)
+[src/spv.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L27)
 
 ___
 
@@ -132,7 +133,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L27)
+[src/spv.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L28)
 
 ___
 
@@ -153,6 +154,16 @@ ___
 #### Defined in
 
 [src/spv.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L15)
+
+___
+
+### timeoutConnect
+
+• `Optional` **timeoutConnect**: `number`
+
+#### Defined in
+
+[src/spv.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L25)
 
 ___
 
@@ -192,4 +203,4 @@ ___
 
 #### Defined in
 
-[src/spv.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L25)
+[src/spv.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L26)
