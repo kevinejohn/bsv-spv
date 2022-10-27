@@ -407,7 +407,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:186](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L186)
+[src/listener.ts:187](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L187)
 
 ___
 
@@ -548,7 +548,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:380](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L380)
+[src/listener.ts:381](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L381)
 
 ___
 
@@ -962,7 +962,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:385](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L385)
+[src/listener.ts:386](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L386)
 
 ___
 
@@ -1173,7 +1173,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:267](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L267)
+[src/listener.ts:268](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L268)
 
 ___
 

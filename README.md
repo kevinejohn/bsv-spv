@@ -26,16 +26,15 @@ const port = 8080; // Server that new blocks nad mempool txs are announced on
 
 const config = {
   ticker: "BSV", // BTC, BCH, XEC, BSV
-  nodes: [`95.217.197.54:8333`], // Set to your favorite node IP addresses
+  nodes: [`95.217.197.54:8333`], // Set to your favorite node IP addresses. Will ask for other peers after connected
   forceUserAgent: `Bitcoin SV`, // Disconnects with nodes that do not string match with user agent
   // user_agent: 'Bitcoin SV',
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)
   dataDir: __dirname, // Directory to store files
   pruneBlocks: 0, // Number of newest blocks you want saved to local disk. 0 to keeping all blocks back to genesis.
-  blockHeight: -10, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current height
-  MEMPOOL_PRUNE_AFTER: 1000 * 60 * 60 * 2, // Prune mempool txs after 2 hours
-  mempool: true, // Enable/disable mempool
-  blocks: true, // Enable/disable block downloads
+  blockHeight: -10, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current heightafter 2 hours
+  mempool: 1, // Number of mempool tx threads
+  blocks: 1, // Number of bitcoin block threads
 };
 
 if (cluster.isWorker) {

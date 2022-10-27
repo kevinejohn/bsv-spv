@@ -1,13 +1,15 @@
 import * as lmdb from "lmdb";
 import fs from "fs";
+import { NetAddress } from "bsv-p2p/lib/messages/address";
 
 export default class DbNodes {
   blacklistTime: number;
   env: any;
   dbi_root: lmdb.RootDatabase;
-  dbi_seen: lmdb.Database<number>;
-  dbi_connected: lmdb.Database<number>;
-  dbi_blacklisted: lmdb.Database<number>;
+  dbi_meta: lmdb.Database<any, string>;
+  dbi_seen: lmdb.Database<any, string>;
+  dbi_connected: lmdb.Database<number, string>;
+  dbi_blacklisted: lmdb.Database<number, string>;
   nodesDir: string;
 
   constructor({
@@ -27,6 +29,9 @@ export default class DbNodes {
     this.dbi_root = lmdb.open({
       path: nodesDir,
       readOnly,
+    });
+    this.dbi_meta = this.dbi_root.openDB({
+      name: "meta",
     });
     this.dbi_seen = this.dbi_root.openDB({
       name: "peers_seen",
@@ -50,23 +55,36 @@ export default class DbNodes {
       await this.dbi_blacklisted.close();
     } catch (err) {}
     try {
+      await this.dbi_meta.close();
+    } catch (err) {}
+    try {
       await this.dbi_root.close();
     } catch (err) {}
   }
 
-  saveSeenNodes(addrArray: any[]): string[] {
-    const nodes: string[] = [];
-    const time = +new Date();
-    const nodeArray = addrArray
-      .filter(({ ipv4, port }) => ipv4 && port < 20000)
-      .map(({ ipv4, port }) => `${ipv4}:${port}`);
-    for (const node of nodeArray) {
-      if (!this.dbi_seen.get(node)) {
-        this.dbi_seen.put(node, time);
-        nodes.push(node);
+  saveSeenNodes(addrs: NetAddress[]) {
+    let count = 0;
+    for (const addr of addrs) {
+      const key = `${addr.ipv4}:${addr.port}`;
+      if (!this.dbi_seen.get(key) && addr.ipv4 && addr.port < 20000) {
+        this.dbi_seen.putSync(key, addr);
+        count++;
       }
     }
-    return nodes;
+    return count;
+  }
+
+  markSavedSeen() {
+    this.dbi_meta.put("saved_seen", { date: +new Date() });
+  }
+  hasSavedSeen(secondsAgo = 60) {
+    const result = this.dbi_meta.get("saved_seen");
+    if (result) {
+      const { date } = result;
+      const compare = +new Date() - secondsAgo * 1000;
+      if (date > compare) return true;
+    }
+    return false;
   }
 
   connected(node: string) {
@@ -74,9 +92,16 @@ export default class DbNodes {
     this.dbi_connected.put(node, count + 1);
   }
 
+  hasConnected(node: string): boolean {
+    const data = this.dbi_connected.get(node);
+    return !!data;
+  }
+
   blacklist(node: string) {
-    const date = Math.round(+new Date() / 1000);
-    this.dbi_blacklisted.put(node, date);
+    if (!this.isBlacklisted(node)) {
+      const date = Math.round(+new Date() / 1000);
+      this.dbi_blacklisted.put(node, date);
+    }
   }
 
   isBlacklisted(node: string): boolean {

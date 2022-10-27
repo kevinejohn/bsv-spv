@@ -13,6 +13,7 @@
 - [blacklistTime](DbNodes.md#blacklisttime)
 - [dbi\_blacklisted](DbNodes.md#dbi_blacklisted)
 - [dbi\_connected](DbNodes.md#dbi_connected)
+- [dbi\_meta](DbNodes.md#dbi_meta)
 - [dbi\_root](DbNodes.md#dbi_root)
 - [dbi\_seen](DbNodes.md#dbi_seen)
 - [env](DbNodes.md#env)
@@ -26,7 +27,10 @@
 - [getBlacklistedNodes](DbNodes.md#getblacklistednodes)
 - [getConnectedNodes](DbNodes.md#getconnectednodes)
 - [getSeenNodes](DbNodes.md#getseennodes)
+- [hasConnected](DbNodes.md#hasconnected)
+- [hasSavedSeen](DbNodes.md#hassavedseen)
 - [isBlacklisted](DbNodes.md#isblacklisted)
+- [markSavedSeen](DbNodes.md#marksavedseen)
 - [saveSeenNodes](DbNodes.md#saveseennodes)
 
 ## Constructors
@@ -46,7 +50,7 @@
 
 #### Defined in
 
-[src/db_nodes.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L13)
+[src/db_nodes.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L15)
 
 ## Properties
 
@@ -56,23 +60,33 @@
 
 #### Defined in
 
-[src/db_nodes.ts:5](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L5)
+[src/db_nodes.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L6)
 
 ___
 
 ### dbi\_blacklisted
 
-• **dbi\_blacklisted**: `Database`<`number`, `Key`\>
+• **dbi\_blacklisted**: `Database`<`number`, `string`\>
 
 #### Defined in
 
-[src/db_nodes.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L10)
+[src/db_nodes.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L12)
 
 ___
 
 ### dbi\_connected
 
-• **dbi\_connected**: `Database`<`number`, `Key`\>
+• **dbi\_connected**: `Database`<`number`, `string`\>
+
+#### Defined in
+
+[src/db_nodes.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L11)
+
+___
+
+### dbi\_meta
+
+• **dbi\_meta**: `Database`<`any`, `string`\>
 
 #### Defined in
 
@@ -86,17 +100,17 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L7)
+[src/db_nodes.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L8)
 
 ___
 
 ### dbi\_seen
 
-• **dbi\_seen**: `Database`<`number`, `Key`\>
+• **dbi\_seen**: `Database`<`any`, `string`\>
 
 #### Defined in
 
-[src/db_nodes.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L8)
+[src/db_nodes.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L10)
 
 ___
 
@@ -106,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L6)
+[src/db_nodes.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L7)
 
 ___
 
@@ -116,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L11)
+[src/db_nodes.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L13)
 
 ## Methods
 
@@ -136,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:77](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L77)
+[src/db_nodes.ts:100](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L100)
 
 ___
 
@@ -150,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L42)
+[src/db_nodes.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L47)
 
 ___
 
@@ -170,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L72)
+[src/db_nodes.ts:90](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L90)
 
 ___
 
@@ -184,7 +198,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:87](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L87)
+[src/db_nodes.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L112)
 
 ___
 
@@ -198,7 +212,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L98)
+[src/db_nodes.ts:123](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L123)
 
 ___
 
@@ -212,7 +226,47 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L107)
+[src/db_nodes.ts:132](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L132)
+
+___
+
+### hasConnected
+
+▸ **hasConnected**(`node`): `boolean`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `node` | `string` |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[src/db_nodes.ts:95](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L95)
+
+___
+
+### hasSavedSeen
+
+▸ **hasSavedSeen**(`secondsAgo?`): `boolean`
+
+#### Parameters
+
+| Name | Type | Default value |
+| :------ | :------ | :------ |
+| `secondsAgo` | `number` | `60` |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[src/db_nodes.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L80)
 
 ___
 
@@ -232,24 +286,38 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:82](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L82)
+[src/db_nodes.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L107)
+
+___
+
+### markSavedSeen
+
+▸ **markSavedSeen**(): `void`
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/db_nodes.ts:77](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L77)
 
 ___
 
 ### saveSeenNodes
 
-▸ **saveSeenNodes**(`addrArray`): `string`[]
+▸ **saveSeenNodes**(`addrs`): `number`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `addrArray` | `any`[] |
+| `addrs` | `NetAddress`[] |
 
 #### Returns
 
-`string`[]
+`number`
 
 #### Defined in
 
-[src/db_nodes.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L57)
+[src/db_nodes.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L65)
