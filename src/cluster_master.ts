@@ -1,6 +1,7 @@
 import cluster, { Worker } from "cluster";
 import { SpvOptions } from "./spv";
 import DbNodes from "./db_nodes";
+import DbBlocks from "./db_blocks";
 import * as Helpers from "./helpers";
 import Net from "net";
 import path from "path";
@@ -87,6 +88,11 @@ export default class Master {
     if (!nodes || nodes.length === 0) throw Error(`Missing nodes array`);
     if (!blocks && !mempool)
       throw Error(`Must set blocks > 0 and/or mempool > 0`);
+
+    const blocksDir = path.join(dataDir, ticker, "blocks");
+    const db_blocks = new DbBlocks({ blocksDir, readOnly: false });
+    db_blocks.syncDb();
+    db_blocks.close();
 
     const netAddrs: NetAddress[] = nodes.map((address) => {
       const ipv4 = address.split(":")[0];

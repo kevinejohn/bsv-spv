@@ -383,7 +383,7 @@ export default class Listener extends EventEmitter {
     return this.db_listener.getBlockInfo(hash);
   }
 
-  readBlock(
+  async readBlock(
     { hash, height }: { height: number; hash: string },
     callback: (params: bsv.BlockStream) => Promise<any>
   ): Promise<boolean> {

@@ -464,7 +464,7 @@ node_modules/@types/node/ts4.8/events.d.ts:327
 
 #### Defined in
 
-[src/spv.ts:125](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L125)
+[src/spv.ts:127](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L127)
 
 ___
 
@@ -515,7 +515,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:191](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L191)
+[src/spv.ts:193](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L193)
 
 ___
 
@@ -529,7 +529,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:407](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L407)
+[src/spv.ts:409](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L409)
 
 ___
 
@@ -551,7 +551,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:464](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L464)
+[src/spv.ts:466](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L466)
 
 ___
 
@@ -680,7 +680,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:449](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L449)
+[src/spv.ts:451](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L451)
 
 ___
 
@@ -700,7 +700,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:426](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L426)
+[src/spv.ts:428](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L428)
 
 ___
 
@@ -722,7 +722,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:432](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L432)
+[src/spv.ts:434](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L434)
 
 ___
 
@@ -742,7 +742,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:423](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L423)
+[src/spv.ts:425](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L425)
 
 ___
 
@@ -781,7 +781,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:437](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L437)
+[src/spv.ts:439](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L439)
 
 ___
 
@@ -800,7 +800,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:429](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L429)
+[src/spv.ts:431](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L431)
 
 ___
 
@@ -814,7 +814,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:420](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L420)
+[src/spv.ts:422](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L422)
 
 ___
 
@@ -989,7 +989,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:501](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L501)
+[src/spv.ts:503](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L503)
 
 ___
 
@@ -1003,7 +1003,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:487](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L487)
+[src/spv.ts:489](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L489)
 
 ___
 
@@ -1216,7 +1216,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:474](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L474)
+[src/spv.ts:476](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L476)
 
 ___
 
@@ -1407,7 +1407,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:553](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L553)
+[src/spv.ts:555](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L555)
 
 ___
 
@@ -1421,7 +1421,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:148](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L148)
+[src/spv.ts:150](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L150)
 
 ___
 
@@ -1449,7 +1449,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:584](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L584)
+[src/spv.ts:586](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L586)
 
 ___
 
