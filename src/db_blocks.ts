@@ -9,6 +9,7 @@ export default class DbBlocks {
   writeStream?: fs.WriteStream;
   dbi_blocks: lmdb.Database<Buffer>;
   dbi_root: lmdb.RootDatabase<Buffer>;
+  dbPath: string;
 
   constructor({
     blocksDir,
@@ -21,28 +22,36 @@ export default class DbBlocks {
     this.blocksDir = blocksDir;
     fs.mkdirSync(blocksDir, { recursive: true });
     const dbPath = path.join(blocksDir, "meta");
-    fs.mkdirSync(dbPath, { recursive: true });
+    this.dbPath = dbPath;
 
+    fs.mkdirSync(this.dbPath, { recursive: true });
     this.dbi_root = lmdb.open({
-      path: dbPath,
+      path: this.dbPath,
       readOnly,
     });
     this.dbi_blocks = this.dbi_root.openDB({
       name: "blocks",
       encoding: "binary",
       keyEncoding: "binary",
+      cache: true,
     });
   }
 
-  syncDb() {
+  async syncDb() {
+    const startDate = +new Date();
     console.log(`Syncing block files with db...`);
     const count = this.dbi_blocks.getKeysCount({ limit: 10 });
     if (count === 0) {
       const hashes = Array.from(this.getSavedBlocksSync());
       for (const hash of hashes) {
-        this.dbi_blocks.putSync(Buffer.from(hash, "hex"), Buffer.from(""));
+        this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
       }
-      console.log(`Synced ${hashes.length} block files with db`);
+      await this.dbi_blocks.flushed;
+      console.log(
+        `Synced ${hashes.length} block files with db in ${
+          (+new Date() - startDate) / 1000
+        } seconds`
+      );
     }
   }
 

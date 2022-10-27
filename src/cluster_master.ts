@@ -91,8 +91,7 @@ export default class Master {
 
     const blocksDir = path.join(dataDir, ticker, "blocks");
     const db_blocks = new DbBlocks({ blocksDir, readOnly: false });
-    db_blocks.syncDb();
-    db_blocks.close();
+    db_blocks.syncDb().then(() => db_blocks.close());
 
     const netAddrs: NetAddress[] = nodes.map((address) => {
       const ipv4 = address.split(":")[0];

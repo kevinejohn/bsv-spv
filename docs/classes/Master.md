@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:346](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L346)
+[src/cluster_master.ts:345](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L345)
 
 ___
 
@@ -222,7 +222,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:315](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L315)
+[src/cluster_master.ts:314](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L314)
 
 ___
 
@@ -242,7 +242,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:304](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L304)
+[src/cluster_master.ts:303](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L303)
 
 ___
 
@@ -262,7 +262,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:292](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L292)
+[src/cluster_master.ts:291](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L291)
 
 ___
 
@@ -284,4 +284,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:211](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L211)
+[src/cluster_master.ts:210](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L210)
