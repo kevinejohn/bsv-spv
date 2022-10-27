@@ -370,6 +370,9 @@ export default class Master {
         throw Error(`Invalid type`);
       }
     }
-    return node || this.seed_nodes[0];
+    return (
+      node ||
+      this.seed_nodes[Math.floor(Math.random() * this.seed_nodes.length)]
+    );
   }
 }

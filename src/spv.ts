@@ -401,14 +401,15 @@ export default class Spv extends EventEmitter {
               // More reliable if we calculate the height
               blockHeight = this.headers.getHeight(hash);
             } catch (err) {}
-            this.db_listener &&
-              (await this.db_listener.markBlockProcessed({
+            if (this.db_listener) {
+              await this.db_listener.markBlockProcessed({
                 blockHash,
                 height: blockHeight,
                 txCount,
                 size,
                 timer: +new Date() - startDate,
-              }));
+              });
+            }
             if (success) {
               this.emit("block_saved", {
                 height: blockHeight,
