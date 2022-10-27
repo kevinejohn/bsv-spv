@@ -289,9 +289,11 @@ export default class Spv extends EventEmitter {
           await this.peer.ping(30);
         } catch (err) {
           if (!this.peer) return;
-          failedPings++;
-          if (failedPings >= 2) {
+          if (failedPings++ >= 2) {
             // Reconnect
+            console.error(
+              `${this.id} Node did not respond to ping ${failedPings} times. Reconnecting...`
+            );
             this.peer.disconnects = 0; // Reset disconnects
             this.disconnect();
             this.connect();
