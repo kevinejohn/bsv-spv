@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:214](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L214)
+[src/db_blocks.ts:216](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L216)
 
 ___
 
@@ -149,7 +149,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:219](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L219)
+[src/db_blocks.ts:221](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L221)
 
 ___
 
@@ -163,7 +163,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L49)
+[src/db_blocks.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L51)
 
 ___
 
@@ -183,7 +183,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:199](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L199)
+[src/db_blocks.ts:201](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L201)
 
 ___
 
@@ -203,7 +203,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:89](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L89)
+[src/db_blocks.ts:91](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L91)
 
 ___
 
@@ -217,7 +217,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L66)
+[src/db_blocks.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L68)
 
 ___
 
@@ -231,7 +231,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:71](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L71)
+[src/db_blocks.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L73)
 
 ___
 
@@ -245,7 +245,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L58)
+[src/db_blocks.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L60)
 
 ___
 
@@ -259,7 +259,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:76](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L76)
+[src/db_blocks.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L78)
 
 ___
 
@@ -283,7 +283,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:224](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L224)
+[src/db_blocks.ts:226](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L226)
 
 ___
 
@@ -306,7 +306,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:156](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L156)
+[src/db_blocks.ts:158](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L158)
 
 ___
 
@@ -344,4 +344,4 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L98)
+[src/db_blocks.ts:100](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L100)

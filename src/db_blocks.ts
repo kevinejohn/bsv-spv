@@ -37,12 +37,14 @@ export default class DbBlocks {
   }
 
   syncDb() {
+    console.log(`Syncing block files with db...`);
     const count = this.dbi_blocks.getKeysCount({ limit: 10 });
     if (count === 0) {
       const hashes = Array.from(this.getSavedBlocksSync());
       for (const hash of hashes) {
         this.dbi_blocks.putSync(Buffer.from(hash, "hex"), Buffer.from(""));
       }
+      console.log(`Synced ${hashes.length} block files with db`);
     }
   }
 
