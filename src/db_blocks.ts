@@ -140,7 +140,7 @@ export default class DbBlocks {
               // Save block to disk
               await fs.promises.rename(`${dir}.${process.pid}`, dir);
               if (!this.blockExists(blockHash.toString("hex"))) {
-                this.dbi_blocks.putSync(blockHash, Buffer.from(""));
+                await this.dbi_blocks.put(blockHash, Buffer.from(""));
               }
               return resolve(true);
             } else {

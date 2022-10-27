@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:100](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L100)
+[src/db_nodes.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L101)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:90](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L90)
+[src/db_nodes.ts:91](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L91)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L112)
+[src/db_nodes.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L113)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:123](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L123)
+[src/db_nodes.ts:124](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L124)
 
 ___
 
@@ -226,7 +226,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:132](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L132)
+[src/db_nodes.ts:133](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L133)
 
 ___
 
@@ -246,7 +246,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:95](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L95)
+[src/db_nodes.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L96)
 
 ___
 
@@ -266,7 +266,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L80)
+[src/db_nodes.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L81)
 
 ___
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L107)
+[src/db_nodes.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L108)
 
 ___
 
@@ -300,13 +300,13 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:77](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L77)
+[src/db_nodes.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L78)
 
 ___
 
 ### saveSeenNodes
 
-▸ **saveSeenNodes**(`addrs`): `number`
+▸ **saveSeenNodes**(`addrs`): `Promise`<`number`\>
 
 #### Parameters
 
@@ -316,7 +316,7 @@ ___
 
 #### Returns
 
-`number`
+`Promise`<`number`\>
 
 #### Defined in
 

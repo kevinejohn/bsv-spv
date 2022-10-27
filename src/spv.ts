@@ -308,7 +308,7 @@ export default class Spv extends EventEmitter {
     });
     this.peer.on("addr", async ({ addrs }: { addrs: NetAddress[] }) => {
       try {
-        const nodes = this.db_nodes.saveSeenNodes(addrs);
+        const nodes = await this.db_nodes.saveSeenNodes(addrs);
         this.db_nodes.markSavedSeen();
         if (nodes > 0)
           console.log(`${this.id} Saved ${nodes} new seen peer nodes`);
@@ -357,13 +357,13 @@ export default class Spv extends EventEmitter {
               blockHeight = this.headers.getHeight(hash);
             } catch (err) {}
             this.db_listener &&
-              this.db_listener.markBlockProcessed({
+              (await this.db_listener.markBlockProcessed({
                 blockHash,
                 height: blockHeight,
                 txCount,
                 size,
                 timer: +new Date() - startDate,
-              });
+              }));
             if (success) {
               this.emit("block_saved", {
                 height: blockHeight,

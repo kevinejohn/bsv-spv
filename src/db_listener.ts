@@ -69,12 +69,13 @@ export default class DbListener {
     );
     let buf = this.dbi_heights.get(height);
     if (!buf || buf.toString("hex") !== blockHash.toString("hex")) {
-      this.dbi_heights.putSync(height, blockHash);
+      this.dbi_heights.put(height, blockHash);
     }
     buf = this.dbi_blocks.get(blockHash);
     if (!buf || buf.toString() !== value.toString()) {
-      this.dbi_blocks.putSync(blockHash, value);
+      this.dbi_blocks.put(blockHash, value);
     }
+    return Promise.all([this.dbi_heights.flushed, this.dbi_blocks.flushed]);
   }
 
   batchBlocksProcessed(array: ListenerOptions[]): Promise<boolean> {

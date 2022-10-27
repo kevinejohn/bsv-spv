@@ -330,7 +330,7 @@ export default class Listener extends EventEmitter {
                 const { header, size, txCount, startDate } = params;
                 const blockHash = header ? header.getHash(true) : "";
                 const timer = +new Date() - startDate;
-                this.db_listener.markBlockProcessed({
+                await this.db_listener.markBlockProcessed({
                   blockHash,
                   height,
                   matches,

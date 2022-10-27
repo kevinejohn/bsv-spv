@@ -62,15 +62,16 @@ export default class DbNodes {
     } catch (err) {}
   }
 
-  saveSeenNodes(addrs: NetAddress[]) {
+  async saveSeenNodes(addrs: NetAddress[]) {
     let count = 0;
     for (const addr of addrs) {
       const key = `${addr.ipv4}:${addr.port}`;
       if (!this.dbi_seen.get(key) && addr.ipv4 && addr.port < 20000) {
-        this.dbi_seen.putSync(key, addr);
+        this.dbi_seen.put(key, addr);
         count++;
       }
     }
+    if (count) await this.dbi_seen.flushed;
     return count;
   }
 
