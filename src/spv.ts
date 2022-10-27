@@ -115,8 +115,8 @@ export default class Spv extends EventEmitter {
   updateId() {
     if (!this.isConnected()) {
       this.id = `#${this.uid} ${this.mempool ? "mempool " : ""}${
-        this.blocks ? "blocks " : ""
-      }`;
+        this.blocks ? "blocks" : ""
+      }`.trim();
     } else {
       this.id = `#${this.uid} ${this.mempool ? "mempool-" : ""}${
         this.blocks ? "blocks-" : ""
