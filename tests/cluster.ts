@@ -18,8 +18,8 @@ const config: MasterOptions = {
   dataDir: path.join(__dirname, "data"),
   pruneBlocks: 0, // 0 for no block pruning
   blockHeight: -1, // Sync to block height
-  mempool: 2, // Watch mempool
-  blocks: 2, // Watch blocks
+  mempool: 1, // Watch mempool
+  blocks: 1, // Watch blocks
   // DEBUG_LOG: true, // p2p network console.logs
 };
 

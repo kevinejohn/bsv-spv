@@ -82,7 +82,7 @@ export default class Worker {
         }
       } catch (err) {}
     });
-    spv.on("version_invalid", ({ user_agent, expected_user_agent }) => {
+    spv.on("version_invalid", ({ error }) => {
       // console.error(
       //   `${spv.id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${expected_user_agent}"`
       // );
@@ -117,6 +117,9 @@ export default class Worker {
           spv.peer.disconnects = 0;
         }
       }, 1000 * 60);
+    });
+    spv.on("could_not_connect", () => {
+      this.sendToMaster({ command: `send_new_node` });
     });
     spv.on("node_peers", ({ addrs, nodes }) => {
       console.log(

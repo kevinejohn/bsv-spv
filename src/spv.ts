@@ -181,6 +181,7 @@ export default class Spv extends EventEmitter {
           this.syncingHeaders = undefined;
           resolve(newHeaders);
         } catch (err) {
+          // console.error(err);
           this.syncingHeaders = undefined;
           reject(err);
         }
@@ -441,7 +442,11 @@ export default class Spv extends EventEmitter {
     try {
       await this.peer.connect(versionOptions);
     } catch (err) {
+      if (!hasConnected && !this.db_nodes.hasConnected(node)) {
+        this.db_nodes.blacklist(node);
+      }
       // console.error(err);
+      this.emit("could_not_connect", { ticker, node });
     }
   }
   disconnect() {
