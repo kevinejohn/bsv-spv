@@ -158,33 +158,30 @@ export default class Spv extends EventEmitter {
       this.syncingHeaders = new Promise(async (resolve, reject) => {
         try {
           let newHeaders = 0;
-          while (true) {
-            if (!this.peer) throw Error(`Peer not connected`);
-            // try {
-            let from = this.headers
-              .getFromHeaderArray()
-              .map((o) => Buffer.from(o, "hex"));
-            do {
-              let lastHash = from[0];
-              await this.peer.connect(); // Wait until connected
-              const headers: bsvMin.Header[] = await this.peer.getHeaders({
-                from,
-              });
-              if (headers.length === 0) break;
-              newHeaders += await this.addHeaders({ headers });
-              const lastHeader = headers[headers.length - 1];
-              if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
-              from = [lastHeader.getHash()];
-            } while (true);
-            break;
-            // } catch (err: any) {
-            //   const RETRY = 3;
-            //   console.error(
-            //     `${this.id} could not sync headers: ${err.message}. Retrying in ${RETRY} seconds.... (${err.message})`
-            //   );
-            //   await new Promise((r) => setTimeout(r, RETRY * 1000));
-            // }
-          }
+          // try {
+          let from = this.headers
+            .getFromHeaderArray()
+            .map((o) => Buffer.from(o, "hex"));
+          do {
+            let lastHash = from[0];
+
+            if (!this.peer || !this.isConnected()) throw Error(`Not connected`);
+            const headers: bsvMin.Header[] = await this.peer.getHeaders({
+              from,
+            });
+            if (headers.length === 0) break;
+            newHeaders += await this.addHeaders({ headers });
+            const lastHeader = headers[headers.length - 1];
+            if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
+            from = [lastHeader.getHash()];
+          } while (true);
+          // } catch (err: any) {
+          //   const RETRY = 3;
+          //   console.error(
+          //     `${this.id} could not sync headers: ${err.message}. Retrying in ${RETRY} seconds.... (${err.message})`
+          //   );
+          //   await new Promise((r) => setTimeout(r, RETRY * 1000));
+          // }
           this.syncingHeaders = undefined;
           resolve(newHeaders);
         } catch (err) {
@@ -600,9 +597,10 @@ export default class Spv extends EventEmitter {
         if (blockDownloaded) blocksDled++;
         tipHeight = this.headers.getHeight();
       } catch (err: any) {
+        if (!this.isConnected()) break;
         const RETRY = 3;
         console.error(
-          `syncBlocks error: ${err.message}. Retrying in ${RETRY} seconds...`
+          `${this.id} syncBlocks error: ${err.message}. Retrying in ${RETRY} seconds...`
         );
         await new Promise((r) => setTimeout(r, RETRY * 1000));
         height--; // Retry height
