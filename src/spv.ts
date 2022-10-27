@@ -75,7 +75,7 @@ export default class Spv extends EventEmitter {
     mempool = false,
     autoReconnect = true,
     autoReconnectWait,
-    timeoutConnect = 1000 * 5, // 5 seconds. Shorter than default
+    timeoutConnect = 1000 * 15, // 15 seconds. Shorter than default
     versionOptions,
     invalidBlocks = [],
     pruneBlocks = 0, // Maximum number of new blocks to keep. 0 for keeping all blocks
@@ -483,12 +483,12 @@ export default class Spv extends EventEmitter {
         return txids;
       });
     }
-    if (blocks) {
-      this.peer.fetchNewBlocks((hashes) => {
-        this.emit(`blocks_seen`, { hashes });
-        return hashes;
-      });
-    }
+    // if (blocks) {
+    //   this.peer.fetchNewBlocks((hashes) => {
+    //     this.emit(`blocks_seen`, { hashes });
+    //     return hashes;
+    //   });
+    // }
     try {
       await this.peer.connect(versionOptions);
     } catch (err) {
