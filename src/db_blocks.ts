@@ -44,7 +44,7 @@ export default class DbBlocks {
     if (count === 0) {
       const hashes = Array.from(this.getSavedBlocksSync());
       for (const hash of hashes) {
-        this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
+        this.markBlockSaved(hash);
       }
       await this.dbi_blocks.flushed;
       console.log(
@@ -104,6 +104,12 @@ export default class DbBlocks {
     }
   }
 
+  markBlockSaved(hash: string) {
+    if (!this.blockExists(hash)) {
+      return this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
+    }
+  }
+
   writeBlockChunk({
     chunk,
     blockHash,
@@ -139,9 +145,7 @@ export default class DbBlocks {
             if (!fileExists) {
               // Save block to disk
               await fs.promises.rename(`${dir}.${process.pid}`, dir);
-              if (!this.blockExists(blockHash.toString("hex"))) {
-                await this.dbi_blocks.put(blockHash, Buffer.from(""));
-              }
+              this.markBlockSaved(blockHash.toString("hex"));
               return resolve(true);
             } else {
               // Block already saved. Delete copy
@@ -221,13 +225,12 @@ export default class DbBlocks {
   }
 
   blockExists(hash: string) {
-    const result = this.dbi_blocks.doesExist(Buffer.from(hash, "hex"));
-    return result;
+    return this.dbi_blocks.doesExist(Buffer.from(hash, "hex"));
   }
 
-  blockExistsSync(hash: string) {
+  blockFileExists(hash: string) {
     const dir = path.join(this.blocksDir, `${hash}.bin`);
-    return fs.existsSync(dir);
+    return this.fileExists(dir);
   }
 
   async getTx({

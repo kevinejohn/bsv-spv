@@ -561,11 +561,15 @@ export default class Spv extends EventEmitter {
 
   async downloadBlock({ height, hash }: { height: number; hash: string }) {
     if (!this.db_blocks.blockExists(hash)) {
-      if (!this.peer) throw Error(`Peer not connected`);
-      await this.peer.connect(); // Wait until connected
-      this.emit(`block_downloading`, { hash, height });
-      await this.peer.getBlock(hash);
-      return true;
+      if (await this.db_blocks.blockFileExists(hash)) {
+        this.db_blocks.markBlockSaved(hash);
+      } else {
+        if (!this.peer || !this.isConnected())
+          throw Error(`Peer not connected`);
+        this.emit(`block_downloading`, { hash, height });
+        await this.peer.getBlock(hash);
+        return true;
+      }
     }
     return false;
   }
