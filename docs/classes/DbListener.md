@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L80)
+[src/db_listener.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L81)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L98)
+[src/db_listener.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L99)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:120](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L120)
+[src/db_listener.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L121)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:114](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L114)
+[src/db_listener.ts:115](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L115)
 
 ___
 
@@ -193,7 +193,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L107)
+[src/db_listener.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L108)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L101)
+[src/db_listener.ts:102](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L102)
 
 ___
 
@@ -227,7 +227,7 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:127](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L127)
+[src/db_listener.ts:128](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L128)
 
 ___
 
@@ -247,13 +247,13 @@ ___
 
 #### Defined in
 
-[src/db_listener.ts:95](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L95)
+[src/db_listener.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L96)
 
 ___
 
 ### markBlockProcessed
 
-▸ **markBlockProcessed**(`__namedParameters`): `void`
+▸ **markBlockProcessed**(`__namedParameters`): `Promise`<[`boolean`, `boolean`]\>
 
 #### Parameters
 
@@ -263,7 +263,7 @@ ___
 
 #### Returns
 
-`void`
+`Promise`<[`boolean`, `boolean`]\>
 
 #### Defined in
 

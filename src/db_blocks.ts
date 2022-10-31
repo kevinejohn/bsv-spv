@@ -23,22 +23,35 @@ export default class DbBlocks {
     fs.mkdirSync(blocksDir, { recursive: true });
     const dbPath = path.join(blocksDir, "meta");
     this.dbPath = dbPath;
-    let initialize = false;
-    if (!fs.existsSync(dbPath)) initialize = true;
-    fs.mkdirSync(dbPath, { recursive: true });
 
-    this.dbi_root = lmdb.open({ path: dbPath, readOnly });
+    fs.mkdirSync(this.dbPath, { recursive: true });
+    this.dbi_root = lmdb.open({
+      path: this.dbPath,
+      readOnly,
+    });
     this.dbi_blocks = this.dbi_root.openDB({
       name: "blocks",
       encoding: "binary",
       keyEncoding: "binary",
+      cache: true,
     });
+  }
 
-    if (initialize && !readOnly) {
+  async syncDb() {
+    const startDate = +new Date();
+    console.log(`Syncing block files with db...`);
+    const count = this.dbi_blocks.getKeysCount({ limit: 10 });
+    if (count === 0) {
       const hashes = Array.from(this.getSavedBlocksSync());
       for (const hash of hashes) {
-        this.dbi_blocks.putSync(Buffer.from(hash, "hex"), Buffer.from(""));
+        this.dbi_blocks.put(Buffer.from(hash, "hex"), Buffer.from(""));
       }
+      await this.dbi_blocks.flushed;
+      console.log(
+        `Synced ${hashes.length} block files with db in ${
+          (+new Date() - startDate) / 1000
+        } seconds`
+      );
     }
   }
 
@@ -126,7 +139,9 @@ export default class DbBlocks {
             if (!fileExists) {
               // Save block to disk
               await fs.promises.rename(`${dir}.${process.pid}`, dir);
-              await this.dbi_blocks.put(blockHash, Buffer.from(""));
+              if (!this.blockExists(blockHash.toString("hex"))) {
+                await this.dbi_blocks.put(blockHash, Buffer.from(""));
+              }
               return resolve(true);
             } else {
               // Block already saved. Delete copy
@@ -200,11 +215,14 @@ export default class DbBlocks {
     }
     await fs.promises.unlink(dir);
     hash = hash.split(".")[0];
-    await this.dbi_blocks.remove(Buffer.from(hash, "hex"));
+    if (this.blockExists(hash)) {
+      await this.dbi_blocks.remove(Buffer.from(hash, "hex"));
+    }
   }
 
   blockExists(hash: string) {
-    return this.dbi_blocks.doesExist(Buffer.from(hash, "hex"));
+    const result = this.dbi_blocks.doesExist(Buffer.from(hash, "hex"));
+    return result;
   }
 
   blockExistsSync(hash: string) {

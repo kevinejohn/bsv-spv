@@ -179,7 +179,7 @@ export default class Listener extends EventEmitter {
       }
       if (height < this.blockHeight) return; // Ignore event if block height is less than listeners start block
     } else {
-      console.log(`Unknown command: ${JSON.stringify(obj)}`);
+      // console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
     this.emit(command, data);
   }
@@ -330,7 +330,7 @@ export default class Listener extends EventEmitter {
                 const { header, size, txCount, startDate } = params;
                 const blockHash = header ? header.getHash(true) : "";
                 const timer = +new Date() - startDate;
-                this.db_listener.markBlockProcessed({
+                await this.db_listener.markBlockProcessed({
                   blockHash,
                   height,
                   matches,
@@ -362,14 +362,16 @@ export default class Listener extends EventEmitter {
         clearInterval(interval);
       }
       const seconds = (+new Date() - date) / 1000;
-      console.log(
-        `Synced ${processed} blocks (${Helpers.formatSpeeds(
-          blockSize,
-          seconds
-        )} in ${seconds} seconds. ${skipped} blocks missing. ${
-          this.db_listener.blocksProcessed() - 1
-        }/${tip.height} blocks processed at ${new Date().toLocaleString()}`
-      );
+      if (processed) {
+        console.log(
+          `Synced ${processed} blocks (${Helpers.formatSpeeds(
+            blockSize,
+            seconds
+          )} in ${seconds} seconds. ${skipped} blocks missing. ${
+            this.db_listener.blocksProcessed() - 1
+          }/${tip.height} blocks processed at ${new Date().toLocaleString()}`
+        );
+      }
       this.syncingBlocks = false;
       return { skipped, processed, blockSize };
     } catch (err) {
@@ -383,7 +385,7 @@ export default class Listener extends EventEmitter {
     return this.db_listener.getBlockInfo(hash);
   }
 
-  readBlock(
+  async readBlock(
     { hash, height }: { height: number; hash: string },
     callback: (params: bsv.BlockStream) => Promise<any>
   ): Promise<boolean> {

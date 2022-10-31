@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[src/cluster_worker.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L15)
+[src/cluster_worker.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L16)
 
 ## Properties
 
@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[src/cluster_worker.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L13)
+[src/cluster_worker.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L14)
 
 ## Methods
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[src/cluster_worker.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L32)
+[src/cluster_worker.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L37)
 
 ___
 
@@ -75,4 +75,4 @@ ___
 
 #### Defined in
 
-[src/cluster_worker.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L36)
+[src/cluster_worker.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L41)
