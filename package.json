@@ -4,11 +4,19 @@
   "description": "Stay in sync with latest bitcoin headers, blocks and mempool txs",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "src"
+  ],
   "scripts": {
     "test": "ts-node ./tests/cluster.ts",
     "build": "tsc",
     "docs": "typedoc",
     "prepare": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kevinejohn/bsv-spv.git"
   },
   "author": "Kevin Johnson",
   "license": "MIT",
