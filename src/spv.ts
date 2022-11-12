@@ -248,7 +248,7 @@ export default class Spv extends EventEmitter {
         ticker: string;
         disconnects: number;
       }) => {
-        clearInterval(this.peerPingInterval);
+        // clearInterval(this.peerPingInterval);
         clearTimeout(this.getPeersTimeout);
         if (
           disconnects >= 3 &&
@@ -283,7 +283,10 @@ export default class Spv extends EventEmitter {
         try {
           if (!this.peer) return;
           if (this.syncingBlocks || this.syncingHeaders) return;
-          await this.peer.ping(30);
+          const response_ms = await this.peer.ping(30);
+          // console.log(
+          //   `${this.id} Ping responded in ${response_ms / 1000} seconds`
+          // );
           failedPings = 0;
         } catch (err) {
           if (!this.peer) return;
@@ -510,7 +513,7 @@ export default class Spv extends EventEmitter {
       try {
         this.peer.disconnect();
       } catch (err) {
-        console.error(err);
+        // console.error(err);
       }
       this.peer = undefined;
     }
