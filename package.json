@@ -28,7 +28,7 @@
   "dependencies": {
     "bsv-headers": "^1.0.2",
     "bsv-minimal": "^1.1.2",
-    "bsv-p2p": "^1.1.4",
+    "bsv-p2p": "^1.1.5",
     "express": "^4.18.2",
     "levelup": "^5.1.1",
     "lmdb": "^2.6.9",
@@ -42,8 +42,8 @@
     "@types/node": "^18.11.9",
     "@types/rocksdb": "^3.0.1",
     "ts-node": "^10.9.1",
-    "typedoc": "^0.23.19",
+    "typedoc": "^0.23.21",
     "typedoc-plugin-markdown": "^3.13.6",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   }
 }

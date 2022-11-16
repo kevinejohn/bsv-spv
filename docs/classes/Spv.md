@@ -422,7 +422,7 @@ EventEmitter.captureRejectionSymbol
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:328
+node_modules/@types/node/events.d.ts:328
 
 ___
 
@@ -438,7 +438,7 @@ EventEmitter.captureRejections
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:333
+node_modules/@types/node/events.d.ts:333
 
 ___
 
@@ -452,7 +452,7 @@ EventEmitter.defaultMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:334
+node_modules/@types/node/events.d.ts:334
 
 ___
 
@@ -474,7 +474,7 @@ EventEmitter.errorMonitor
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:327
+node_modules/@types/node/events.d.ts:327
 
 ## Methods
 
@@ -526,7 +526,7 @@ EventEmitter.addListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:354
+node_modules/@types/node/events.d.ts:354
 
 ___
 
@@ -560,7 +560,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:503](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L503)
+[src/spv.ts:506](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L506)
 
 ___
 
@@ -582,7 +582,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:562](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L562)
+[src/spv.ts:565](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L565)
 
 ___
 
@@ -649,7 +649,7 @@ EventEmitter.emit
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:610
+node_modules/@types/node/events.d.ts:610
 
 ___
 
@@ -687,7 +687,7 @@ EventEmitter.eventNames
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:669
+node_modules/@types/node/events.d.ts:669
 
 ___
 
@@ -711,7 +711,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:547](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L547)
+[src/spv.ts:550](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L550)
 
 ___
 
@@ -731,7 +731,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:524](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L524)
+[src/spv.ts:527](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L527)
 
 ___
 
@@ -753,7 +753,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:530](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L530)
+[src/spv.ts:533](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L533)
 
 ___
 
@@ -773,7 +773,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:521](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L521)
+[src/spv.ts:524](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L524)
 
 ___
 
@@ -798,7 +798,7 @@ EventEmitter.getMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:526
+node_modules/@types/node/events.d.ts:526
 
 ___
 
@@ -812,7 +812,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:535](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L535)
+[src/spv.ts:538](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L538)
 
 ___
 
@@ -831,7 +831,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:527](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L527)
+[src/spv.ts:530](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L530)
 
 ___
 
@@ -845,7 +845,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:518](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L518)
+[src/spv.ts:521](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L521)
 
 ___
 
@@ -875,7 +875,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:616
+node_modules/@types/node/events.d.ts:616
 
 ___
 
@@ -913,7 +913,7 @@ EventEmitter.listeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:539
+node_modules/@types/node/events.d.ts:539
 
 ___
 
@@ -944,7 +944,7 @@ EventEmitter.off
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:499
+node_modules/@types/node/events.d.ts:499
 
 ___
 
@@ -999,7 +999,7 @@ EventEmitter.on
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:385
+node_modules/@types/node/events.d.ts:385
 
 ___
 
@@ -1052,7 +1052,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:414
+node_modules/@types/node/events.d.ts:414
 
 ___
 
@@ -1094,7 +1094,7 @@ EventEmitter.prependListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:634
+node_modules/@types/node/events.d.ts:634
 
 ___
 
@@ -1134,7 +1134,7 @@ EventEmitter.prependOnceListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:650
+node_modules/@types/node/events.d.ts:650
 
 ___
 
@@ -1189,7 +1189,7 @@ EventEmitter.rawListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:569
+node_modules/@types/node/events.d.ts:569
 
 ___
 
@@ -1212,7 +1212,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:576](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L576)
+[src/spv.ts:579](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L579)
 
 ___
 
@@ -1248,7 +1248,7 @@ EventEmitter.removeAllListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:510
+node_modules/@types/node/events.d.ts:510
 
 ___
 
@@ -1354,7 +1354,7 @@ EventEmitter.removeListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:494
+node_modules/@types/node/events.d.ts:494
 
 ___
 
@@ -1389,7 +1389,7 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:520
+node_modules/@types/node/events.d.ts:520
 
 ___
 
@@ -1403,7 +1403,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:589](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L589)
+[src/spv.ts:592](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L592)
 
 ___
 
@@ -1445,7 +1445,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:621](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L621)
+[src/spv.ts:624](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L624)
 
 ___
 
@@ -1499,7 +1499,7 @@ EventEmitter.getEventListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:299
+node_modules/@types/node/events.d.ts:299
 
 ___
 
@@ -1543,7 +1543,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:271
+node_modules/@types/node/events.d.ts:271
 
 ___
 
@@ -1629,7 +1629,7 @@ EventEmitter.on
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:254
+node_modules/@types/node/events.d.ts:254
 
 ___
 
@@ -1739,7 +1739,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:194
+node_modules/@types/node/events.d.ts:194
 
 ▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
 
@@ -1761,7 +1761,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:195
+node_modules/@types/node/events.d.ts:195
 
 ___
 
@@ -1802,4 +1802,4 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:317
+node_modules/@types/node/events.d.ts:317

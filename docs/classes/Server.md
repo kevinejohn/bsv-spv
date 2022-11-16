@@ -438,7 +438,7 @@ ___
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:328
+node_modules/@types/node/events.d.ts:328
 
 ___
 
@@ -454,7 +454,7 @@ Sets or gets the default captureRejection value for all emitters.
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:333
+node_modules/@types/node/events.d.ts:333
 
 ___
 
@@ -468,7 +468,7 @@ ___
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:334
+node_modules/@types/node/events.d.ts:334
 
 ___
 
@@ -490,7 +490,7 @@ regular `'error'` listener is installed.
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:327
+node_modules/@types/node/events.d.ts:327
 
 ## Methods
 
@@ -521,7 +521,7 @@ v0.1.26
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:354
+node_modules/@types/node/events.d.ts:354
 
 ___
 
@@ -633,7 +633,7 @@ v0.1.26
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:610
+node_modules/@types/node/events.d.ts:610
 
 ___
 
@@ -671,7 +671,7 @@ v6.0.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:669
+node_modules/@types/node/events.d.ts:669
 
 ___
 
@@ -722,7 +722,7 @@ v1.0.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:526
+node_modules/@types/node/events.d.ts:526
 
 ___
 
@@ -772,7 +772,7 @@ v3.2.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:616
+node_modules/@types/node/events.d.ts:616
 
 ___
 
@@ -810,7 +810,7 @@ v0.1.26
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:539
+node_modules/@types/node/events.d.ts:539
 
 ___
 
@@ -841,7 +841,7 @@ v10.0.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:499
+node_modules/@types/node/events.d.ts:499
 
 ___
 
@@ -896,7 +896,7 @@ v0.1.101
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:385
+node_modules/@types/node/events.d.ts:385
 
 ___
 
@@ -975,7 +975,7 @@ v0.3.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:414
+node_modules/@types/node/events.d.ts:414
 
 ___
 
@@ -1017,7 +1017,7 @@ v6.0.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:634
+node_modules/@types/node/events.d.ts:634
 
 ___
 
@@ -1057,7 +1057,7 @@ v6.0.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:650
+node_modules/@types/node/events.d.ts:650
 
 ___
 
@@ -1112,7 +1112,7 @@ v9.4.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:569
+node_modules/@types/node/events.d.ts:569
 
 ___
 
@@ -1193,7 +1193,7 @@ v0.1.26
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:510
+node_modules/@types/node/events.d.ts:510
 
 ___
 
@@ -1299,7 +1299,7 @@ v0.1.26
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:494
+node_modules/@types/node/events.d.ts:494
 
 ___
 
@@ -1334,7 +1334,7 @@ v0.3.5
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:520
+node_modules/@types/node/events.d.ts:520
 
 ___
 
@@ -1412,7 +1412,7 @@ v15.2.0, v14.17.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:299
+node_modules/@types/node/events.d.ts:299
 
 ___
 
@@ -1456,7 +1456,7 @@ Since v3.2.0 - Use `listenerCount` instead.
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:271
+node_modules/@types/node/events.d.ts:271
 
 ___
 
@@ -1542,7 +1542,7 @@ that iterates `eventName` events emitted by the `emitter`
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:254
+node_modules/@types/node/events.d.ts:254
 
 ___
 
@@ -1652,7 +1652,7 @@ v11.13.0, v10.16.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:194
+node_modules/@types/node/events.d.ts:194
 
 ▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
 
@@ -1674,7 +1674,7 @@ node_modules/@types/node/ts4.8/events.d.ts:194
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:195
+node_modules/@types/node/events.d.ts:195
 
 ___
 
@@ -1715,4 +1715,4 @@ v15.4.0
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:317
+node_modules/@types/node/events.d.ts:317
