@@ -27,6 +27,7 @@ const port = 8080; // Server that new blocks nad mempool txs are announced on
 const config = {
   ticker: "BSV", // BTC, BCH, XEC, BSV
   nodes: [`95.217.197.54:8333`], // Set to your favorite node IP addresses. Will ask for other peers after connected
+  // enableIpv6: true, // Connect to ipv6 nodes
   forceUserAgent: `Bitcoin SV`, // Disconnects with nodes that do not string match with user agent
   // user_agent: 'Bitcoin SV',
   invalidBlocks: [], // Set if you want to force a specific fork (see examples below)

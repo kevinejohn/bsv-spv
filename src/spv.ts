@@ -215,12 +215,7 @@ export default class Spv extends EventEmitter {
     this.updateId();
 
     if (blocks) {
-      const listenerDir = path.join(
-        dataDir,
-        ticker,
-        "history",
-        `node-${node.replace(":", "-")}`
-      );
+      const listenerDir = path.join(dataDir, ticker, "history", `node-${node}`);
       this.db_listener = new DbListener({ listenerDir });
     }
 
@@ -241,10 +236,12 @@ export default class Spv extends EventEmitter {
       "disconnected",
       ({
         node,
+        port,
         ticker,
         disconnects,
       }: {
         node: string;
+        port: number;
         ticker: string;
         disconnects: number;
       }) => {
@@ -253,9 +250,9 @@ export default class Spv extends EventEmitter {
         if (
           disconnects >= 3 &&
           !hasConnected &&
-          !this.db_nodes.hasConnected(node)
+          !this.db_nodes.hasConnected({ node, port })
         ) {
-          this.db_nodes.blacklist(node);
+          this.db_nodes.blacklist({ node, port });
         }
         this.emit("disconnected", { node, ticker, disconnects });
         this.updateId();
@@ -270,7 +267,8 @@ export default class Spv extends EventEmitter {
       clearTimeout(this.getPeersTimeout);
       this.getPeersTimeout = setTimeout(() => {
         try {
-          this.db_nodes.connected(node); // Mark as connected
+          const { node, port } = params;
+          this.db_nodes.connected({ node, port }); // Mark as connected
           if (!this.db_nodes.hasSavedSeen()) {
             console.log(`${this.id} Getting node peers...`);
             this.getNodePeers();
@@ -306,7 +304,15 @@ export default class Spv extends EventEmitter {
     });
     this.peer.on(
       "version",
-      ({ node, version }: { node: string; version: VersionOptions }) => {
+      ({
+        node,
+        port,
+        version,
+      }: {
+        node: string;
+        port: number;
+        version: VersionOptions;
+      }) => {
         try {
           if (typeof this.forceUserAgent === "string") {
             const { user_agent } = version;
@@ -315,7 +321,7 @@ export default class Spv extends EventEmitter {
               !user_agent ||
               !user_agent.toLowerCase().includes(expected_user_agent)
             ) {
-              this.db_nodes.blacklist(node);
+              this.db_nodes.blacklist({ node, port });
               this.emit("version_invalid", {
                 error: `user_agent does not match ${expected_user_agent}: ${user_agent}`,
                 user_agent,
@@ -330,7 +336,7 @@ export default class Spv extends EventEmitter {
             !version.start_height ||
             version.start_height < this.headers.getHeight() - 5
           ) {
-            this.db_nodes.blacklist(node);
+            this.db_nodes.blacklist({ node, port });
             this.emit("version_invalid", {
               error: `start_height (${
                 version.start_height
@@ -496,8 +502,8 @@ export default class Spv extends EventEmitter {
     try {
       await this.peer.connect(versionOptions);
     } catch (err) {
-      if (!hasConnected && !this.db_nodes.hasConnected(node)) {
-        this.db_nodes.blacklist(node);
+      if (!hasConnected && !this.db_nodes.hasConnected({ node })) {
+        this.db_nodes.blacklist({ node });
       }
       // console.error(err);
       this.emit("could_not_connect", { ticker, node });

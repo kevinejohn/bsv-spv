@@ -9,7 +9,9 @@
     "src"
   ],
   "scripts": {
-    "test": "ts-node ./tests/cluster.ts",
+    "test": "npm run test-cluster",
+    "test-cluster": "ts-node ./tests/cluster.ts",
+    "test-lister": "ts-node ./tests/lister.ts",
     "build": "tsc",
     "docs": "typedoc",
     "prepare": "npm run build"
@@ -28,10 +30,10 @@
   "dependencies": {
     "bsv-headers": "^1.0.2",
     "bsv-minimal": "^1.1.2",
-    "bsv-p2p": "^1.1.5",
+    "bsv-p2p": "^1.1.7",
     "express": "^4.18.2",
     "levelup": "^5.1.1",
-    "lmdb": "^2.6.9",
+    "lmdb": "^2.7.1",
     "node-lmdb": "^0.9.7",
     "rocksdb": "^5.2.1",
     "source-map-support": "^0.5.21"

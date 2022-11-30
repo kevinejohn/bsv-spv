@@ -16,6 +16,7 @@
 - [dbi\_meta](DbNodes.md#dbi_meta)
 - [dbi\_root](DbNodes.md#dbi_root)
 - [dbi\_seen](DbNodes.md#dbi_seen)
+- [enableIpv6](DbNodes.md#enableipv6)
 - [env](DbNodes.md#env)
 - [nodesDir](DbNodes.md#nodesdir)
 
@@ -24,6 +25,7 @@
 - [blacklist](DbNodes.md#blacklist)
 - [close](DbNodes.md#close)
 - [connected](DbNodes.md#connected)
+- [formatUrl](DbNodes.md#formaturl)
 - [getBlacklistedNodes](DbNodes.md#getblacklistednodes)
 - [getConnectedNodes](DbNodes.md#getconnectednodes)
 - [getSeenNodes](DbNodes.md#getseennodes)
@@ -45,12 +47,13 @@
 | :------ | :------ |
 | `__namedParameters` | `Object` |
 | `__namedParameters.blacklistTime?` | `number` |
+| `__namedParameters.enableIpv6?` | `boolean` |
 | `__namedParameters.nodesDir` | `string` |
 | `__namedParameters.readOnly?` | `boolean` |
 
 #### Defined in
 
-[src/db_nodes.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L15)
+[src/db_nodes.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L16)
 
 ## Properties
 
@@ -114,6 +117,16 @@ ___
 
 ___
 
+### enableIpv6
+
+• **enableIpv6**: `boolean`
+
+#### Defined in
+
+[src/db_nodes.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L14)
+
+___
+
 ### env
 
 • **env**: `any`
@@ -136,13 +149,15 @@ ___
 
 ### blacklist
 
-▸ **blacklist**(`node`): `void`
+▸ **blacklist**(`__namedParameters`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `node` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.node` | `string` |
+| `__namedParameters.port?` | `number` |
 
 #### Returns
 
@@ -150,7 +165,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L101)
+[src/db_nodes.ts:126](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L126)
 
 ___
 
@@ -164,19 +179,21 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L47)
+[src/db_nodes.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L51)
 
 ___
 
 ### connected
 
-▸ **connected**(`node`): `void`
+▸ **connected**(`__namedParameters`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `node` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.node` | `string` |
+| `__namedParameters.port?` | `number` |
 
 #### Returns
 
@@ -184,7 +201,29 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:91](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L91)
+[src/db_nodes.ts:114](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L114)
+
+___
+
+### formatUrl
+
+▸ **formatUrl**(`__namedParameters`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `__namedParameters` | `Object` |
+| `__namedParameters.node` | `string` |
+| `__namedParameters.port?` | `number` |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[src/db_nodes.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L69)
 
 ___
 
@@ -198,7 +237,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L113)
+[src/db_nodes.ts:140](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L140)
 
 ___
 
@@ -212,7 +251,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:124](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L124)
+[src/db_nodes.ts:151](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L151)
 
 ___
 
@@ -226,19 +265,21 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:133](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L133)
+[src/db_nodes.ts:160](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L160)
 
 ___
 
 ### hasConnected
 
-▸ **hasConnected**(`node`): `boolean`
+▸ **hasConnected**(`__namedParameters`): `boolean`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `node` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.node` | `string` |
+| `__namedParameters.port?` | `number` |
 
 #### Returns
 
@@ -246,7 +287,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L96)
+[src/db_nodes.ts:120](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L120)
 
 ___
 
@@ -266,19 +307,21 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L81)
+[src/db_nodes.ts:104](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L104)
 
 ___
 
 ### isBlacklisted
 
-▸ **isBlacklisted**(`node`): `boolean`
+▸ **isBlacklisted**(`__namedParameters`): `boolean`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `node` | `string` |
+| `__namedParameters` | `Object` |
+| `__namedParameters.node` | `string` |
+| `__namedParameters.port?` | `number` |
 
 #### Returns
 
@@ -286,7 +329,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L108)
+[src/db_nodes.ts:134](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L134)
 
 ___
 
@@ -300,7 +343,7 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:78](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L78)
+[src/db_nodes.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L101)
 
 ___
 
@@ -312,7 +355,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `addrs` | `NetAddress`[] |
+| `addrs` | `string`[] \| `NetAddress`[] |
 
 #### Returns
 
@@ -320,4 +363,4 @@ ___
 
 #### Defined in
 
-[src/db_nodes.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L65)
+[src/db_nodes.ts:82](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L82)

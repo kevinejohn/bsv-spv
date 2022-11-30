@@ -19,6 +19,7 @@ export interface MasterOptions {
   ticker: string;
   nodes: string[];
   seedNodesOnly?: boolean;
+  enableIpv6?: boolean;
   mempool: number;
   blocks: number;
   forceUserAgent?: string;
@@ -51,6 +52,7 @@ export default class Master {
     ticker,
     nodes,
     seedNodesOnly = false,
+    enableIpv6 = false,
     forceUserAgent,
     user_agent,
     version,
@@ -75,7 +77,7 @@ export default class Master {
     });
 
     const nodesDir = path.join(dataDir, ticker, "nodes");
-    this.db_nodes = new DbNodes({ nodesDir, readOnly: false });
+    this.db_nodes = new DbNodes({ nodesDir, enableIpv6, readOnly: false });
     this.seed_nodes = nodes;
     this.mempool = mempool;
     this.blocks = blocks;
@@ -92,16 +94,7 @@ export default class Master {
     const blocksDir = path.join(dataDir, ticker, "blocks");
     const db_blocks = new DbBlocks({ blocksDir, readOnly: false });
     db_blocks.syncDb().then(() => db_blocks.close());
-
-    const netAddrs: NetAddress[] = nodes.map((address) => {
-      const ipv4 = address.split(":")[0];
-      const port = parseInt(address.split(":")[1]);
-      const services = Buffer.from("");
-      const ip = Buffer.from("");
-      const addr: NetAddress = { ipv4, port, services, ip };
-      return addr;
-    });
-    this.db_nodes.saveSeenNodes(netAddrs);
+    this.db_nodes.saveSeenNodes(nodes);
 
     const workerConfig: SpvOptions = {
       ticker,

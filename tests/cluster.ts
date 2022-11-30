@@ -8,6 +8,7 @@ const config: MasterOptions = {
   ticker: "BSV",
   // nodes: [`18.192.253.59:8333`, `95.217.197.54:8333`],
   nodes: [`95.217.197.54:8333`],
+  // enableIpv6: true,
   // nodes: [`18.192.253.59:8333`, `100.11.101.138:8333`, `100.25.248.168:8333`],
   forceUserAgent: `Bitcoin SV`,
   user_agent: "Bitcoin SV",

@@ -317,7 +317,7 @@ export default class Worker {
       }
     }, REFRESH * 1000);
 
-    console.log(`${spv.id} Connecting to node...`);
+    console.log(`${spv.id} Connecting to node ${config.node}...`);
     await spv.connect();
   }
 }

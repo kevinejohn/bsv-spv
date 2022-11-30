@@ -11,6 +11,7 @@
 - [blockHeight](MasterOptions.md#blockheight)
 - [blocks](MasterOptions.md#blocks)
 - [dataDir](MasterOptions.md#datadir)
+- [enableIpv6](MasterOptions.md#enableipv6)
 - [forceUserAgent](MasterOptions.md#forceuseragent)
 - [invalidBlocks](MasterOptions.md#invalidblocks)
 - [mempool](MasterOptions.md#mempool)
@@ -29,7 +30,7 @@
 
 #### Defined in
 
-[src/cluster_master.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L31)
+[src/cluster_master.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L32)
 
 ___
 
@@ -39,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L32)
+[src/cluster_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
 
 ___
 
@@ -49,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L30)
+[src/cluster_master.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L31)
 
 ___
 
@@ -59,7 +60,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:23](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L23)
+[src/cluster_master.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L24)
 
 ___
 
@@ -69,7 +70,17 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
+[src/cluster_master.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L29)
+
+___
+
+### enableIpv6
+
+• `Optional` **enableIpv6**: `boolean`
+
+#### Defined in
+
+[src/cluster_master.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L22)
 
 ___
 
@@ -79,7 +90,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L24)
+[src/cluster_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
 
 ___
 
@@ -89,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
+[src/cluster_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
 
 ___
 
@@ -99,7 +110,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L22)
+[src/cluster_master.ts:23](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L23)
 
 ___
 
@@ -119,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L29)
+[src/cluster_master.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L30)
 
 ___
 
@@ -149,7 +160,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
+[src/cluster_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
 
 ___
 
@@ -159,4 +170,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
+[src/cluster_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
