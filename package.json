@@ -34,7 +34,6 @@
     "express": "^4.18.2",
     "levelup": "^5.1.1",
     "lmdb": "^2.7.2",
-    "node-lmdb": "^0.9.7",
     "rocksdb": "^5.2.1",
     "source-map-support": "^0.5.21"
   },
