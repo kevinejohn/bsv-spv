@@ -5,7 +5,6 @@ import DbBlocks from "./db_blocks";
 import * as Helpers from "./helpers";
 import Net from "net";
 import path from "path";
-import { NetAddress } from "bsv-p2p/lib/messages/address";
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Master Unhandled Rejection at Promise", p);
