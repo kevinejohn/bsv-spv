@@ -114,14 +114,14 @@ export default class DbMempool {
       const buf = this.txs[txid.toString("hex")];
       const tx = bsv.Transaction.fromBuffer(buf);
       const size = tx.length;
-      const time = +new Date();
+      const time = Math.floor(+new Date() / 1000);
       return { tx, size, time };
     }
     if (!Buffer.isBuffer(txid)) txid = Buffer.from(txid, "hex");
     const buf = await this.db.get(txid);
     if (!buf) throw Error(`Tx not found`);
     const br = new bsv.utils.BufferReader(buf);
-    const time = br.readVarintNum();
+    const time = Math.floor(br.readVarintNum() / 1000);
     const txBuf = br.readVarLengthBuffer();
     const tx = bsv.Transaction.fromBuffer(txBuf);
     const size = tx.length;
