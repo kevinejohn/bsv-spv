@@ -215,8 +215,17 @@ export default class Spv extends EventEmitter {
     this.updateId();
 
     if (blocks) {
-      const listenerDir = path.join(dataDir, ticker, "history", `node-${node}`);
-      this.db_listener = new DbListener({ listenerDir });
+      try {
+        const listenerDir = path.join(
+          dataDir,
+          ticker,
+          "history",
+          `node-${node}`
+        );
+        this.db_listener = new DbListener({ listenerDir });
+      } catch (err: any) {
+        console.error(`Skipping db_listener: ${err.message}`);
+      }
     }
 
     this.peer = new Peer({
