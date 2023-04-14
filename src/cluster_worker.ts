@@ -258,6 +258,10 @@ export default class Worker {
             seconds
           )}. Block already saved. ${new Date().toLocaleString()}`
         );
+        this.sendToMaster({
+          command: `block_already_saved`,
+          data: { hash, height, size, txCount },
+        });
       }
     );
     let chunkParams: any;
