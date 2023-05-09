@@ -25,26 +25,20 @@ const onBlock = ({
   }
 };
 
-listener.on("headers_saved", ({ hashes }: { hashes: string[] }) => {});
-listener.on("mempool_tx", ({ transaction, size }) => {
+listener.on("headers_saved", ({ hashes }) => {});
+listener.on("mempool_tx", ({ transaction }) => {
   console.log(
-    `new mempool tx ${transaction.getTxid()} ${size.toLocaleString(
+    `new mempool tx ${transaction.getTxid()} ${transaction.sizeTxOuts.toLocaleString(
       "en-US"
     )} bytes.`
   );
 });
-listener.on(
-  "block_reorg",
-  ({ height, hash }: { height: number; hash: string }) => {
-    // Re-org after height
-  }
-);
-listener.on(
-  "block_saved",
-  ({ height, hash }: { height: number; hash: string }) => {
-    listener.syncBlocks(onBlock);
-  }
-);
+listener.on("block_reorg", ({ height, hash }) => {
+  // Re-org after height
+});
+listener.on("block_saved", ({ height, hash }) => {
+  listener.syncBlocks(onBlock);
+});
 
 listener.connect({ port: 8080 });
 listener.syncBlocks(onBlock);

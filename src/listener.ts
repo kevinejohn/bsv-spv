@@ -7,6 +7,7 @@ import Net from "net";
 import path from "path";
 import * as Helpers from "./helpers";
 import * as bsv from "bsv-minimal";
+import { SpvEmitter, SpvEvents } from "./types/SpvEmitter";
 
 export interface ListenerOptions {
   name: string;
@@ -22,7 +23,7 @@ export interface ListenerOptions {
   };
 }
 
-export default class Listener extends EventEmitter {
+export default class Listener extends (EventEmitter as new () => SpvEmitter) {
   ticker: ListenerOptions["ticker"];
   name: ListenerOptions["name"];
   blockHeight: ListenerOptions["blockHeight"];
@@ -181,7 +182,7 @@ export default class Listener extends EventEmitter {
     } else {
       // console.log(`Unknown command: ${JSON.stringify(obj)}`);
     }
-    this.emit(command, data);
+    this.emit(command as keyof SpvEvents, data);
   }
 
   connect({
