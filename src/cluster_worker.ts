@@ -135,11 +135,7 @@ export default class Worker {
     spv.on("could_not_connect", () => {
       this.sendToMaster({ command: `send_new_node` });
     });
-    spv.on("node_peers", ({ addrs, nodes }) => {
-      console.log(
-        `${spv.id} sent us ${nodes.length} new peers (${addrs.length} total)`
-      );
-    });
+
     spv.on("headers_new", ({ headers }) => {
       const { height, hash } = spv.getTip();
       console.log(

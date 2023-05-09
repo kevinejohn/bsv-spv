@@ -9,6 +9,7 @@ import DbBlocks from "./db_blocks";
 import DbNodes from "./db_nodes";
 import DbListener from "./db_listener";
 import * as path from "path";
+import { SpvEmitter } from "./types/SpvEmitter";
 
 export interface SpvOptions {
   uid?: string;
@@ -32,7 +33,7 @@ export interface SpvOptions {
   DEBUG_MEMORY?: boolean;
 }
 
-export default class Spv extends EventEmitter {
+export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   id: string;
   uid: string;
   ticker: string;
