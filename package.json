@@ -1,6 +1,6 @@
 {
   "name": "bsv-spv",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Stay in sync with latest bitcoin headers, blocks and mempool txs",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
