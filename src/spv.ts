@@ -20,6 +20,7 @@ export interface SpvOptions {
   version?: number;
   blocks?: boolean;
   mempool?: boolean;
+  validate?: boolean;
   autoReconnect?: boolean;
   autoReconnectWait?: number;
   timeoutConnect?: number;
@@ -58,6 +59,7 @@ export default class Spv extends EventEmitter {
   version?: number;
   mempool: boolean;
   blocks: boolean;
+  validate: boolean;
   dataDir: string;
   DEBUG_LOG: boolean;
   getPeersTimeout?: NodeJS.Timeout;
@@ -73,6 +75,7 @@ export default class Spv extends EventEmitter {
     version,
     blocks = false,
     mempool = false,
+    validate = true,
     autoReconnect = true,
     autoReconnectWait,
     timeoutConnect = 1000 * 15, // 15 seconds. Shorter than default
@@ -102,6 +105,7 @@ export default class Spv extends EventEmitter {
     this.node = node;
     this.mempool = mempool;
     this.blocks = blocks;
+    this.validate = validate;
     this.syncingHeaders;
     this.syncingBlocks = false;
     this.forceUserAgent = forceUserAgent;
@@ -209,6 +213,7 @@ export default class Spv extends EventEmitter {
       version,
       mempool,
       blocks,
+      validate,
       DEBUG_LOG,
     } = this;
 
@@ -236,6 +241,7 @@ export default class Spv extends EventEmitter {
       start_height: this.headers.getHeight(),
       user_agent,
       version,
+      validate,
       mempoolTxs: mempool,
       DEBUG_LOG,
     });
@@ -419,6 +425,8 @@ export default class Spv extends EventEmitter {
               // More reliable if we calculate the height
               blockHeight = this.headers.getHeight(hash);
             } catch (err) {}
+            if (typeof blockHeight !== "number")
+              throw Error(`Missing blockHeight`);
             if (this.db_listener) {
               await this.db_listener.markBlockProcessed({
                 blockHash,

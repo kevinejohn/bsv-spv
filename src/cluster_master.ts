@@ -21,6 +21,7 @@ export interface MasterOptions {
   enableIpv6?: boolean;
   mempool: number;
   blocks: number;
+  validate?: boolean;
   forceUserAgent?: string;
   user_agent?: string;
   version?: number;
@@ -61,6 +62,7 @@ export default class Master {
     blockHeight,
     mempool = 0,
     blocks = 0,
+    validate,
     DEBUG_LOG,
     DEBUG_MEMORY,
   }: MasterOptions) {
@@ -105,6 +107,7 @@ export default class Master {
       dataDir,
       pruneBlocks,
       blockHeight,
+      validate,
       autoReconnectWait: 100,
       DEBUG_LOG,
       DEBUG_MEMORY,

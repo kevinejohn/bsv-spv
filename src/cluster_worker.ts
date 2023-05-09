@@ -1,5 +1,4 @@
 import Spv, { SpvOptions } from "./spv";
-import cluster from "cluster";
 import * as Helpers from "./helpers";
 
 process.on("unhandledRejection", (reason, p) => {
