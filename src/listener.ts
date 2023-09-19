@@ -165,8 +165,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
         `Block re-org after height ${height}, ${hash} at ${new Date().toLocaleString()}!`
       );
       const from = height + 1;
-      const to = this.headers.getHeight();
-      this.db_listener.delBlocks(from, to);
+      this.rewindHeight(from);
     } else if (command === "block_saved") {
       const { height, hash } = data;
       // console.log(
@@ -264,6 +263,11 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
         this.txsSize = 0;
       }, REFRESH * 1000);
     }
+  }
+
+  rewindHeight(fromHeight: number) {
+    const to = this.headers.getHeight();
+    return this.db_listener.delBlocks(fromHeight, to);
   }
 
   async syncBlocks(
