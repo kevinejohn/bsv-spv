@@ -196,12 +196,13 @@ export default class DbBlocks {
               await promise;
               stream.resume();
             }
+            if (result.finished) resolve(true);
           } catch (err) {
             stream.destroy();
             reject(err);
           }
         });
-        stream.on("end", () => resolve(true));
+        // stream.on("end", () => resolve(true));
         stream.on("error", (err) => reject(err));
       } catch (err) {
         reject(err);
