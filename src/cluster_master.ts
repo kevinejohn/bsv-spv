@@ -29,6 +29,7 @@ export interface MasterOptions {
   dataDir: string;
   pruneBlocks: number;
   blockHeight: number;
+  streamBlock?: boolean;
   DEBUG_LOG?: boolean;
   DEBUG_MEMORY?: boolean;
 }
@@ -57,6 +58,7 @@ export default class Master {
     user_agent,
     version,
     invalidBlocks,
+    streamBlock,
     dataDir,
     pruneBlocks,
     blockHeight,
@@ -107,6 +109,7 @@ export default class Master {
       dataDir,
       pruneBlocks,
       blockHeight,
+      streamBlock,
       validate,
       autoReconnectWait: 100,
       DEBUG_LOG,

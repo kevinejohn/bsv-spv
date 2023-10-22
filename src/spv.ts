@@ -22,6 +22,7 @@ export interface SpvOptions {
   blocks?: boolean;
   mempool?: boolean;
   validate?: boolean;
+  streamBlock?: boolean;
   autoReconnect?: boolean;
   autoReconnectWait?: number;
   timeoutConnect?: number;
@@ -44,6 +45,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   pruneBlocks: number;
   blockHeight: number;
   forceUserAgent?: string;
+  streamBlock: boolean;
   autoReconnect: boolean;
   autoReconnectWait?: number;
   timeoutConnect: number;
@@ -78,6 +80,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     mempool = false,
     validate = true,
     autoReconnect = true,
+    streamBlock = true,
     autoReconnectWait,
     timeoutConnect = 1000 * 15, // 15 seconds. Shorter than default
     versionOptions,
@@ -94,6 +97,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.saveMempool = mempool;
     this.pruneBlocks = pruneBlocks;
     this.blockHeight = blockHeight;
+    this.streamBlock = streamBlock;
     this.autoReconnect = autoReconnect;
     this.autoReconnectWait = autoReconnectWait;
     this.versionOptions = versionOptions;
@@ -208,6 +212,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
       ticker,
       dataDir,
       versionOptions,
+      streamBlock,
       autoReconnect,
       autoReconnectWait,
       user_agent,
@@ -237,6 +242,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.peer = new Peer({
       node,
       ticker,
+      stream: streamBlock,
       autoReconnect,
       autoReconnectWait,
       start_height: this.headers.getHeight(),
@@ -386,6 +392,75 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
         console.error(err);
       }
     });
+    this.peer.on("block", async ({ block }) => {
+      // Called if streamBlock = false instead of block_chunk
+      try {
+        if (!block.header) throw Error(`Block missing header`);
+        const header = block.header;
+        const blockHash = header.getHash();
+        let blockHeight = block.height;
+        const txCount = block.txCount || 0;
+        const size = block.size;
+
+        this.addHeaders({ headers: [header] });
+        const success = await this.db_blocks.writeBlockChunk({
+          chunk: block.toBuffer(),
+          blockHash,
+          started: true,
+          finished: true,
+        });
+
+        const hash = blockHash.toString("hex");
+        try {
+          // Height was not included in blocks until v2
+          // https://en.bitcoin.it/wiki/BIP_0034
+          // More reliable if we calculate the height
+          blockHeight = this.headers.getHeight(hash);
+        } catch (err) {}
+        if (typeof blockHeight !== "number") throw Error(`Missing blockHeight`);
+        if (this.db_listener) {
+          await this.db_listener.markBlockProcessed({
+            blockHash,
+            height: blockHeight,
+            txCount,
+            size,
+            // timer: 0,
+          });
+        }
+        if (success) {
+          this.emit("block_saved", {
+            height: blockHeight,
+            hash,
+            size,
+            startDate: +new Date(),
+            txCount,
+          });
+        } else {
+          this.emit("block_already_saved", {
+            height: blockHeight,
+            hash,
+            size,
+            startDate: +new Date(),
+            txCount,
+          });
+        }
+
+        if (this.pruneBlocks > 0) {
+          const tipHeight =
+            blockHeight > 0 ? blockHeight : this.headers.getHeight();
+          const height = tipHeight - this.pruneBlocks;
+          const hash = this.headers.getHash(height);
+          this.db_blocks
+            .delBlock(hash)
+            .then(() => {
+              this.emit("pruned_block", { height, hash });
+            })
+            .catch((err) => console.error(err));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
     this.peer.on(
       "block_chunk",
       async ({
@@ -399,6 +474,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
         txCount,
         startDate,
       }) => {
+        // Called when streamBlock = true
         try {
           this.emit("block_chunk", {
             header,
