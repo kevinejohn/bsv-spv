@@ -38,7 +38,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
   db_listener: DbListener;
   headers: Headers; // Fix
   reconnectTimeout?: NodeJS.Timeout;
-  interval?: NodeJS.Timer;
+  interval?: NodeJS.Timeout;
   client?: Net.Socket;
   txsSeen: number;
   txsSize: number;

@@ -43,7 +43,7 @@ export default class Worker {
     let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
-    let blockInterval: NodeJS.Timer | undefined;
+    let blockInterval: NodeJS.Timeout | undefined;
     let hasConnected = false;
 
     let date = +new Date();
@@ -76,7 +76,7 @@ export default class Worker {
       // );
       this.sendToMaster({ command: `send_new_node` });
     });
-    let resetInterval: NodeJS.Timer;
+    let resetInterval: NodeJS.Timeout;
     spv.on("disconnected", ({ node, disconnects }) => {
       if (hasConnected)
         console.error(`${spv.id} disconnected ${disconnects} times`);

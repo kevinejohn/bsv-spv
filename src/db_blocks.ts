@@ -183,7 +183,7 @@ export default class DbBlocks {
         }
 
         const block = new bsv.Block();
-        const stream = fs.createReadStream(dir);
+        const stream = fs.createReadStream(dir, { highWaterMark: 100000000 });
         stream.on("data", async (data: Buffer) => {
           try {
             const result = block.addBufferChunk(data);
