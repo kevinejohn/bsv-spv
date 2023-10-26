@@ -31,16 +31,16 @@
 
 ### constructor
 
-• **new DbMempool**(`__namedParameters`)
+• **new DbMempool**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.mempoolDir` | `string` |
-| `__namedParameters.pruneAfter?` | `number` |
-| `__namedParameters.readOnly?` | `boolean` |
+| `«destructured»` | `Object` |
+| › `mempoolDir` | `string` |
+| › `pruneAfter?` | `number` |
+| › `readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -50,7 +50,7 @@
 
 ### batch
 
-• **batch**: `AbstractBatch`<`any`, `any`\>[]
+• **batch**: `AbstractBatch`[]
 
 #### Defined in
 
@@ -168,15 +168,15 @@ ___
 
 ### getTxids
 
-▸ **getTxids**(`__namedParameters`): `Promise`<`Buffer`[]\>
+▸ **getTxids**(`«destructured»`): `Promise`<`Buffer`[]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.newerThan?` | `number` |
-| `__namedParameters.olderThan?` | `number` |
+| `«destructured»` | `Object` |
+| › `newerThan?` | `number` |
+| › `olderThan?` | `number` |
 
 #### Returns
 

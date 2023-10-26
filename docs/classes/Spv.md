@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- `EventEmitter`
+- `TypedEventEmitter`<`SpvEvents`, `this`\>
 
   ↳ **`Spv`**
 
@@ -44,12 +44,9 @@
 - [timeoutConnect](Spv.md#timeoutconnect)
 - [uid](Spv.md#uid)
 - [user\_agent](Spv.md#user_agent)
+- [validate](Spv.md#validate)
 - [version](Spv.md#version)
 - [versionOptions](Spv.md#versionoptions)
-- [captureRejectionSymbol](Spv.md#capturerejectionsymbol)
-- [captureRejections](Spv.md#capturerejections)
-- [defaultMaxListeners](Spv.md#defaultmaxlisteners)
-- [errorMonitor](Spv.md#errormonitor)
 
 ### Methods
 
@@ -84,31 +81,26 @@
 - [syncHeaders](Spv.md#syncheaders)
 - [updateId](Spv.md#updateid)
 - [warningPruneBlocks](Spv.md#warningpruneblocks)
-- [getEventListeners](Spv.md#geteventlisteners)
-- [listenerCount](Spv.md#listenercount-1)
-- [on](Spv.md#on-1)
-- [once](Spv.md#once-1)
-- [setMaxListeners](Spv.md#setmaxlisteners-1)
 
 ## Constructors
 
 ### constructor
 
-• **new Spv**(`__namedParameters`)
+• **new Spv**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`SpvOptions`](../interfaces/SpvOptions.md) |
+| `«destructured»` | [`SpvOptions`](../interfaces/SpvOptions.md) |
 
 #### Overrides
 
-EventEmitter.constructor
+(EventEmitter as new () &#x3D;\&gt; SpvEmitter).constructor
 
 #### Defined in
 
-[src/spv.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L66)
+[src/spv.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L69)
 
 ## Properties
 
@@ -118,7 +110,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/spv.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L62)
+[src/spv.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L65)
 
 ___
 
@@ -128,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L45)
+[src/spv.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L47)
 
 ___
 
@@ -138,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L46)
+[src/spv.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L48)
 
 ___
 
@@ -148,7 +140,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L43)
+[src/spv.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L45)
 
 ___
 
@@ -158,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L60)
+[src/spv.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L62)
 
 ___
 
@@ -168,7 +160,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L56)
+[src/spv.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L58)
 
 ___
 
@@ -178,7 +170,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L61)
+[src/spv.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L64)
 
 ___
 
@@ -188,7 +180,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L50)
+[src/spv.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L52)
 
 ___
 
@@ -198,7 +190,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L51)
+[src/spv.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L53)
 
 ___
 
@@ -208,7 +200,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L53)
+[src/spv.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L55)
 
 ___
 
@@ -218,7 +210,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L52)
+[src/spv.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L54)
 
 ___
 
@@ -228,7 +220,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L44)
+[src/spv.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L46)
 
 ___
 
@@ -238,7 +230,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:63](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L63)
+[src/spv.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L66)
 
 ___
 
@@ -248,7 +240,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L49)
+[src/spv.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L51)
 
 ___
 
@@ -258,7 +250,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L35)
+[src/spv.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L37)
 
 ___
 
@@ -268,7 +260,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L59)
+[src/spv.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L61)
 
 ___
 
@@ -278,7 +270,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L38)
+[src/spv.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L40)
 
 ___
 
@@ -288,17 +280,17 @@ ___
 
 #### Defined in
 
-[src/spv.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L48)
+[src/spv.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L50)
 
 ___
 
 ### peerPingInterval
 
-• `Optional` **peerPingInterval**: `Timer`
+• `Optional` **peerPingInterval**: `Timeout`
 
 #### Defined in
 
-[src/spv.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L64)
+[src/spv.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L67)
 
 ___
 
@@ -308,7 +300,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L42)
+[src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L44)
 
 ___
 
@@ -318,7 +310,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L40)
+[src/spv.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L42)
 
 ___
 
@@ -328,7 +320,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L41)
+[src/spv.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L43)
 
 ___
 
@@ -338,7 +330,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L55)
+[src/spv.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L57)
 
 ___
 
@@ -348,7 +340,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L54)
+[src/spv.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L56)
 
 ___
 
@@ -358,7 +350,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L37)
+[src/spv.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L39)
 
 ___
 
@@ -368,7 +360,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L47)
+[src/spv.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L49)
 
 ___
 
@@ -378,7 +370,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L36)
+[src/spv.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L38)
 
 ___
 
@@ -388,7 +380,17 @@ ___
 
 #### Defined in
 
-[src/spv.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L57)
+[src/spv.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L59)
+
+___
+
+### validate
+
+• **validate**: `boolean`
+
+#### Defined in
+
+[src/spv.ts:63](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L63)
 
 ___
 
@@ -398,7 +400,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L58)
+[src/spv.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L60)
 
 ___
 
@@ -408,86 +410,20 @@ ___
 
 #### Defined in
 
-[src/spv.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L39)
-
-___
-
-### captureRejectionSymbol
-
-▪ `Static` `Readonly` **captureRejectionSymbol**: typeof [`captureRejectionSymbol`](Spv.md#capturerejectionsymbol)
-
-#### Inherited from
-
-EventEmitter.captureRejectionSymbol
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:328
-
-___
-
-### captureRejections
-
-▪ `Static` **captureRejections**: `boolean`
-
-Sets or gets the default captureRejection value for all emitters.
-
-#### Inherited from
-
-EventEmitter.captureRejections
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:333
-
-___
-
-### defaultMaxListeners
-
-▪ `Static` **defaultMaxListeners**: `number`
-
-#### Inherited from
-
-EventEmitter.defaultMaxListeners
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:334
-
-___
-
-### errorMonitor
-
-▪ `Static` `Readonly` **errorMonitor**: typeof [`errorMonitor`](Spv.md#errormonitor)
-
-This symbol shall be used to install a listener for only monitoring `'error'`
-events. Listeners installed using this symbol are called before the regular
-`'error'` listeners are called.
-
-Installing a listener using this symbol does not change the behavior once an
-`'error'` event is emitted, therefore the process will still crash if no
-regular `'error'` listener is installed.
-
-#### Inherited from
-
-EventEmitter.errorMonitor
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:327
+[src/spv.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L41)
 
 ## Methods
 
 ### addHeaders
 
-▸ **addHeaders**(`__namedParameters`): `Promise`<`number`\>
+▸ **addHeaders**(`«destructured»`): `Promise`<`number`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.headers` | `default`[] |
+| `«destructured»` | `Object` |
+| › `headers` | `default`[] |
 
 #### Returns
 
@@ -495,26 +431,26 @@ node_modules/@types/node/events.d.ts:327
 
 #### Defined in
 
-[src/spv.ts:133](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L133)
+[src/spv.ts:138](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L138)
 
 ___
 
 ### addListener
 
-▸ **addListener**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **addListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Alias for `emitter.on(eventName, listener)`.
+#### Type parameters
 
-**`Since`**
-
-v0.1.26
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
-| `listener` | (...`args`: `any`[]) => `void` |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -522,11 +458,11 @@ v0.1.26
 
 #### Inherited from
 
-EventEmitter.addListener
+(EventEmitter as new () =\> SpvEmitter).addListener
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:354
+[src/types/TypedEventEmitter.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L24)
 
 ___
 
@@ -546,7 +482,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:197](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L197)
+[src/spv.ts:202](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L202)
 
 ___
 
@@ -560,21 +496,21 @@ ___
 
 #### Defined in
 
-[src/spv.ts:512](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L512)
+[src/spv.ts:596](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L596)
 
 ___
 
 ### downloadBlock
 
-▸ **downloadBlock**(`__namedParameters`): `Promise`<`boolean`\>
+▸ **downloadBlock**(`«destructured»`): `Promise`<`boolean`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.hash` | `string` |
-| `__namedParameters.height` | `number` |
+| `«destructured»` | `Object` |
+| › `hash` | `string` |
+| › `height` | `number` |
 
 #### Returns
 
@@ -582,62 +518,26 @@ ___
 
 #### Defined in
 
-[src/spv.ts:571](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L571)
+[src/spv.ts:655](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L655)
 
 ___
 
 ### emit
 
-▸ **emit**(`eventName`, ...`args`): `boolean`
+▸ **emit**<`E`\>(`event`, `...args`): `boolean`
 
-Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
-to each.
+#### Type parameters
 
-Returns `true` if the event had listeners, `false` otherwise.
-
-```js
-const EventEmitter = require('events');
-const myEmitter = new EventEmitter();
-
-// First listener
-myEmitter.on('event', function firstListener() {
-  console.log('Helloooo! first listener');
-});
-// Second listener
-myEmitter.on('event', function secondListener(arg1, arg2) {
-  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
-});
-// Third listener
-myEmitter.on('event', function thirdListener(...args) {
-  const parameters = args.join(', ');
-  console.log(`event with parameters ${parameters} in third listener`);
-});
-
-console.log(myEmitter.listeners('event'));
-
-myEmitter.emit('event', 1, 2, 3, 4, 5);
-
-// Prints:
-// [
-//   [Function: firstListener],
-//   [Function: secondListener],
-//   [Function: thirdListener]
-// ]
-// Helloooo! first listener
-// event with parameters 1, 2 in second listener
-// event with parameters 1, 2, 3, 4, 5 in third listener
-```
-
-**`Since`**
-
-v0.1.26
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
-| `...args` | `any`[] |
+| `event` | `E` |
+| `...args` | `Parameters`<`SpvEvents`[`E`]\> |
 
 #### Returns
 
@@ -645,11 +545,11 @@ v0.1.26
 
 #### Inherited from
 
-EventEmitter.emit
+(EventEmitter as new () =\> SpvEmitter).emit
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:610
+[src/types/TypedEventEmitter.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L37)
 
 ___
 
@@ -657,53 +557,33 @@ ___
 
 ▸ **eventNames**(): (`string` \| `symbol`)[]
 
-Returns an array listing the events for which the emitter has registered
-listeners. The values in the array are strings or `Symbol`s.
-
-```js
-const EventEmitter = require('events');
-const myEE = new EventEmitter();
-myEE.on('foo', () => {});
-myEE.on('bar', () => {});
-
-const sym = Symbol('symbol');
-myEE.on(sym, () => {});
-
-console.log(myEE.eventNames());
-// Prints: [ 'foo', 'bar', Symbol(symbol) ]
-```
-
-**`Since`**
-
-v6.0.0
-
 #### Returns
 
 (`string` \| `symbol`)[]
 
 #### Inherited from
 
-EventEmitter.eventNames
+(EventEmitter as new () =\> SpvEmitter).eventNames
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:669
+[src/types/TypedEventEmitter.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L42)
 
 ___
 
 ### getBlockTx
 
-▸ **getBlockTx**(`__namedParameters`): `Promise`<{ `tx`: `undefined` \| `default`  }\>
+▸ **getBlockTx**(`«destructured»`): `Promise`<{ `tx`: `undefined` \| `default`  }\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.block` | `string` |
-| `__namedParameters.len` | `number` |
-| `__namedParameters.pos` | `number` |
-| `__namedParameters.txid?` | `string` |
+| `«destructured»` | `Object` |
+| › `block` | `string` |
+| › `len` | `number` |
+| › `pos` | `number` |
+| › `txid?` | `string` |
 
 #### Returns
 
@@ -711,7 +591,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:556](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L556)
+[src/spv.ts:640](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L640)
 
 ___
 
@@ -731,21 +611,21 @@ ___
 
 #### Defined in
 
-[src/spv.ts:533](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L533)
+[src/spv.ts:617](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L617)
 
 ___
 
 ### getHeader
 
-▸ **getHeader**(`__namedParameters`): `default`
+▸ **getHeader**(`«destructured»`): `default`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.hash?` | `string` |
-| `__namedParameters.height` | `number` |
+| `«destructured»` | `Object` |
+| › `hash?` | `string` |
+| › `height` | `number` |
 
 #### Returns
 
@@ -753,7 +633,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:539](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L539)
+[src/spv.ts:623](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L623)
 
 ___
 
@@ -773,7 +653,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:530](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L530)
+[src/spv.ts:614](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L614)
 
 ___
 
@@ -781,24 +661,17 @@ ___
 
 ▸ **getMaxListeners**(): `number`
 
-Returns the current max listener value for the `EventEmitter` which is either
-set by `emitter.setMaxListeners(n)` or defaults to [defaultMaxListeners](Spv.md#defaultmaxlisteners).
-
-**`Since`**
-
-v1.0.0
-
 #### Returns
 
 `number`
 
 #### Inherited from
 
-EventEmitter.getMaxListeners
+(EventEmitter as new () =\> SpvEmitter).getMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:526
+[src/types/TypedEventEmitter.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L47)
 
 ___
 
@@ -812,7 +685,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:544](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L544)
+[src/spv.ts:628](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L628)
 
 ___
 
@@ -831,7 +704,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:536](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L536)
+[src/spv.ts:620](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L620)
 
 ___
 
@@ -845,25 +718,25 @@ ___
 
 #### Defined in
 
-[src/spv.ts:527](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L527)
+[src/spv.ts:611](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L611)
 
 ___
 
 ### listenerCount
 
-▸ **listenerCount**(`eventName`): `number`
+▸ **listenerCount**<`E`\>(`event`): `number`
 
-Returns the number of listeners listening to the event named `eventName`.
+#### Type parameters
 
-**`Since`**
-
-v3.2.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventName` | `string` \| `symbol` | The name of the event being listened for |
+| Name | Type |
+| :------ | :------ |
+| `event` | `E` |
 
 #### Returns
 
@@ -871,68 +744,60 @@ v3.2.0
 
 #### Inherited from
 
-EventEmitter.listenerCount
+(EventEmitter as new () =\> SpvEmitter).listenerCount
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:616
+[src/types/TypedEventEmitter.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L45)
 
 ___
 
 ### listeners
 
-▸ **listeners**(`eventName`): `Function`[]
+▸ **listeners**<`E`\>(`event`): `SpvEvents`[`E`][]
 
-Returns a copy of the array of listeners for the event named `eventName`.
+#### Type parameters
 
-```js
-server.on('connection', (stream) => {
-  console.log('someone connected!');
-});
-console.log(util.inspect(server.listeners('connection')));
-// Prints: [ [Function] ]
-```
-
-**`Since`**
-
-v0.1.26
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
+| `event` | `E` |
 
 #### Returns
 
-`Function`[]
+`SpvEvents`[`E`][]
 
 #### Inherited from
 
-EventEmitter.listeners
+(EventEmitter as new () =\> SpvEmitter).listeners
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:539
+[src/types/TypedEventEmitter.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L44)
 
 ___
 
 ### off
 
-▸ **off**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **off**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Alias for `emitter.removeListener()`.
+#### Type parameters
 
-**`Since`**
-
-v10.0.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
-| `listener` | (...`args`: `any`[]) => `void` |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -940,54 +805,30 @@ v10.0.0
 
 #### Inherited from
 
-EventEmitter.off
+(EventEmitter as new () =\> SpvEmitter).off
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:499
+[src/types/TypedEventEmitter.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L33)
 
 ___
 
 ### on
 
-▸ **on**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **on**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Adds the `listener` function to the end of the listeners array for the
-event named `eventName`. No checks are made to see if the `listener` has
-already been added. Multiple calls passing the same combination of `eventName`and `listener` will result in the `listener` being added, and called, multiple
-times.
+#### Type parameters
 
-```js
-server.on('connection', (stream) => {
-  console.log('someone connected!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-By default, event listeners are invoked in the order they are added. The`emitter.prependListener()` method can be used as an alternative to add the
-event listener to the beginning of the listeners array.
-
-```js
-const myEE = new EventEmitter();
-myEE.on('foo', () => console.log('a'));
-myEE.prependListener('foo', () => console.log('b'));
-myEE.emit('foo');
-// Prints:
-//   b
-//   a
-```
-
-**`Since`**
-
-v0.1.101
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventName` | `string` \| `symbol` | The name of the event. |
-| `listener` | (...`args`: `any`[]) => `void` | The callback function |
+| Name | Type |
+| :------ | :------ |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -995,52 +836,30 @@ v0.1.101
 
 #### Inherited from
 
-EventEmitter.on
+(EventEmitter as new () =\> SpvEmitter).on
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:385
+[src/types/TypedEventEmitter.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L25)
 
 ___
 
 ### once
 
-▸ **once**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **once**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Adds a **one-time**`listener` function for the event named `eventName`. The
-next time `eventName` is triggered, this listener is removed and then invoked.
+#### Type parameters
 
-```js
-server.once('connection', (stream) => {
-  console.log('Ah, we have our first user!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
-event listener to the beginning of the listeners array.
-
-```js
-const myEE = new EventEmitter();
-myEE.once('foo', () => console.log('a'));
-myEE.prependOnceListener('foo', () => console.log('b'));
-myEE.emit('foo');
-// Prints:
-//   b
-//   a
-```
-
-**`Since`**
-
-v0.3.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventName` | `string` \| `symbol` | The name of the event. |
-| `listener` | (...`args`: `any`[]) => `void` | The callback function |
+| Name | Type |
+| :------ | :------ |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -1048,41 +867,30 @@ v0.3.0
 
 #### Inherited from
 
-EventEmitter.once
+(EventEmitter as new () =\> SpvEmitter).once
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:414
+[src/types/TypedEventEmitter.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L26)
 
 ___
 
 ### prependListener
 
-▸ **prependListener**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **prependListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Adds the `listener` function to the _beginning_ of the listeners array for the
-event named `eventName`. No checks are made to see if the `listener` has
-already been added. Multiple calls passing the same combination of `eventName`and `listener` will result in the `listener` being added, and called, multiple
-times.
+#### Type parameters
 
-```js
-server.prependListener('connection', (stream) => {
-  console.log('someone connected!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-**`Since`**
-
-v6.0.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventName` | `string` \| `symbol` | The name of the event. |
-| `listener` | (...`args`: `any`[]) => `void` | The callback function |
+| Name | Type |
+| :------ | :------ |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -1090,39 +898,30 @@ v6.0.0
 
 #### Inherited from
 
-EventEmitter.prependListener
+(EventEmitter as new () =\> SpvEmitter).prependListener
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:634
+[src/types/TypedEventEmitter.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L27)
 
 ___
 
 ### prependOnceListener
 
-▸ **prependOnceListener**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **prependOnceListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Adds a **one-time**`listener` function for the event named `eventName` to the _beginning_ of the listeners array. The next time `eventName` is triggered, this
-listener is removed, and then invoked.
+#### Type parameters
 
-```js
-server.prependOnceListener('connection', (stream) => {
-  console.log('Ah, we have our first user!');
-});
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-**`Since`**
-
-v6.0.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventName` | `string` \| `symbol` | The name of the event. |
-| `listener` | (...`args`: `any`[]) => `void` | The callback function |
+| Name | Type |
+| :------ | :------ |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -1130,80 +929,55 @@ v6.0.0
 
 #### Inherited from
 
-EventEmitter.prependOnceListener
+(EventEmitter as new () =\> SpvEmitter).prependOnceListener
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:650
+[src/types/TypedEventEmitter.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L28)
 
 ___
 
 ### rawListeners
 
-▸ **rawListeners**(`eventName`): `Function`[]
+▸ **rawListeners**<`E`\>(`event`): `SpvEvents`[`E`][]
 
-Returns a copy of the array of listeners for the event named `eventName`,
-including any wrappers (such as those created by `.once()`).
+#### Type parameters
 
-```js
-const emitter = new EventEmitter();
-emitter.once('log', () => console.log('log once'));
-
-// Returns a new Array with a function `onceWrapper` which has a property
-// `listener` which contains the original listener bound above
-const listeners = emitter.rawListeners('log');
-const logFnWrapper = listeners[0];
-
-// Logs "log once" to the console and does not unbind the `once` event
-logFnWrapper.listener();
-
-// Logs "log once" to the console and removes the listener
-logFnWrapper();
-
-emitter.on('log', () => console.log('log persistently'));
-// Will return a new Array with a single function bound by `.on()` above
-const newListeners = emitter.rawListeners('log');
-
-// Logs "log persistently" twice
-newListeners[0]();
-emitter.emit('log');
-```
-
-**`Since`**
-
-v9.4.0
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
+| `event` | `E` |
 
 #### Returns
 
-`Function`[]
+`SpvEvents`[`E`][]
 
 #### Inherited from
 
-EventEmitter.rawListeners
+(EventEmitter as new () =\> SpvEmitter).rawListeners
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:569
+[src/types/TypedEventEmitter.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L43)
 
 ___
 
 ### readBlock
 
-▸ **readBlock**(`__namedParameters`, `callback`): `Promise`<`boolean`\>
+▸ **readBlock**(`«destructured»`, `callback`): `Promise`<`boolean`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.hash` | `string` |
-| `__namedParameters.height` | `number` |
+| `«destructured»` | `Object` |
+| › `hash` | `string` |
+| › `height` | `number` |
 | `callback` | (`params`: `any`) => `Promise`<`void`\> |
 
 #### Returns
@@ -1212,31 +986,25 @@ ___
 
 #### Defined in
 
-[src/spv.ts:585](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L585)
+[src/spv.ts:669](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L669)
 
 ___
 
 ### removeAllListeners
 
-▸ **removeAllListeners**(`event?`): [`Spv`](Spv.md)
+▸ **removeAllListeners**<`E`\>(`event?`): [`Spv`](Spv.md)
 
-Removes all listeners, or those of the specified `eventName`.
+#### Type parameters
 
-It is bad practice to remove listeners added elsewhere in the code,
-particularly when the `EventEmitter` instance was created by some other
-component or module (e.g. sockets or file streams).
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-**`Since`**
-
-v0.1.26
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `event?` | `string` \| `symbol` |
+| `event?` | `E` |
 
 #### Returns
 
@@ -1244,105 +1012,30 @@ v0.1.26
 
 #### Inherited from
 
-EventEmitter.removeAllListeners
+(EventEmitter as new () =\> SpvEmitter).removeAllListeners
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:510
+[src/types/TypedEventEmitter.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L34)
 
 ___
 
 ### removeListener
 
-▸ **removeListener**(`eventName`, `listener`): [`Spv`](Spv.md)
+▸ **removeListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
 
-Removes the specified `listener` from the listener array for the event named`eventName`.
+#### Type parameters
 
-```js
-const callback = (stream) => {
-  console.log('someone connected!');
-};
-server.on('connection', callback);
-// ...
-server.removeListener('connection', callback);
-```
-
-`removeListener()` will remove, at most, one instance of a listener from the
-listener array. If any single listener has been added multiple times to the
-listener array for the specified `eventName`, then `removeListener()` must be
-called multiple times to remove each instance.
-
-Once an event is emitted, all listeners attached to it at the
-time of emitting are called in order. This implies that any`removeListener()` or `removeAllListeners()` calls _after_ emitting and _before_ the last listener finishes execution
-will not remove them from`emit()` in progress. Subsequent events behave as expected.
-
-```js
-const myEmitter = new MyEmitter();
-
-const callbackA = () => {
-  console.log('A');
-  myEmitter.removeListener('event', callbackB);
-};
-
-const callbackB = () => {
-  console.log('B');
-};
-
-myEmitter.on('event', callbackA);
-
-myEmitter.on('event', callbackB);
-
-// callbackA removes listener callbackB but it will still be called.
-// Internal listener array at time of emit [callbackA, callbackB]
-myEmitter.emit('event');
-// Prints:
-//   A
-//   B
-
-// callbackB is now removed.
-// Internal listener array [callbackA]
-myEmitter.emit('event');
-// Prints:
-//   A
-```
-
-Because listeners are managed using an internal array, calling this will
-change the position indices of any listener registered _after_ the listener
-being removed. This will not impact the order in which listeners are called,
-but it means that any copies of the listener array as returned by
-the `emitter.listeners()` method will need to be recreated.
-
-When a single function has been added as a handler multiple times for a single
-event (as in the example below), `removeListener()` will remove the most
-recently added instance. In the example the `once('ping')`listener is removed:
-
-```js
-const ee = new EventEmitter();
-
-function pong() {
-  console.log('pong');
-}
-
-ee.on('ping', pong);
-ee.once('ping', pong);
-ee.removeListener('ping', pong);
-
-ee.emit('ping');
-ee.emit('ping');
-```
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-**`Since`**
-
-v0.1.26
+| Name | Type |
+| :------ | :------ |
+| `E` | extends keyof `SpvEvents` |
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `eventName` | `string` \| `symbol` |
-| `listener` | (...`args`: `any`[]) => `void` |
+| `event` | `E` |
+| `listener` | `SpvEvents`[`E`] |
 
 #### Returns
 
@@ -1350,34 +1043,23 @@ v0.1.26
 
 #### Inherited from
 
-EventEmitter.removeListener
+(EventEmitter as new () =\> SpvEmitter).removeListener
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:494
+[src/types/TypedEventEmitter.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L35)
 
 ___
 
 ### setMaxListeners
 
-▸ **setMaxListeners**(`n`): [`Spv`](Spv.md)
-
-By default `EventEmitter`s will print a warning if more than `10` listeners are
-added for a particular event. This is a useful default that helps finding
-memory leaks. The `emitter.setMaxListeners()` method allows the limit to be
-modified for this specific `EventEmitter` instance. The value can be set to`Infinity` (or `0`) to indicate an unlimited number of listeners.
-
-Returns a reference to the `EventEmitter`, so that calls can be chained.
-
-**`Since`**
-
-v0.3.5
+▸ **setMaxListeners**(`maxListeners`): [`Spv`](Spv.md)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `n` | `number` |
+| `maxListeners` | `number` |
 
 #### Returns
 
@@ -1385,11 +1067,11 @@ v0.3.5
 
 #### Inherited from
 
-EventEmitter.setMaxListeners
+(EventEmitter as new () =\> SpvEmitter).setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/events.d.ts:520
+[src/types/TypedEventEmitter.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L48)
 
 ___
 
@@ -1403,7 +1085,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:598](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L598)
+[src/spv.ts:682](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L682)
 
 ___
 
@@ -1417,7 +1099,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:156](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L156)
+[src/spv.ts:161](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L161)
 
 ___
 
@@ -1431,7 +1113,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L121)
+[src/spv.ts:126](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L126)
 
 ___
 
@@ -1445,361 +1127,4 @@ ___
 
 #### Defined in
 
-[src/spv.ts:630](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L630)
-
-___
-
-### getEventListeners
-
-▸ `Static` **getEventListeners**(`emitter`, `name`): `Function`[]
-
-Returns a copy of the array of listeners for the event named `eventName`.
-
-For `EventEmitter`s this behaves exactly the same as calling `.listeners` on
-the emitter.
-
-For `EventTarget`s this is the only way to get the event listeners for the
-event target. This is useful for debugging and diagnostic purposes.
-
-```js
-const { getEventListeners, EventEmitter } = require('events');
-
-{
-  const ee = new EventEmitter();
-  const listener = () => console.log('Events are fun');
-  ee.on('foo', listener);
-  getEventListeners(ee, 'foo'); // [listener]
-}
-{
-  const et = new EventTarget();
-  const listener = () => console.log('Events are fun');
-  et.addEventListener('foo', listener);
-  getEventListeners(et, 'foo'); // [listener]
-}
-```
-
-**`Since`**
-
-v15.2.0, v14.17.0
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `emitter` | `EventEmitter` \| `_DOMEventTarget` |
-| `name` | `string` \| `symbol` |
-
-#### Returns
-
-`Function`[]
-
-#### Inherited from
-
-EventEmitter.getEventListeners
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:299
-
-___
-
-### listenerCount
-
-▸ `Static` **listenerCount**(`emitter`, `eventName`): `number`
-
-A class method that returns the number of listeners for the given `eventName`registered on the given `emitter`.
-
-```js
-const { EventEmitter, listenerCount } = require('events');
-const myEmitter = new EventEmitter();
-myEmitter.on('event', () => {});
-myEmitter.on('event', () => {});
-console.log(listenerCount(myEmitter, 'event'));
-// Prints: 2
-```
-
-**`Since`**
-
-v0.9.12
-
-**`Deprecated`**
-
-Since v3.2.0 - Use `listenerCount` instead.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `emitter` | `EventEmitter` | The emitter to query |
-| `eventName` | `string` \| `symbol` | The event name |
-
-#### Returns
-
-`number`
-
-#### Inherited from
-
-EventEmitter.listenerCount
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:271
-
-___
-
-### on
-
-▸ `Static` **on**(`emitter`, `eventName`, `options?`): `AsyncIterableIterator`<`any`\>
-
-```js
-const { on, EventEmitter } = require('events');
-
-(async () => {
-  const ee = new EventEmitter();
-
-  // Emit later on
-  process.nextTick(() => {
-    ee.emit('foo', 'bar');
-    ee.emit('foo', 42);
-  });
-
-  for await (const event of on(ee, 'foo')) {
-    // The execution of this inner block is synchronous and it
-    // processes one event at a time (even with await). Do not use
-    // if concurrent execution is required.
-    console.log(event); // prints ['bar'] [42]
-  }
-  // Unreachable here
-})();
-```
-
-Returns an `AsyncIterator` that iterates `eventName` events. It will throw
-if the `EventEmitter` emits `'error'`. It removes all listeners when
-exiting the loop. The `value` returned by each iteration is an array
-composed of the emitted event arguments.
-
-An `AbortSignal` can be used to cancel waiting on events:
-
-```js
-const { on, EventEmitter } = require('events');
-const ac = new AbortController();
-
-(async () => {
-  const ee = new EventEmitter();
-
-  // Emit later on
-  process.nextTick(() => {
-    ee.emit('foo', 'bar');
-    ee.emit('foo', 42);
-  });
-
-  for await (const event of on(ee, 'foo', { signal: ac.signal })) {
-    // The execution of this inner block is synchronous and it
-    // processes one event at a time (even with await). Do not use
-    // if concurrent execution is required.
-    console.log(event); // prints ['bar'] [42]
-  }
-  // Unreachable here
-})();
-
-process.nextTick(() => ac.abort());
-```
-
-**`Since`**
-
-v13.6.0, v12.16.0
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `emitter` | `EventEmitter` | - |
-| `eventName` | `string` | The name of the event being listened for |
-| `options?` | `StaticEventEmitterOptions` | - |
-
-#### Returns
-
-`AsyncIterableIterator`<`any`\>
-
-that iterates `eventName` events emitted by the `emitter`
-
-#### Inherited from
-
-EventEmitter.on
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:254
-
-___
-
-### once
-
-▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
-
-Creates a `Promise` that is fulfilled when the `EventEmitter` emits the given
-event or that is rejected if the `EventEmitter` emits `'error'` while waiting.
-The `Promise` will resolve with an array of all the arguments emitted to the
-given event.
-
-This method is intentionally generic and works with the web platform [EventTarget](https://dom.spec.whatwg.org/#interface-eventtarget) interface, which has no special`'error'` event
-semantics and does not listen to the `'error'` event.
-
-```js
-const { once, EventEmitter } = require('events');
-
-async function run() {
-  const ee = new EventEmitter();
-
-  process.nextTick(() => {
-    ee.emit('myevent', 42);
-  });
-
-  const [value] = await once(ee, 'myevent');
-  console.log(value);
-
-  const err = new Error('kaboom');
-  process.nextTick(() => {
-    ee.emit('error', err);
-  });
-
-  try {
-    await once(ee, 'myevent');
-  } catch (err) {
-    console.log('error happened', err);
-  }
-}
-
-run();
-```
-
-The special handling of the `'error'` event is only used when `events.once()`is used to wait for another event. If `events.once()` is used to wait for the
-'`error'` event itself, then it is treated as any other kind of event without
-special handling:
-
-```js
-const { EventEmitter, once } = require('events');
-
-const ee = new EventEmitter();
-
-once(ee, 'error')
-  .then(([err]) => console.log('ok', err.message))
-  .catch((err) => console.log('error', err.message));
-
-ee.emit('error', new Error('boom'));
-
-// Prints: ok boom
-```
-
-An `AbortSignal` can be used to cancel waiting for the event:
-
-```js
-const { EventEmitter, once } = require('events');
-
-const ee = new EventEmitter();
-const ac = new AbortController();
-
-async function foo(emitter, event, signal) {
-  try {
-    await once(emitter, event, { signal });
-    console.log('event emitted!');
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      console.error('Waiting for the event was canceled!');
-    } else {
-      console.error('There was an error', error.message);
-    }
-  }
-}
-
-foo(ee, 'foo', ac.signal);
-ac.abort(); // Abort waiting for the event
-ee.emit('foo'); // Prints: Waiting for the event was canceled!
-```
-
-**`Since`**
-
-v11.13.0, v10.16.0
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `emitter` | `_NodeEventTarget` |
-| `eventName` | `string` \| `symbol` |
-| `options?` | `StaticEventEmitterOptions` |
-
-#### Returns
-
-`Promise`<`any`[]\>
-
-#### Inherited from
-
-EventEmitter.once
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:194
-
-▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `emitter` | `_DOMEventTarget` |
-| `eventName` | `string` |
-| `options?` | `StaticEventEmitterOptions` |
-
-#### Returns
-
-`Promise`<`any`[]\>
-
-#### Inherited from
-
-EventEmitter.once
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:195
-
-___
-
-### setMaxListeners
-
-▸ `Static` **setMaxListeners**(`n?`, ...`eventTargets`): `void`
-
-```js
-const {
-  setMaxListeners,
-  EventEmitter
-} = require('events');
-
-const target = new EventTarget();
-const emitter = new EventEmitter();
-
-setMaxListeners(5, target, emitter);
-```
-
-**`Since`**
-
-v15.4.0
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `n?` | `number` | A non-negative number. The maximum number of listeners per `EventTarget` event. |
-| `...eventTargets` | (`EventEmitter` \| `_DOMEventTarget`)[] | - |
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-EventEmitter.setMaxListeners
-
-#### Defined in
-
-node_modules/@types/node/events.d.ts:317
+[src/spv.ts:714](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L714)

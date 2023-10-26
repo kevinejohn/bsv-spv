@@ -27,16 +27,16 @@
 
 ### constructor
 
-• **new DbHeaders**(`__namedParameters`)
+• **new DbHeaders**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.headers` | `any` |
-| `__namedParameters.headersDir` | `string` |
-| `__namedParameters.readOnly?` | `boolean` |
+| `«destructured»` | `Object` |
+| › `headers` | `any` |
+| › `headersDir` | `string` |
+| › `readOnly?` | `boolean` |
 
 #### Defined in
 

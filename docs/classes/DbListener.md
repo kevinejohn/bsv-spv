@@ -32,15 +32,15 @@
 
 ### constructor
 
-• **new DbListener**(`__namedParameters`)
+• **new DbListener**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.listenerDir` | `string` |
-| `__namedParameters.readOnly?` | `boolean` |
+| `«destructured»` | `Object` |
+| › `listenerDir` | `string` |
+| › `readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -253,13 +253,13 @@ ___
 
 ### markBlockProcessed
 
-▸ **markBlockProcessed**(`__namedParameters`): `Promise`<[`boolean`, `boolean`]\>
+▸ **markBlockProcessed**(`«destructured»`): `Promise`<[`boolean`, `boolean`]\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `ListenerOptions` |
+| `«destructured»` | `ListenerOptions` |
 
 #### Returns
 

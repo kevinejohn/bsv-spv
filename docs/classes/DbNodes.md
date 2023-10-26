@@ -39,17 +39,17 @@
 
 ### constructor
 
-• **new DbNodes**(`__namedParameters`)
+• **new DbNodes**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.blacklistTime?` | `number` |
-| `__namedParameters.enableIpv6?` | `boolean` |
-| `__namedParameters.nodesDir` | `string` |
-| `__namedParameters.readOnly?` | `boolean` |
+| `«destructured»` | `Object` |
+| › `blacklistTime?` | `number` |
+| › `enableIpv6?` | `boolean` |
+| › `nodesDir` | `string` |
+| › `readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -149,15 +149,15 @@ ___
 
 ### blacklist
 
-▸ **blacklist**(`__namedParameters`): `void`
+▸ **blacklist**(`«destructured»`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.node` | `string` |
-| `__namedParameters.port?` | `number` |
+| `«destructured»` | `Object` |
+| › `node` | `string` |
+| › `port?` | `number` |
 
 #### Returns
 
@@ -185,15 +185,15 @@ ___
 
 ### connected
 
-▸ **connected**(`__namedParameters`): `void`
+▸ **connected**(`«destructured»`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.node` | `string` |
-| `__namedParameters.port?` | `number` |
+| `«destructured»` | `Object` |
+| › `node` | `string` |
+| › `port?` | `number` |
 
 #### Returns
 
@@ -207,15 +207,15 @@ ___
 
 ### formatUrl
 
-▸ **formatUrl**(`__namedParameters`): `string`
+▸ **formatUrl**(`«destructured»`): `string`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.node` | `string` |
-| `__namedParameters.port?` | `number` |
+| `«destructured»` | `Object` |
+| › `node` | `string` |
+| › `port?` | `number` |
 
 #### Returns
 
@@ -271,15 +271,15 @@ ___
 
 ### hasConnected
 
-▸ **hasConnected**(`__namedParameters`): `boolean`
+▸ **hasConnected**(`«destructured»`): `boolean`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.node` | `string` |
-| `__namedParameters.port?` | `number` |
+| `«destructured»` | `Object` |
+| › `node` | `string` |
+| › `port?` | `number` |
 
 #### Returns
 
@@ -313,15 +313,15 @@ ___
 
 ### isBlacklisted
 
-▸ **isBlacklisted**(`__namedParameters`): `boolean`
+▸ **isBlacklisted**(`«destructured»`): `boolean`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.node` | `string` |
-| `__namedParameters.port?` | `number` |
+| `«destructured»` | `Object` |
+| › `node` | `string` |
+| › `port?` | `number` |
 
 #### Returns
 

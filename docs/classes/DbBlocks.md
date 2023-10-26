@@ -38,15 +38,15 @@
 
 ### constructor
 
-• **new DbBlocks**(`__namedParameters`)
+• **new DbBlocks**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.blocksDir` | `string` |
-| `__namedParameters.readOnly?` | `boolean` |
+| `«destructured»` | `Object` |
+| › `blocksDir` | `string` |
+| › `readOnly?` | `boolean` |
 
 #### Defined in
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:227](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L227)
+[src/db_blocks.ts:246](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L246)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:231](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L231)
+[src/db_blocks.ts:250](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L250)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:212](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L212)
+[src/db_blocks.ts:231](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L231)
 
 ___
 
@@ -266,17 +266,17 @@ ___
 
 ### getTx
 
-▸ **getTx**(`__namedParameters`): `Promise`<{ `buffer`: `Buffer` ; `bytesRead`: `number` ; `tx`: `undefined` \| `default`  }\>
+▸ **getTx**(`«destructured»`): `Promise`<{ `buffer`: `Buffer` ; `bytesRead`: `number` ; `tx`: `undefined` \| `default`  }\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.block` | `string` \| `Buffer` |
-| `__namedParameters.len` | `number` |
-| `__namedParameters.pos` | `number` |
-| `__namedParameters.txid?` | `string` \| `Buffer` |
+| `«destructured»` | `Object` |
+| › `block` | `string` \| `Buffer` |
+| › `len` | `number` |
+| › `pos` | `number` |
+| › `txid?` | `string` \| `Buffer` |
 
 #### Returns
 
@@ -284,7 +284,7 @@ ___
 
 #### Defined in
 
-[src/db_blocks.ts:236](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L236)
+[src/db_blocks.ts:255](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L255)
 
 ___
 
@@ -310,15 +310,16 @@ ___
 
 ### streamBlock
 
-▸ **streamBlock**(`__namedParameters`, `callback`): `Promise`<`boolean`\>
+▸ **streamBlock**(`«destructured»`, `callback`): `Promise`<`boolean`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.hash` | `string` \| `Buffer` |
-| `__namedParameters.height` | `number` |
+| `«destructured»` | `Object` |
+| › `hash` | `string` \| `Buffer` |
+| › `height` | `number` |
+| › `highWaterMark?` | `number` |
 | `callback` | (`params`: `BlockStream`) => `any` |
 
 #### Returns
@@ -347,17 +348,17 @@ ___
 
 ### writeBlockChunk
 
-▸ **writeBlockChunk**(`__namedParameters`): `Promise`<`unknown`\>
+▸ **writeBlockChunk**(`«destructured»`): `Promise`<`unknown`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.blockHash` | `Buffer` |
-| `__namedParameters.chunk` | `Buffer` |
-| `__namedParameters.finished` | `boolean` |
-| `__namedParameters.started` | `boolean` |
+| `«destructured»` | `Object` |
+| › `blockHash` | `Buffer` |
+| › `chunk` | `Buffer` |
+| › `finished` | `boolean` |
+| › `started` | `boolean` |
 
 #### Returns
 

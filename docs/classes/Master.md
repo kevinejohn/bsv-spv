@@ -36,13 +36,13 @@
 
 ### constructor
 
-• **new Master**(`__namedParameters`)
+• **new Master**(`«destructured»`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | [`MasterOptions`](../interfaces/MasterOptions.md) |
+| `«destructured»` | [`MasterOptions`](../interfaces/MasterOptions.md) |
 
 #### Defined in
 
@@ -208,7 +208,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:339](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L339)
+[src/cluster_master.ts:341](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L341)
 
 ___
 
@@ -222,7 +222,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:308](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L308)
+[src/cluster_master.ts:310](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L310)
 
 ___
 
@@ -242,7 +242,7 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:297](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L297)
+[src/cluster_master.ts:299](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L299)
 
 ___
 
@@ -262,21 +262,21 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:285](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L285)
+[src/cluster_master.ts:287](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L287)
 
 ___
 
 ### startServer
 
-▸ **startServer**(`__namedParameters`): `void`
+▸ **startServer**(`«destructured»`): `void`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `__namedParameters` | `Object` |
-| `__namedParameters.host?` | `string` |
-| `__namedParameters.port` | `number` |
+| `«destructured»` | `Object` |
+| › `host?` | `string` |
+| › `port` | `number` |
 
 #### Returns
 
@@ -284,4 +284,4 @@ ___
 
 #### Defined in
 
-[src/cluster_master.ts:204](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L204)
+[src/cluster_master.ts:206](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L206)
