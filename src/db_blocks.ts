@@ -167,7 +167,11 @@ export default class DbBlocks {
   }
 
   streamBlock(
-    { hash, height }: { hash: string | Buffer; height: number },
+    {
+      hash,
+      height,
+      highWaterMark = 100000000,
+    }: { hash: string | Buffer; height: number; highWaterMark?: number },
     callback: (params: bsv.BlockStream) => Promise<any> | any
   ): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
@@ -182,9 +186,12 @@ export default class DbBlocks {
           throw Error(`Missing block ${hash}`);
         }
 
+        let fileEnd = false;
+        let readingData = false;
         const block = new bsv.Block();
-        const stream = fs.createReadStream(dir, { highWaterMark: 100000000 });
+        const stream = fs.createReadStream(dir, { highWaterMark });
         stream.on("data", async (data: Buffer) => {
+          readingData = true;
           try {
             const result = block.addBufferChunk(data);
             // const { transactions, header, started, finished, height, size } = result;
@@ -196,13 +203,24 @@ export default class DbBlocks {
               await promise;
               stream.resume();
             }
-            if (result.finished) resolve(true);
+            if (result.finished) {
+              resolve(true);
+            } else if (fileEnd) {
+              throw Error(`Block is missing bytes`);
+            }
           } catch (err) {
             stream.destroy();
             reject(err);
           }
+          readingData = false;
         });
-        // stream.on("end", () => resolve(true));
+        stream.on("end", () => {
+          fileEnd = true;
+          if (!readingData) {
+            const err = Error(`Block is missing bytes`);
+            reject(err);
+          }
+        });
         stream.on("error", (err) => reject(err));
       } catch (err) {
         reject(err);
