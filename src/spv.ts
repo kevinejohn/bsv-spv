@@ -667,7 +667,11 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     return false;
   }
   readBlock(
-    { hash, height }: { height: number; hash: string },
+    {
+      hash,
+      height,
+      highWaterMark,
+    }: { height: number; hash: string; highWaterMark?: number },
     callback: (params: any) => Promise<void>
   ) {
     if (!hash) hash = this.headers.getHash(height);
@@ -676,7 +680,10 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
         height = this.headers.getHeight(hash);
       } catch (err) {}
     }
-    return this.db_blocks.streamBlock({ hash, height }, callback);
+    return this.db_blocks.streamBlock(
+      { hash, height, highWaterMark },
+      callback
+    );
   }
 
   async syncBlocks() {

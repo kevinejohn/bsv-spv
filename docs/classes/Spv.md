@@ -978,6 +978,7 @@ ___
 | `«destructured»` | `Object` |
 | › `hash` | `string` |
 | › `height` | `number` |
+| › `highWaterMark?` | `number` |
 | `callback` | (`params`: `any`) => `Promise`<`void`\> |
 
 #### Returns
@@ -1085,7 +1086,7 @@ ___
 
 #### Defined in
 
-[src/spv.ts:682](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L682)
+[src/spv.ts:689](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L689)
 
 ___
 
@@ -1127,4 +1128,4 @@ ___
 
 #### Defined in
 
-[src/spv.ts:714](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L714)
+[src/spv.ts:721](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L721)
