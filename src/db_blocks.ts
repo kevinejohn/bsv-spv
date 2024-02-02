@@ -170,7 +170,7 @@ export default class DbBlocks {
     {
       hash,
       height,
-      highWaterMark = 1024 * 1024 * 256, // ~256MB chunks. Change to fit in memory
+      highWaterMark = 1024 * 1024 * 128, // ~128MB chunks. Change to fit in memory limits
     }: { hash: string | Buffer; height: number; highWaterMark?: number },
     callback: (params: bsv.BlockStream) => Promise<any> | any
   ): Promise<boolean> {
