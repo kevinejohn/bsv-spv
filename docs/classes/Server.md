@@ -567,7 +567,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:388](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L388)
+[src/listener.ts:389](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L389)
 
 ___
 
@@ -891,6 +891,7 @@ ___
 | `«destructured»` | `Object` |
 | › `hash` | `string` |
 | › `height` | `number` |
+| › `highWaterMark?` | `number` |
 | `callback` | (`params`: `BlockStream`) => `Promise`<`any`\> |
 
 #### Returns
@@ -903,7 +904,7 @@ ___
 
 #### Defined in
 
-[src/listener.ts:393](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L393)
+[src/listener.ts:394](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L394)
 
 ___
 
@@ -1036,13 +1037,15 @@ ___
 
 ### syncBlocks
 
-▸ **syncBlocks**(`callback`): `Promise`<`undefined` \| { `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
+▸ **syncBlocks**(`callback`, `options?`): `Promise`<`undefined` \| { `blockSize`: `number` ; `processed`: `number` ; `skipped`: `number`  }\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `callback` | (`params`: `BlockStream`) => `void` \| `Promise`<{ `errors?`: `number` ; `matches`: `number`  }\> \| { `errors?`: `number` ; `matches`: `number`  } |
+| `options?` | `Object` |
+| `options.highWaterMark?` | `number` |
 
 #### Returns
 

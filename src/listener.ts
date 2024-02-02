@@ -276,7 +276,8 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     ) =>
       | Promise<{ matches: number; errors?: number }>
       | { matches: number; errors?: number }
-      | void
+      | void,
+    options?: { highWaterMark?: number }
   ) {
     if (this.syncingBlocks) return;
     this.syncingBlocks = true;
@@ -316,7 +317,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
           let errors = 0;
           let matches = 0;
           await this.readBlock(
-            { height, hash },
+            { height, hash, highWaterMark: options?.highWaterMark },
             async (params: bsv.BlockStream) => {
               // Fix any
               // if (params.started) {
@@ -391,7 +392,11 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
   }
 
   async readBlock(
-    { hash, height }: { height: number; hash: string },
+    {
+      hash,
+      height,
+      highWaterMark,
+    }: { height: number; hash: string; highWaterMark?: number },
     callback: (params: bsv.BlockStream) => Promise<any>
   ): Promise<boolean> {
     if (!hash) hash = this.headers.getHash(height);
@@ -401,6 +406,9 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
       } catch (err) {}
     }
     if (!this.db_blocks.blockExists(hash)) throw Error(`Block not saved`);
-    return this.db_blocks.streamBlock({ hash, height }, callback);
+    return this.db_blocks.streamBlock(
+      { hash, height, highWaterMark },
+      callback
+    );
   }
 }
