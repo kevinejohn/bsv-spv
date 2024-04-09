@@ -18,6 +18,7 @@ export interface SpvOptions {
   dataDir: string;
   forceUserAgent?: string;
   user_agent?: string;
+  magic?: string;
   version?: number;
   blocks?: boolean;
   mempool?: boolean;
@@ -57,6 +58,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   syncingBlocks: boolean;
   connecting: boolean;
   user_agent?: string;
+  magic?: string;
   version?: number;
   mempool: boolean;
   blocks: boolean;
@@ -73,6 +75,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     dataDir,
     forceUserAgent,
     user_agent,
+    magic,
     version,
     blocks = false,
     mempool = false,
@@ -98,6 +101,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.autoReconnectWait = autoReconnectWait;
     this.versionOptions = versionOptions;
     this.user_agent = user_agent;
+    this.magic = magic;
     this.version = version;
     this.timeoutConnect = timeoutConnect;
     this.DEBUG_LOG = DEBUG_LOG;
@@ -211,6 +215,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
       autoReconnect,
       autoReconnectWait,
       user_agent,
+      magic,
       version,
       mempool,
       blocks,
@@ -241,6 +246,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
       autoReconnectWait,
       start_height: this.headers.getHeight(),
       user_agent,
+      magic: magic ? Buffer.from(magic, "hex") : undefined,
       version,
       validate,
       mempoolTxs: mempool,

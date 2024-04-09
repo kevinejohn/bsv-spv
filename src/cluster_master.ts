@@ -24,6 +24,7 @@ export interface MasterOptions {
   validate?: boolean;
   forceUserAgent?: string;
   user_agent?: string;
+  magic?: string;
   version?: number;
   invalidBlocks?: string[];
   dataDir: string;
@@ -55,6 +56,7 @@ export default class Master {
     enableIpv6 = false,
     forceUserAgent,
     user_agent,
+    magic,
     version,
     invalidBlocks,
     dataDir,
@@ -102,6 +104,7 @@ export default class Master {
       node: "",
       forceUserAgent,
       user_agent,
+      magic,
       version,
       invalidBlocks,
       dataDir,
