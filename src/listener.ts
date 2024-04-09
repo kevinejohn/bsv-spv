@@ -14,6 +14,7 @@ export interface ListenerOptions {
   blockHeight: number;
   dataDir: string;
   ticker: string;
+  genesisHeader?: string;
   disableInterval?: boolean;
   DEBUG_MEMORY?: boolean;
   multithread?: {
@@ -51,6 +52,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     ticker,
     disableInterval = false,
     multithread,
+    genesisHeader,
     DEBUG_MEMORY = false,
   }: ListenerOptions) {
     super();
@@ -87,7 +89,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     const listenerDir = path.join(dataDir, ticker, "listeners", name);
 
     console.log(`Loading headers from disk....`);
-    const headers = new Headers();
+    const headers = new Headers({ genesisHeader });
     this.headers = headers;
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({

@@ -17,6 +17,7 @@ export default class Server extends Listener {
     name,
     ticker,
     dataDir,
+    genesisHeader,
     MAX_FILE_SIZE = 1024 * 1024 * 500, // 500MB
     disableInterval = false,
     mempool = true,
@@ -26,6 +27,7 @@ export default class Server extends Listener {
     ticker: string;
     dataDir: string;
     mempool?: boolean;
+    genesisHeader?: string;
     MAX_FILE_SIZE?: number;
     disableInterval?: boolean;
     DEBUG_MEMORY?: boolean;
@@ -35,6 +37,7 @@ export default class Server extends Listener {
       ticker,
       blockHeight: -1,
       dataDir,
+      genesisHeader,
       disableInterval,
       DEBUG_MEMORY,
     });
