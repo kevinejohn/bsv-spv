@@ -25,6 +25,7 @@ export interface MasterOptions {
   forceUserAgent?: string;
   user_agent?: string;
   magic?: string;
+  genesisHeader?: string;
   version?: number;
   invalidBlocks?: string[];
   dataDir: string;
@@ -57,6 +58,7 @@ export default class Master {
     forceUserAgent,
     user_agent,
     magic,
+    genesisHeader,
     version,
     invalidBlocks,
     dataDir,
@@ -105,6 +107,7 @@ export default class Master {
       forceUserAgent,
       user_agent,
       magic,
+      genesisHeader,
       version,
       invalidBlocks,
       dataDir,

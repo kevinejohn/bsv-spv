@@ -19,6 +19,7 @@ export interface SpvOptions {
   forceUserAgent?: string;
   user_agent?: string;
   magic?: string;
+  genesisHeader?: string;
   version?: number;
   blocks?: boolean;
   mempool?: boolean;
@@ -59,6 +60,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   connecting: boolean;
   user_agent?: string;
   magic?: string;
+  genesisHeader?: string;
   version?: number;
   mempool: boolean;
   blocks: boolean;
@@ -76,6 +78,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     forceUserAgent,
     user_agent,
     magic,
+    genesisHeader,
     version,
     blocks = false,
     mempool = false,
@@ -117,7 +120,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.id = "";
     this.updateId();
     console.log(`${this.id} Loading headers from disk...`);
-    const headers = new Headers({ invalidBlocks });
+    const headers = new Headers({ invalidBlocks, genesisHeader });
     this.headers = headers;
     const headersDir = path.join(dataDir, ticker, "headers");
     const blocksDir = path.join(dataDir, ticker, "blocks");
