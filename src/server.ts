@@ -5,6 +5,7 @@ import Listener from "./listener";
 import * as bsv from "bsv-minimal";
 import DbMempool from "./db_mempool";
 import path from "path";
+import cors from "cors";
 
 export default class Server extends Listener {
   app: Express;
@@ -56,6 +57,7 @@ export default class Server extends Listener {
     this.SHOW_LOGS = true;
     this.MAX_FILE_SIZE = MAX_FILE_SIZE;
     const app = express();
+    app.use(cors());
     this.app = app;
     this.server = Http.createServer(app);
   }
