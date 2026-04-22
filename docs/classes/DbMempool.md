@@ -1,241 +1,221 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / DbMempool
 
 # Class: DbMempool
 
-## Table of contents
-
-### Constructors
-
-- [constructor](DbMempool.md#constructor)
-
-### Properties
-
-- [batch](DbMempool.md#batch)
-- [db](DbMempool.md#db)
-- [intervalBatch](DbMempool.md#intervalbatch)
-- [intervalPrune](DbMempool.md#intervalprune)
-- [pruneAfter](DbMempool.md#pruneafter)
-- [txs](DbMempool.md#txs)
-
-### Methods
-
-- [close](DbMempool.md#close)
-- [delTxs](DbMempool.md#deltxs)
-- [getTx](DbMempool.md#gettx)
-- [getTxids](DbMempool.md#gettxids)
-- [pruneTxs](DbMempool.md#prunetxs)
-- [saveTx](DbMempool.md#savetx)
-- [saveTxs](DbMempool.md#savetxs)
+Defined in: [src/db\_mempool.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L6)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new DbMempool**(`«destructured»`)
+> **new DbMempool**(`__namedParameters`): `DbMempool`
+
+Defined in: [src/db\_mempool.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L14)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `mempoolDir` | `string` |
-| › `pruneAfter?` | `number` |
-| › `readOnly?` | `boolean` |
+##### \_\_namedParameters
 
-#### Defined in
+###### mempoolDir
 
-[src/db_mempool.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L15)
+`string`
+
+###### pruneAfter?
+
+`number` = `...`
+
+###### readOnly?
+
+`boolean` = `false`
+
+#### Returns
+
+`DbMempool`
 
 ## Properties
 
 ### batch
 
-• **batch**: `AbstractBatch`[]
+> **batch**: `object`[]
 
-#### Defined in
+Defined in: [src/db\_mempool.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L9)
 
-[src/db_mempool.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L10)
+#### key
 
-___
+> **key**: `Buffer`
+
+#### type
+
+> **type**: `"put"`
+
+#### value
+
+> **value**: `Buffer`
+
+***
 
 ### db
 
-• **db**: `LevelUp`<`AbstractLevelDOWN`<`any`, `any`\>, `AbstractIterator`<`any`, `any`\>\>
+> **db**: `LevelUp`
 
-#### Defined in
+Defined in: [src/db\_mempool.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L7)
 
-[src/db_mempool.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L8)
+***
 
-___
+### intervalBatch?
 
-### intervalBatch
+> `optional` **intervalBatch?**: `Timeout`
 
-• `Optional` **intervalBatch**: `Timer`
+Defined in: [src/db\_mempool.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L10)
 
-#### Defined in
+***
 
-[src/db_mempool.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L11)
+### intervalPrune?
 
-___
+> `optional` **intervalPrune?**: `Timeout`
 
-### intervalPrune
+Defined in: [src/db\_mempool.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L11)
 
-• `Optional` **intervalPrune**: `Timer`
-
-#### Defined in
-
-[src/db_mempool.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L12)
-
-___
+***
 
 ### pruneAfter
 
-• **pruneAfter**: `number`
+> **pruneAfter**: `number`
 
-#### Defined in
+Defined in: [src/db\_mempool.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L12)
 
-[src/db_mempool.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L13)
-
-___
+***
 
 ### txs
 
-• **txs**: `Object`
+> **txs**: `object`
 
-#### Index signature
+Defined in: [src/db\_mempool.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L8)
 
-▪ [key: `string`]: `Buffer`
+#### Index Signature
 
-#### Defined in
-
-[src/db_mempool.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L9)
+\[`key`: `string`\]: `Buffer`\<`ArrayBufferLike`\>
 
 ## Methods
 
-### close
+### close()
 
-▸ **close**(): `void`
+> **close**(): `Promise`\<`void`\>
+
+Defined in: [src/db\_mempool.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L31)
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### delTxs()
+
+> **delTxs**(`txids`): `Promise`\<`unknown`\>
+
+Defined in: [src/db\_mempool.ts:75](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L75)
+
+#### Parameters
+
+##### txids
+
+`Buffer`\<`ArrayBufferLike`\>[]
+
+#### Returns
+
+`Promise`\<`unknown`\>
+
+***
+
+### getTx()
+
+> **getTx**(`txid`): `Promise`\<\{ `size`: `number`; `time`: `number`; `tx`: `Transaction`; \}\>
+
+Defined in: [src/db\_mempool.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L121)
+
+#### Parameters
+
+##### txid
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
+
+#### Returns
+
+`Promise`\<\{ `size`: `number`; `time`: `number`; `tx`: `Transaction`; \}\>
+
+***
+
+### getTxids()
+
+> **getTxids**(`__namedParameters`): `Promise`\<`Buffer`\<`ArrayBufferLike`\>[]\>
+
+Defined in: [src/db\_mempool.ts:87](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L87)
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### newerThan?
+
+`number`
+
+###### olderThan?
+
+`number`
+
+#### Returns
+
+`Promise`\<`Buffer`\<`ArrayBufferLike`\>[]\>
+
+***
+
+### pruneTxs()
+
+> **pruneTxs**(`olderThan?`): `Promise`\<`void`\>
+
+Defined in: [src/db\_mempool.ts:140](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L140)
+
+#### Parameters
+
+##### olderThan?
+
+`number`
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### saveTx()
+
+> **saveTx**(`tx`): `void`
+
+Defined in: [src/db\_mempool.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L45)
+
+#### Parameters
+
+##### tx
+
+`Transaction`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/db_mempool.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L32)
+### saveTxs()
 
-___
+> **saveTxs**(): `Promise`\<`unknown`\>
 
-### delTxs
-
-▸ **delTxs**(`txids`): `Promise`<`unknown`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `txids` | `Buffer`[] |
+Defined in: [src/db\_mempool.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L62)
 
 #### Returns
 
-`Promise`<`unknown`\>
-
-#### Defined in
-
-[src/db_mempool.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L68)
-
-___
-
-### getTx
-
-▸ **getTx**(`txid`): `Promise`<{ `size`: `number` ; `time`: `number` ; `tx`: `default`  }\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `txid` | `string` \| `Buffer` |
-
-#### Returns
-
-`Promise`<{ `size`: `number` ; `time`: `number` ; `tx`: `default`  }\>
-
-#### Defined in
-
-[src/db_mempool.ts:112](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L112)
-
-___
-
-### getTxids
-
-▸ **getTxids**(`«destructured»`): `Promise`<`Buffer`[]\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `newerThan?` | `number` |
-| › `olderThan?` | `number` |
-
-#### Returns
-
-`Promise`<`Buffer`[]\>
-
-#### Defined in
-
-[src/db_mempool.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L80)
-
-___
-
-### pruneTxs
-
-▸ **pruneTxs**(`olderThan?`): `Promise`<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `olderThan?` | `number` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Defined in
-
-[src/db_mempool.ts:131](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L131)
-
-___
-
-### saveTx
-
-▸ **saveTx**(`tx`): `void`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `tx` | `default` |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[src/db_mempool.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L38)
-
-___
-
-### saveTxs
-
-▸ **saveTxs**(): `Promise`<`unknown`\>
-
-#### Returns
-
-`Promise`<`unknown`\>
-
-#### Defined in
-
-[src/db_mempool.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_mempool.ts#L55)
+`Promise`\<`unknown`\>

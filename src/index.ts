@@ -5,10 +5,13 @@ import DbHeaders from "./db_headers";
 import DbMempool from "./db_mempool";
 import DbNodes from "./db_nodes";
 import DbListener from "./db_listener";
+import { DbListenerBlockOptions } from "./db_listener";
 import Worker from "./cluster_worker";
 import Master, { MasterOptions } from "./cluster_master";
 import Listener, { ListenerOptions } from "./listener";
 import Server from "./server";
+import { SpvEvents } from "./types/SpvEmitter";
+import { SupportedTicker } from "./tickers";
 
 export {
   Spv,
@@ -18,10 +21,13 @@ export {
   DbMempool,
   DbNodes,
   DbListener,
+  DbListenerBlockOptions,
   Worker,
   Master,
   MasterOptions,
   Listener,
   ListenerOptions,
+  SpvEvents,
+  SupportedTicker,
   Server,
 };

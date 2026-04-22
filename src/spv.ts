@@ -10,10 +10,11 @@ import DbNodes from "./db_nodes";
 import DbListener from "./db_listener";
 import * as path from "path";
 import { SpvEmitter } from "./types/SpvEmitter";
+import { assertSupportedTicker, SupportedTicker } from "./tickers";
 
 export interface SpvOptions {
   uid?: string;
-  ticker: string;
+  ticker: SupportedTicker;
   node: string;
   dataDir: string;
   forceUserAgent?: string;
@@ -38,7 +39,7 @@ export interface SpvOptions {
 export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   id: string;
   uid: string;
-  ticker: string;
+  ticker: SupportedTicker;
   node: string;
   versionOptions?: VersionOptions;
   queue_nodes?: string[];
@@ -96,6 +97,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.setMaxListeners(0);
     this.uid = uid || `${process.pid}`;
     if (!dataDir) throw Error(`Missing dataDir`);
+    assertSupportedTicker(ticker);
     this.dataDir = dataDir;
     this.saveMempool = mempool;
     this.pruneBlocks = pruneBlocks;
@@ -120,7 +122,11 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
     this.id = "";
     this.updateId();
     console.log(`${this.id} Loading headers from disk...`);
-    const headers = new Headers({ invalidBlocks, genesisHeader });
+    const headers = new Headers({
+      invalidBlocks,
+      genesisHeader,
+      network: ticker,
+    });
     this.headers = headers;
     const headersDir = path.join(dataDir, ticker, "headers");
     const blocksDir = path.join(dataDir, ticker, "blocks");
@@ -185,7 +191,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
             newHeaders += await this.addHeaders({ headers });
             const lastHeader = headers[headers.length - 1];
             if (lastHash.toString("hex") === lastHeader.getHash(true)) break;
-            from = [lastHeader.getHash()];
+            from = [Buffer.from(lastHeader.getHash())];
           } while (true);
           // } catch (err: any) {
           //   const RETRY = 3;
@@ -616,6 +622,15 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
       }
       this.peer = undefined;
     }
+  }
+  async close() {
+    this.disconnect();
+    await Promise.all([
+      this.db_blocks.close(),
+      this.db_headers.close(),
+      this.db_nodes.close(),
+      this.db_listener ? this.db_listener.close() : Promise.resolve(),
+    ]);
   }
   isConnected() {
     return this.peer ? this.peer.connected : false;

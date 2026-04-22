@@ -11,8 +11,16 @@ process.on("uncaughtException", (err) => {
 
 export default class Worker {
   spv?: Spv;
+  shuttingDown: boolean;
+  blockInterval?: NodeJS.Timeout;
+  memoryInterval?: NodeJS.Timeout;
+  resetInterval?: NodeJS.Timeout;
+  statusInterval?: NodeJS.Timeout;
 
   constructor() {
+    this.shuttingDown = false;
+    process.on("SIGINT", () => this.shutdown(0, "SIGINT"));
+    process.on("SIGTERM", () => this.shutdown(0, "SIGTERM"));
     process.on("message", (message: any) => {
       try {
         const msgs = message.toString().split("\n\n");
@@ -25,6 +33,8 @@ export default class Worker {
             const { node } = obj.data;
             this.spv?.disconnect();
             this.spv?.connect(node);
+          } else if (obj.command === "shutdown") {
+            this.shutdown(0, "master shutdown");
           }
         }
       } catch (err) {
@@ -37,13 +47,30 @@ export default class Worker {
     if (process.send) process.send(`${JSON.stringify(obj)}\n\n`);
   }
 
+  async shutdown(exitCode = 0, reason = "shutdown") {
+    if (this.shuttingDown) return;
+    this.shuttingDown = true;
+    console.log(`Worker shutting down: ${reason}`);
+    clearInterval(this.blockInterval);
+    clearInterval(this.memoryInterval);
+    clearInterval(this.resetInterval);
+    clearInterval(this.statusInterval);
+    try {
+      await this.spv?.close();
+    } catch (err) {
+      console.error(`Worker shutdown error`, err);
+      exitCode = exitCode || 1;
+    } finally {
+      process.exit(exitCode);
+    }
+  }
+
   async start(config: SpvOptions) {
     const { mempool, blocks, DEBUG_MEMORY } = config;
     const REFRESH = 10; // console.log status every 10 seconds
     let txsSeen = 0;
     let txsSaved = 0;
     let txsSize = 0;
-    let blockInterval: NodeJS.Timeout | undefined;
     let hasConnected = false;
 
     let date = +new Date();
@@ -51,7 +78,7 @@ export default class Worker {
     this.spv = spv;
 
     if (DEBUG_MEMORY) {
-      setInterval(() => {
+      this.memoryInterval = setInterval(() => {
         const m: any = process.memoryUsage();
         console.log(
           `${spv.id} Memory: ${Object.keys(m)
@@ -76,13 +103,12 @@ export default class Worker {
       // );
       this.sendToMaster({ command: `send_new_node` });
     });
-    let resetInterval: NodeJS.Timeout;
     spv.on("disconnected", ({ node, disconnects }) => {
       if (hasConnected)
         console.error(`${spv.id} disconnected ${disconnects} times`);
-      clearInterval(resetInterval);
-      clearInterval(blockInterval);
-      blockInterval = undefined;
+      clearInterval(this.resetInterval);
+      clearInterval(this.blockInterval);
+      this.blockInterval = undefined;
       hasConnected = false;
 
       this.sendToMaster({
@@ -99,7 +125,7 @@ export default class Worker {
         command: `connected`,
         data: { node },
       });
-      resetInterval = setInterval(() => {
+      this.resetInterval = setInterval(() => {
         // Reset disconect count if connected for longer than a minute
         if (spv.isConnected() && spv.peer) {
           spv.peer.disconnects = 0;
@@ -263,8 +289,8 @@ export default class Worker {
     spv.on("block_chunk", (params) => {
       chunkParams = params;
       if (params.started) {
-        clearInterval(blockInterval);
-        blockInterval = setInterval(() => {
+        clearInterval(this.blockInterval);
+        this.blockInterval = setInterval(() => {
           const { blockHash, height, size, startDate } = chunkParams;
           const seconds = (+new Date() - startDate) / 1000;
           console.log(
@@ -279,8 +305,8 @@ export default class Worker {
         }, 1000 * 10); // TODO: Change to 10 seconds
       }
       if (params.finished) {
-        clearInterval(blockInterval);
-        blockInterval = undefined;
+        clearInterval(this.blockInterval);
+        this.blockInterval = undefined;
       }
     });
     // spv.on(
@@ -296,7 +322,7 @@ export default class Worker {
     //   }
     // );
 
-    setInterval(() => {
+    this.statusInterval = setInterval(() => {
       if (!spv.isConnected()) {
         console.log(`${spv.id} is disconnected.`);
       } else if (mempool) {
@@ -311,7 +337,7 @@ export default class Worker {
         txsSeen = 0;
         txsSaved = 0;
         txsSize = 0;
-      } else if (blocks && !blockInterval) {
+      } else if (blocks && !this.blockInterval) {
         console.log(`${spv.id} is connected. tip ${spv.headers.getHeight()}.`);
       }
     }, REFRESH * 1000);

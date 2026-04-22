@@ -1,565 +1,444 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / Spv
 
 # Class: Spv
 
-## Hierarchy
+Defined in: [src/spv.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L39)
 
-- `TypedEventEmitter`<`SpvEvents`, `this`\>
+## Extends
 
-  ↳ **`Spv`**
-
-## Table of contents
-
-### Constructors
-
-- [constructor](Spv.md#constructor)
-
-### Properties
-
-- [DEBUG\_LOG](Spv.md#debug_log)
-- [autoReconnect](Spv.md#autoreconnect)
-- [autoReconnectWait](Spv.md#autoreconnectwait)
-- [blockHeight](Spv.md#blockheight)
-- [blocks](Spv.md#blocks)
-- [connecting](Spv.md#connecting)
-- [dataDir](Spv.md#datadir)
-- [db\_blocks](Spv.md#db_blocks)
-- [db\_headers](Spv.md#db_headers)
-- [db\_listener](Spv.md#db_listener)
-- [db\_nodes](Spv.md#db_nodes)
-- [forceUserAgent](Spv.md#forceuseragent)
-- [genesisHeader](Spv.md#genesisheader)
-- [getPeersTimeout](Spv.md#getpeerstimeout)
-- [headers](Spv.md#headers)
-- [id](Spv.md#id)
-- [magic](Spv.md#magic)
-- [mempool](Spv.md#mempool)
-- [node](Spv.md#node)
-- [peer](Spv.md#peer)
-- [peerPingInterval](Spv.md#peerpinginterval)
-- [pruneBlocks](Spv.md#pruneblocks)
-- [queue\_nodes](Spv.md#queue_nodes)
-- [saveMempool](Spv.md#savemempool)
-- [syncingBlocks](Spv.md#syncingblocks)
-- [syncingHeaders](Spv.md#syncingheaders)
-- [ticker](Spv.md#ticker)
-- [timeoutConnect](Spv.md#timeoutconnect)
-- [uid](Spv.md#uid)
-- [user\_agent](Spv.md#user_agent)
-- [validate](Spv.md#validate)
-- [version](Spv.md#version)
-- [versionOptions](Spv.md#versionoptions)
-
-### Methods
-
-- [addHeaders](Spv.md#addheaders)
-- [addListener](Spv.md#addlistener)
-- [connect](Spv.md#connect)
-- [disconnect](Spv.md#disconnect)
-- [downloadBlock](Spv.md#downloadblock)
-- [emit](Spv.md#emit)
-- [eventNames](Spv.md#eventnames)
-- [getBlockTx](Spv.md#getblocktx)
-- [getHash](Spv.md#gethash)
-- [getHeader](Spv.md#getheader)
-- [getHeight](Spv.md#getheight)
-- [getMaxListeners](Spv.md#getmaxlisteners)
-- [getNodePeers](Spv.md#getnodepeers)
-- [getTip](Spv.md#gettip)
-- [isConnected](Spv.md#isconnected)
-- [listenerCount](Spv.md#listenercount)
-- [listeners](Spv.md#listeners)
-- [off](Spv.md#off)
-- [on](Spv.md#on)
-- [once](Spv.md#once)
-- [prependListener](Spv.md#prependlistener)
-- [prependOnceListener](Spv.md#prependoncelistener)
-- [rawListeners](Spv.md#rawlisteners)
-- [readBlock](Spv.md#readblock)
-- [removeAllListeners](Spv.md#removealllisteners)
-- [removeListener](Spv.md#removelistener)
-- [setMaxListeners](Spv.md#setmaxlisteners)
-- [syncBlocks](Spv.md#syncblocks)
-- [syncHeaders](Spv.md#syncheaders)
-- [updateId](Spv.md#updateid)
-- [warningPruneBlocks](Spv.md#warningpruneblocks)
+- `TypedEventEmitter`\<[`SpvEvents`](../type-aliases/SpvEvents.md), `this`\>
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new Spv**(`«destructured»`)
+> **new Spv**(`__namedParameters`): `Spv`
+
+Defined in: [src/spv.ts:74](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L74)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | [`SpvOptions`](../interfaces/SpvOptions.md) |
+##### \_\_namedParameters
+
+[`SpvOptions`](../interfaces/SpvOptions.md)
+
+#### Returns
+
+`Spv`
 
 #### Overrides
 
-(EventEmitter as new () &#x3D;\&gt; SpvEmitter).constructor
-
-#### Defined in
-
-[src/spv.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L73)
+`(EventEmitter as new () => SpvEmitter).constructor`
 
 ## Properties
 
-### DEBUG\_LOG
-
-• **DEBUG\_LOG**: `boolean`
-
-#### Defined in
-
-[src/spv.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L69)
-
-___
-
 ### autoReconnect
 
-• **autoReconnect**: `boolean`
+> **autoReconnect**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L50)
 
-[src/spv.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L49)
+***
 
-___
+### autoReconnectWait?
 
-### autoReconnectWait
+> `optional` **autoReconnectWait?**: `number`
 
-• `Optional` **autoReconnectWait**: `number`
+Defined in: [src/spv.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L51)
 
-#### Defined in
-
-[src/spv.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L50)
-
-___
+***
 
 ### blockHeight
 
-• **blockHeight**: `number`
+> **blockHeight**: `number`
 
-#### Defined in
+Defined in: [src/spv.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L48)
 
-[src/spv.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L47)
-
-___
+***
 
 ### blocks
 
-• **blocks**: `boolean`
+> **blocks**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L67)
 
-[src/spv.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L66)
-
-___
+***
 
 ### connecting
 
-• **connecting**: `boolean`
+> **connecting**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L61)
 
-[src/spv.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L60)
-
-___
+***
 
 ### dataDir
 
-• **dataDir**: `string`
+> **dataDir**: `string`
 
-#### Defined in
+Defined in: [src/spv.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L69)
 
-[src/spv.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L68)
-
-___
+***
 
 ### db\_blocks
 
-• **db\_blocks**: [`DbBlocks`](DbBlocks.md)
+> **db\_blocks**: [`DbBlocks`](DbBlocks.md)
 
-#### Defined in
+Defined in: [src/spv.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L55)
 
-[src/spv.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L54)
-
-___
+***
 
 ### db\_headers
 
-• **db\_headers**: [`DbHeaders`](DbHeaders.md)
+> **db\_headers**: [`DbHeaders`](DbHeaders.md)
 
-#### Defined in
+Defined in: [src/spv.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L56)
 
-[src/spv.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L55)
+***
 
-___
+### db\_listener?
 
-### db\_listener
+> `optional` **db\_listener?**: [`DbListener`](DbListener.md)
 
-• `Optional` **db\_listener**: [`DbListener`](DbListener.md)
+Defined in: [src/spv.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L58)
 
-#### Defined in
-
-[src/spv.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L57)
-
-___
+***
 
 ### db\_nodes
 
-• **db\_nodes**: [`DbNodes`](DbNodes.md)
+> **db\_nodes**: [`DbNodes`](DbNodes.md)
 
-#### Defined in
+Defined in: [src/spv.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L57)
 
-[src/spv.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L56)
+***
 
-___
+### DEBUG\_LOG
 
-### forceUserAgent
+> **DEBUG\_LOG**: `boolean`
 
-• `Optional` **forceUserAgent**: `string`
+Defined in: [src/spv.ts:70](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L70)
 
-#### Defined in
+***
 
-[src/spv.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L48)
+### forceUserAgent?
 
-___
+> `optional` **forceUserAgent?**: `string`
 
-### genesisHeader
+Defined in: [src/spv.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L49)
 
-• `Optional` **genesisHeader**: `string`
+***
 
-#### Defined in
+### genesisHeader?
 
-[src/spv.ts:63](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L63)
+> `optional` **genesisHeader?**: `string`
 
-___
+Defined in: [src/spv.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L64)
 
-### getPeersTimeout
+***
 
-• `Optional` **getPeersTimeout**: `Timeout`
+### getPeersTimeout?
 
-#### Defined in
+> `optional` **getPeersTimeout?**: `Timeout`
 
-[src/spv.ts:70](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L70)
+Defined in: [src/spv.ts:71](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L71)
 
-___
+***
 
 ### headers
 
-• **headers**: `default`
+> **headers**: `Headers`
 
-#### Defined in
+Defined in: [src/spv.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L54)
 
-[src/spv.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L53)
-
-___
+***
 
 ### id
 
-• **id**: `string`
+> **id**: `string`
 
-#### Defined in
+Defined in: [src/spv.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L40)
 
-[src/spv.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L39)
+***
 
-___
+### magic?
 
-### magic
+> `optional` **magic?**: `string`
 
-• `Optional` **magic**: `string`
+Defined in: [src/spv.ts:63](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L63)
 
-#### Defined in
-
-[src/spv.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L62)
-
-___
+***
 
 ### mempool
 
-• **mempool**: `boolean`
+> **mempool**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L66)
 
-[src/spv.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L65)
-
-___
+***
 
 ### node
 
-• **node**: `string`
+> **node**: `string`
 
-#### Defined in
+Defined in: [src/spv.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L43)
 
-[src/spv.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L42)
+***
 
-___
+### peer?
 
-### peer
+> `optional` **peer?**: `Peer`
 
-• `Optional` **peer**: `default`
+Defined in: [src/spv.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L53)
 
-#### Defined in
+***
 
-[src/spv.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L52)
+### peerPingInterval?
 
-___
+> `optional` **peerPingInterval?**: `Timeout`
 
-### peerPingInterval
+Defined in: [src/spv.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L72)
 
-• `Optional` **peerPingInterval**: `Timeout`
-
-#### Defined in
-
-[src/spv.ts:71](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L71)
-
-___
+***
 
 ### pruneBlocks
 
-• **pruneBlocks**: `number`
+> **pruneBlocks**: `number`
 
-#### Defined in
+Defined in: [src/spv.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L47)
 
-[src/spv.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L46)
+***
 
-___
+### queue\_nodes?
 
-### queue\_nodes
+> `optional` **queue\_nodes?**: `string`[]
 
-• `Optional` **queue\_nodes**: `string`[]
+Defined in: [src/spv.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L45)
 
-#### Defined in
-
-[src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L44)
-
-___
+***
 
 ### saveMempool
 
-• **saveMempool**: `boolean`
+> **saveMempool**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L46)
 
-[src/spv.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L45)
-
-___
+***
 
 ### syncingBlocks
 
-• **syncingBlocks**: `boolean`
+> **syncingBlocks**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L60)
 
-[src/spv.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L59)
+***
 
-___
+### syncingHeaders?
 
-### syncingHeaders
+> `optional` **syncingHeaders?**: `Promise`\<`number`\>
 
-• `Optional` **syncingHeaders**: `Promise`<`number`\>
+Defined in: [src/spv.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L59)
 
-#### Defined in
-
-[src/spv.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L58)
-
-___
+***
 
 ### ticker
 
-• **ticker**: `string`
+> **ticker**: `ChainTicker`
 
-#### Defined in
+Defined in: [src/spv.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L42)
 
-[src/spv.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L41)
-
-___
+***
 
 ### timeoutConnect
 
-• **timeoutConnect**: `number`
+> **timeoutConnect**: `number`
 
-#### Defined in
+Defined in: [src/spv.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L52)
 
-[src/spv.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L51)
-
-___
+***
 
 ### uid
 
-• **uid**: `string`
+> **uid**: `string`
 
-#### Defined in
+Defined in: [src/spv.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L41)
 
-[src/spv.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L40)
+***
 
-___
+### user\_agent?
 
-### user\_agent
+> `optional` **user\_agent?**: `string`
 
-• `Optional` **user\_agent**: `string`
+Defined in: [src/spv.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L62)
 
-#### Defined in
-
-[src/spv.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L61)
-
-___
+***
 
 ### validate
 
-• **validate**: `boolean`
+> **validate**: `boolean`
 
-#### Defined in
+Defined in: [src/spv.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L68)
 
-[src/spv.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L67)
+***
 
-___
+### version?
 
-### version
+> `optional` **version?**: `number`
 
-• `Optional` **version**: `number`
+Defined in: [src/spv.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L65)
 
-#### Defined in
+***
 
-[src/spv.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L64)
+### versionOptions?
 
-___
+> `optional` **versionOptions?**: `VersionOptions`
 
-### versionOptions
-
-• `Optional` **versionOptions**: `VersionOptions`
-
-#### Defined in
-
-[src/spv.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L43)
+Defined in: [src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L44)
 
 ## Methods
 
-### addHeaders
+### addHeaders()
 
-▸ **addHeaders**(`«destructured»`): `Promise`<`number`\>
+> **addHeaders**(`__namedParameters`): `Promise`\<`number`\>
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `headers` | `default`[] |
-
-#### Returns
-
-`Promise`<`number`\>
-
-#### Defined in
-
-[src/spv.ts:145](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L145)
-
-___
-
-### addListener
-
-▸ **addListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
-
-#### Type parameters
-
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+Defined in: [src/spv.ts:151](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L151)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### \_\_namedParameters
+
+###### headers
+
+`Header`[]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`Promise`\<`number`\>
+
+***
+
+### addListener()
+
+> **addListener**\<`E`\>(`event`, `listener`): `this`
+
+Defined in: [src/types/TypedEventEmitter.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L24)
+
+#### Type Parameters
+
+##### E
+
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
+
+#### Parameters
+
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
+
+#### Returns
+
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).addListener
+`(EventEmitter as new () => SpvEmitter).addListener`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L24)
+### close()
 
-___
+> **close**(): `Promise`\<`void`\>
 
-### connect
-
-▸ **connect**(`node?`): `Promise`<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `node` | `string` |
+Defined in: [src/spv.ts:626](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L626)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/spv.ts:209](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L209)
+### connect()
 
-___
+> **connect**(`node?`): `Promise`\<`void`\>
 
-### disconnect
+Defined in: [src/spv.ts:215](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L215)
 
-▸ **disconnect**(): `void`
+#### Parameters
+
+##### node?
+
+`string` = `...`
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### disconnect()
+
+> **disconnect**(): `void`
+
+Defined in: [src/spv.ts:611](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L611)
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/spv.ts:605](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L605)
+### downloadBlock()
 
-___
+> **downloadBlock**(`__namedParameters`): `Promise`\<`boolean`\>
 
-### downloadBlock
-
-▸ **downloadBlock**(`«destructured»`): `Promise`<`boolean`\>
+Defined in: [src/spv.ts:679](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L679)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `hash` | `string` |
-| › `height` | `number` |
+##### \_\_namedParameters
+
+###### hash
+
+`string`
+
+###### height
+
+`number`
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/spv.ts:664](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L664)
+### emit()
 
-___
+> **emit**\<`E`\>(`event`, ...`args`): `boolean`
 
-### emit
+Defined in: [src/types/TypedEventEmitter.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L37)
 
-▸ **emit**<`E`\>(`event`, `...args`): `boolean`
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `...args` | `Parameters`<`SpvEvents`[`E`]\> |
+##### event
+
+`E`
+
+##### args
+
+...`Parameters`\<[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]\>
 
 #### Returns
 
@@ -567,17 +446,15 @@ ___
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).emit
+`(EventEmitter as new () => SpvEmitter).emit`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L37)
+### eventNames()
 
-___
+> **eventNames**(): (`string` \| `symbol`)[]
 
-### eventNames
-
-▸ **eventNames**(): (`string` \| `symbol`)[]
+Defined in: [src/types/TypedEventEmitter.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L42)
 
 #### Returns
 
@@ -585,103 +462,107 @@ ___
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).eventNames
+`(EventEmitter as new () => SpvEmitter).eventNames`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L42)
+### getBlockTx()
 
-___
+> **getBlockTx**(`__namedParameters`): `Promise`\<\{ `tx`: `Transaction` \| `undefined`; \}\>
 
-### getBlockTx
-
-▸ **getBlockTx**(`«destructured»`): `Promise`<{ `tx`: `undefined` \| `default`  }\>
+Defined in: [src/spv.ts:664](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L664)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `block` | `string` |
-| › `len` | `number` |
-| › `pos` | `number` |
-| › `txid?` | `string` |
+##### \_\_namedParameters
+
+###### block
+
+`string`
+
+###### len
+
+`number`
+
+###### pos
+
+`number`
+
+###### txid?
+
+`string`
 
 #### Returns
 
-`Promise`<{ `tx`: `undefined` \| `default`  }\>
+`Promise`\<\{ `tx`: `Transaction` \| `undefined`; \}\>
 
-#### Defined in
+***
 
-[src/spv.ts:649](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L649)
+### getHash()
 
-___
+> **getHash**(`height`): `string`
 
-### getHash
-
-▸ **getHash**(`height`): `string`
+Defined in: [src/spv.ts:641](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L641)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `height` | `number` |
+##### height
+
+`number`
 
 #### Returns
 
 `string`
 
-#### Defined in
+***
 
-[src/spv.ts:626](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L626)
+### getHeader()
 
-___
+> **getHeader**(`__namedParameters`): `Header`
 
-### getHeader
-
-▸ **getHeader**(`«destructured»`): `default`
+Defined in: [src/spv.ts:647](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L647)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `hash?` | `string` |
-| › `height` | `number` |
+##### \_\_namedParameters
+
+###### hash?
+
+`string`
+
+###### height
+
+`number`
 
 #### Returns
 
-`default`
+`Header`
 
-#### Defined in
+***
 
-[src/spv.ts:632](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L632)
+### getHeight()
 
-___
+> **getHeight**(`hash?`): `number`
 
-### getHeight
-
-▸ **getHeight**(`hash?`): `number`
+Defined in: [src/spv.ts:638](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L638)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash?` | `string` |
+##### hash?
+
+`string`
 
 #### Returns
 
 `number`
 
-#### Defined in
+***
 
-[src/spv.ts:623](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L623)
+### getMaxListeners()
 
-___
+> **getMaxListeners**(): `number`
 
-### getMaxListeners
-
-▸ **getMaxListeners**(): `number`
+Defined in: [src/types/TypedEventEmitter.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L47)
 
 #### Returns
 
@@ -689,76 +570,71 @@ ___
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).getMaxListeners
+`(EventEmitter as new () => SpvEmitter).getMaxListeners`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L47)
+### getNodePeers()
 
-___
+> **getNodePeers**(): `Promise`\<\{ `addrs`: `NetAddress`[]; `node`: `string`; `port`: `number`; `ticker`: `string`; \}\>
 
-### getNodePeers
-
-▸ **getNodePeers**(): `Promise`<{ `addrs`: `NetAddress`[] ; `node`: `string` ; `port`: `number` ; `ticker`: `string`  }\>
+Defined in: [src/spv.ts:652](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L652)
 
 #### Returns
 
-`Promise`<{ `addrs`: `NetAddress`[] ; `node`: `string` ; `port`: `number` ; `ticker`: `string`  }\>
+`Promise`\<\{ `addrs`: `NetAddress`[]; `node`: `string`; `port`: `number`; `ticker`: `string`; \}\>
 
-#### Defined in
+***
 
-[src/spv.ts:637](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L637)
+### getTip()
 
-___
+> **getTip**(): `object`
 
-### getTip
-
-▸ **getTip**(): `Object`
+Defined in: [src/spv.ts:644](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L644)
 
 #### Returns
 
-`Object`
+`object`
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` |
-| `height` | `number` |
+##### hash
 
-#### Defined in
+> **hash**: `string`
 
-[src/spv.ts:629](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L629)
+##### height
 
-___
+> **height**: `number`
 
-### isConnected
+***
 
-▸ **isConnected**(): `boolean`
+### isConnected()
+
+> **isConnected**(): `boolean`
+
+Defined in: [src/spv.ts:635](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L635)
 
 #### Returns
 
 `boolean`
 
-#### Defined in
+***
 
-[src/spv.ts:620](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L620)
+### listenerCount()
 
-___
+> **listenerCount**\<`E`\>(`event`): `number`
 
-### listenerCount
+Defined in: [src/types/TypedEventEmitter.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L45)
 
-▸ **listenerCount**<`E`\>(`event`): `number`
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
+##### event
+
+`E`
 
 #### Returns
 
@@ -766,388 +642,382 @@ ___
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).listenerCount
+`(EventEmitter as new () => SpvEmitter).listenerCount`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L45)
+### listeners()
 
-___
+> **listeners**\<`E`\>(`event`): [`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\][]
 
-### listeners
+Defined in: [src/types/TypedEventEmitter.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L44)
 
-▸ **listeners**<`E`\>(`event`): `SpvEvents`[`E`][]
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
+##### event
+
+`E`
 
 #### Returns
 
-`SpvEvents`[`E`][]
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\][]
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).listeners
+`(EventEmitter as new () => SpvEmitter).listeners`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L44)
+### off()
 
-___
+> **off**\<`E`\>(`event`, `listener`): `this`
 
-### off
+Defined in: [src/types/TypedEventEmitter.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L33)
 
-▸ **off**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).off
+`(EventEmitter as new () => SpvEmitter).off`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L33)
+### on()
 
-___
+> **on**\<`E`\>(`event`, `listener`): `this`
 
-### on
+Defined in: [src/types/TypedEventEmitter.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L25)
 
-▸ **on**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).on
+`(EventEmitter as new () => SpvEmitter).on`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L25)
+### once()
 
-___
+> **once**\<`E`\>(`event`, `listener`): `this`
 
-### once
+Defined in: [src/types/TypedEventEmitter.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L26)
 
-▸ **once**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).once
+`(EventEmitter as new () => SpvEmitter).once`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L26)
+### prependListener()
 
-___
+> **prependListener**\<`E`\>(`event`, `listener`): `this`
 
-### prependListener
+Defined in: [src/types/TypedEventEmitter.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L27)
 
-▸ **prependListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).prependListener
+`(EventEmitter as new () => SpvEmitter).prependListener`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L27)
+### prependOnceListener()
 
-___
+> **prependOnceListener**\<`E`\>(`event`, `listener`): `this`
 
-### prependOnceListener
+Defined in: [src/types/TypedEventEmitter.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L28)
 
-▸ **prependOnceListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).prependOnceListener
+`(EventEmitter as new () => SpvEmitter).prependOnceListener`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L28)
+### rawListeners()
 
-___
+> **rawListeners**\<`E`\>(`event`): [`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\][]
 
-### rawListeners
+Defined in: [src/types/TypedEventEmitter.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L43)
 
-▸ **rawListeners**<`E`\>(`event`): `SpvEvents`[`E`][]
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
+##### event
+
+`E`
 
 #### Returns
 
-`SpvEvents`[`E`][]
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\][]
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).rawListeners
+`(EventEmitter as new () => SpvEmitter).rawListeners`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L43)
+### readBlock()
 
-___
+> **readBlock**(`__namedParameters`, `callback`): `Promise`\<`boolean`\>
 
-### readBlock
-
-▸ **readBlock**(`«destructured»`, `callback`): `Promise`<`boolean`\>
+Defined in: [src/spv.ts:693](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L693)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `hash` | `string` |
-| › `height` | `number` |
-| › `highWaterMark?` | `number` |
-| `callback` | (`params`: `any`) => `Promise`<`void`\> |
+##### \_\_namedParameters
+
+###### hash
+
+`string`
+
+###### height
+
+`number`
+
+###### highWaterMark?
+
+`number`
+
+##### callback
+
+(`params`) => `Promise`\<`void`\>
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/spv.ts:678](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L678)
+### removeAllListeners()
 
-___
+> **removeAllListeners**\<`E`\>(`event?`): `this`
 
-### removeAllListeners
+Defined in: [src/types/TypedEventEmitter.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L34)
 
-▸ **removeAllListeners**<`E`\>(`event?`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event?` | `E` |
+##### event?
+
+`E`
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).removeAllListeners
+`(EventEmitter as new () => SpvEmitter).removeAllListeners`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L34)
+### removeListener()
 
-___
+> **removeListener**\<`E`\>(`event`, `listener`): `this`
 
-### removeListener
+Defined in: [src/types/TypedEventEmitter.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L35)
 
-▸ **removeListener**<`E`\>(`event`, `listener`): [`Spv`](Spv.md)
+#### Type Parameters
 
-#### Type parameters
+##### E
 
-| Name | Type |
-| :------ | :------ |
-| `E` | extends keyof `SpvEvents` |
+`E` *extends* keyof [`SpvEvents`](../type-aliases/SpvEvents.md)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `event` | `E` |
-| `listener` | `SpvEvents`[`E`] |
+##### event
+
+`E`
+
+##### listener
+
+[`SpvEvents`](../type-aliases/SpvEvents.md)\[`E`\]
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).removeListener
+`(EventEmitter as new () => SpvEmitter).removeListener`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L35)
+### setMaxListeners()
 
-___
+> **setMaxListeners**(`maxListeners`): `this`
 
-### setMaxListeners
-
-▸ **setMaxListeners**(`maxListeners`): [`Spv`](Spv.md)
+Defined in: [src/types/TypedEventEmitter.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L48)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `maxListeners` | `number` |
+##### maxListeners
+
+`number`
 
 #### Returns
 
-[`Spv`](Spv.md)
+`this`
 
 #### Inherited from
 
-(EventEmitter as new () =\> SpvEmitter).setMaxListeners
+`(EventEmitter as new () => SpvEmitter).setMaxListeners`
 
-#### Defined in
+***
 
-[src/types/TypedEventEmitter.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/TypedEventEmitter.ts#L48)
+### syncBlocks()
 
-___
+> **syncBlocks**(): `Promise`\<`number`\>
 
-### syncBlocks
-
-▸ **syncBlocks**(): `Promise`<`number`\>
+Defined in: [src/spv.ts:713](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L713)
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
-#### Defined in
+***
 
-[src/spv.ts:698](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L698)
+### syncHeaders()
 
-___
+> **syncHeaders**(): `Promise`\<`number`\>
 
-### syncHeaders
-
-▸ **syncHeaders**(): `Promise`<`number`\>
+Defined in: [src/spv.ts:174](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L174)
 
 #### Returns
 
-`Promise`<`number`\>
+`Promise`\<`number`\>
 
-#### Defined in
+***
 
-[src/spv.ts:168](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L168)
+### updateId()
 
-___
+> **updateId**(): `void`
 
-### updateId
-
-▸ **updateId**(): `void`
+Defined in: [src/spv.ts:139](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L139)
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/spv.ts:133](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L133)
+### warningPruneBlocks()
 
-___
+> **warningPruneBlocks**(): `Promise`\<`number`\>
 
-### warningPruneBlocks
-
-▸ **warningPruneBlocks**(): `Promise`<`number`\>
+Defined in: [src/spv.ts:745](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L745)
 
 #### Returns
 
-`Promise`<`number`\>
-
-#### Defined in
-
-[src/spv.ts:730](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L730)
+`Promise`\<`number`\>

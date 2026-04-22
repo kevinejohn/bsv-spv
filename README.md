@@ -25,7 +25,7 @@ const cluster = require("cluster");
 const port = 8080; // Server that new blocks nad mempool txs are announced on
 
 const config = {
-  ticker: "BSV", // BTC, BCH, XEC, BSV
+  ticker: "BSV", // BTC, BCH, BSV
   nodes: [`95.217.197.54:8333`], // Set to your favorite node IP addresses. Will ask for other peers after connected
   // enableIpv6: true, // Connect to ipv6 nodes
   forceUserAgent: `Bitcoin SV`, // Disconnects with nodes that do not string match with user agent
@@ -135,27 +135,37 @@ invalidBlocks = [
 invalidBlocks = [
   "00000000000000000019f112ec0a9982926f1258cdcc558dd7c3b7e5dc7fa148", // BTC fork 478559
   "000000000000000001d956714215d96ffc00e0afda4cd0a96c96f8d802b1662b", // BSV fork 556767
-  "000000000000000004284c9d8b2c8ff731efeaec6be50729bdc9bd07f910757d", // XEC fork 661648
-];
-
-// Use XEC only
-invalidBlocks = [
-  "00000000000000000019f112ec0a9982926f1258cdcc558dd7c3b7e5dc7fa148", // BTC fork 478559
-  "000000000000000001d956714215d96ffc00e0afda4cd0a96c96f8d802b1662b", // BSV fork 556767
-  "0000000000000000029e471c41818d24b8b74c911071c4ef0b4a0509f9b5a8ce", // BCH fork 661648
 ];
 ```
 
 ## Tests
 
 ```sh
-ts-node ./tests/cluster.js
+npm test
+```
+
+Live network smoke tests can be run individually:
+
+```sh
+npm run test-live
 ```
 
 ```sh
-ts-node ./tests/listener.js
+npm run test-live:btc
 ```
 
 ```sh
-ts-node ./tests/server.js
+npm run test-live:bch
+```
+
+```sh
+npm run test-live:bsv
+```
+
+```sh
+npm run test-listener
+```
+
+```sh
+npm run test-server
 ```

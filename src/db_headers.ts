@@ -57,11 +57,13 @@ export default class DbHeaders {
   }
 
   getHeader(hash: string | Buffer): bsv.Header {
+    const hashString = Buffer.isBuffer(hash) ? hash.toString("hex") : hash;
     if (!Buffer.isBuffer(hash)) hash = Buffer.from(hash, "hex");
-    if (hash.toString("hex") === this.headers.genesis) {
-      return this.headers.genesisHeader;
-    }
     const buf = this.dbi_headers.getBinary(hash);
+    if (!buf) {
+      const header = this.headers.getHeader({ hash: hashString });
+      if (header) return header;
+    }
     if (!buf) throw Error(`Missing header: ${hash.toString("hex")}`);
     const header = bsv.Header.fromBuffer(buf);
     return header;

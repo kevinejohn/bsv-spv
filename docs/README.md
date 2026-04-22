@@ -1,10 +1,10 @@
-bsv-spv
+**bsv-spv**
+
+***
 
 # bsv-spv
 
-## Table of contents
-
-### Classes
+## Classes
 
 - [DbBlocks](classes/DbBlocks.md)
 - [DbHeaders](classes/DbHeaders.md)
@@ -17,8 +17,14 @@ bsv-spv
 - [Spv](classes/Spv.md)
 - [Worker](classes/Worker.md)
 
-### Interfaces
+## Interfaces
 
+- [DbListenerBlockOptions](interfaces/DbListenerBlockOptions.md)
 - [ListenerOptions](interfaces/ListenerOptions.md)
 - [MasterOptions](interfaces/MasterOptions.md)
 - [SpvOptions](interfaces/SpvOptions.md)
+
+## Type Aliases
+
+- [SpvEvents](type-aliases/SpvEvents.md)
+- [SupportedTicker](type-aliases/SupportedTicker.md)

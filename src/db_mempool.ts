@@ -1,15 +1,14 @@
 import * as bsv from "bsv-minimal";
 import levelup, { LevelUp } from "levelup";
-import { AbstractBatch } from "abstract-leveldown";
 import rocksdb from "rocksdb";
 import fs from "fs";
 
 export default class DbMempool {
   db: LevelUp;
   txs: { [key: string]: Buffer };
-  batch: AbstractBatch[];
-  intervalBatch?: NodeJS.Timer;
-  intervalPrune?: NodeJS.Timer;
+  batch: { type: "put"; key: Buffer; value: Buffer }[];
+  intervalBatch?: NodeJS.Timeout;
+  intervalPrune?: NodeJS.Timeout;
   pruneAfter: number;
 
   constructor({
@@ -29,10 +28,18 @@ export default class DbMempool {
     this.txs = {};
   }
 
-  close() {
-    try {
-      this.db.close();
-    } catch (err) {}
+  async close() {
+    clearInterval(this.intervalBatch);
+    clearInterval(this.intervalPrune);
+    this.intervalBatch = undefined;
+    this.intervalPrune = undefined;
+    await this.saveTxs();
+    await new Promise<void>((resolve, reject) => {
+      this.db.close((err: any) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
   }
 
   saveTx(tx: bsv.Transaction) {
@@ -87,16 +94,18 @@ export default class DbMempool {
     return new Promise((resolve, reject) => {
       try {
         const txids: Buffer[] = [];
+        const hasOlderThan = typeof olderThan === "number";
+        const hasNewerThan = typeof newerThan === "number";
         const stream = this.db.createReadStream({ keys: true, values: true });
         stream.on("data", ({ key, value }: { key: Buffer; value: Buffer }) => {
           const br = new bsv.utils.BufferReader(value);
           const time = br.readVarintNum();
-          if (olderThan && newerThan && time < olderThan && time > newerThan) {
-            txids.push(key);
-          } else if (olderThan && time < olderThan) {
-            txids.push(key);
-          } else if (newerThan && time > newerThan) {
-            txids.push(key);
+          if (hasOlderThan && hasNewerThan) {
+            if (time < olderThan && time > newerThan) txids.push(key);
+          } else if (hasOlderThan) {
+            if (time < olderThan) txids.push(key);
+          } else if (hasNewerThan) {
+            if (time > newerThan) txids.push(key);
           } else {
             txids.push(key);
           }

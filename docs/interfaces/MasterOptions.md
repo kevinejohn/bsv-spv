@@ -1,206 +1,153 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / MasterOptions
 
 # Interface: MasterOptions
 
-## Table of contents
-
-### Properties
-
-- [DEBUG\_LOG](MasterOptions.md#debug_log)
-- [DEBUG\_MEMORY](MasterOptions.md#debug_memory)
-- [blockHeight](MasterOptions.md#blockheight)
-- [blocks](MasterOptions.md#blocks)
-- [dataDir](MasterOptions.md#datadir)
-- [enableIpv6](MasterOptions.md#enableipv6)
-- [forceUserAgent](MasterOptions.md#forceuseragent)
-- [genesisHeader](MasterOptions.md#genesisheader)
-- [invalidBlocks](MasterOptions.md#invalidblocks)
-- [magic](MasterOptions.md#magic)
-- [mempool](MasterOptions.md#mempool)
-- [nodes](MasterOptions.md#nodes)
-- [pruneBlocks](MasterOptions.md#pruneblocks)
-- [seedNodesOnly](MasterOptions.md#seednodesonly)
-- [ticker](MasterOptions.md#ticker)
-- [user\_agent](MasterOptions.md#user_agent)
-- [validate](MasterOptions.md#validate)
-- [version](MasterOptions.md#version)
+Defined in: [src/cluster\_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
 
 ## Properties
 
-### DEBUG\_LOG
-
-• `Optional` **DEBUG\_LOG**: `boolean`
-
-#### Defined in
-
-[src/cluster_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
-
-___
-
-### DEBUG\_MEMORY
-
-• `Optional` **DEBUG\_MEMORY**: `boolean`
-
-#### Defined in
-
-[src/cluster_master.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L35)
-
-___
-
 ### blockHeight
 
-• **blockHeight**: `number`
+> **blockHeight**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L41)
 
-[src/cluster_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
-
-___
+***
 
 ### blocks
 
-• **blocks**: `number`
+> **blocks**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L31)
 
-[src/cluster_master.ts:23](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L23)
-
-___
+***
 
 ### dataDir
 
-• **dataDir**: `string`
+> **dataDir**: `string`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L39)
 
-[src/cluster_master.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L31)
+***
 
-___
+### DEBUG\_LOG?
 
-### enableIpv6
+> `optional` **DEBUG\_LOG?**: `boolean`
 
-• `Optional` **enableIpv6**: `boolean`
+Defined in: [src/cluster\_master.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L42)
 
-#### Defined in
+***
 
-[src/cluster_master.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L21)
+### DEBUG\_MEMORY?
 
-___
+> `optional` **DEBUG\_MEMORY?**: `boolean`
 
-### forceUserAgent
+Defined in: [src/cluster\_master.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L43)
 
-• `Optional` **forceUserAgent**: `string`
+***
 
-#### Defined in
+### enableIpv6?
 
-[src/cluster_master.ts:25](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L25)
+> `optional` **enableIpv6?**: `boolean`
 
-___
+Defined in: [src/cluster\_master.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L29)
 
-### genesisHeader
+***
 
-• `Optional` **genesisHeader**: `string`
+### forceUserAgent?
 
-#### Defined in
+> `optional` **forceUserAgent?**: `string`
 
-[src/cluster_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
+Defined in: [src/cluster\_master.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L33)
 
-___
+***
 
-### invalidBlocks
+### genesisHeader?
 
-• `Optional` **invalidBlocks**: `string`[]
+> `optional` **genesisHeader?**: `string`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L36)
 
-[src/cluster_master.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L30)
+***
 
-___
+### invalidBlocks?
 
-### magic
+> `optional` **invalidBlocks?**: `string`[]
 
-• `Optional` **magic**: `string`
+Defined in: [src/cluster\_master.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L38)
 
-#### Defined in
+***
 
-[src/cluster_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
+### magic?
 
-___
+> `optional` **magic?**: `string`
+
+Defined in: [src/cluster\_master.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L35)
+
+***
 
 ### mempool
 
-• **mempool**: `number`
+> **mempool**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:30](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L30)
 
-[src/cluster_master.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L22)
-
-___
+***
 
 ### nodes
 
-• **nodes**: `string`[]
+> **nodes**: `string`[]
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
 
-[src/cluster_master.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L19)
-
-___
+***
 
 ### pruneBlocks
 
-• **pruneBlocks**: `number`
+> **pruneBlocks**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L40)
 
-[src/cluster_master.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L32)
+***
 
-___
+### seedNodesOnly?
 
-### seedNodesOnly
+> `optional` **seedNodesOnly?**: `boolean`
 
-• `Optional` **seedNodesOnly**: `boolean`
+Defined in: [src/cluster\_master.ts:28](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L28)
 
-#### Defined in
-
-[src/cluster_master.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L20)
-
-___
+***
 
 ### ticker
 
-• **ticker**: `string`
+> **ticker**: `ChainTicker`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
 
-[src/cluster_master.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L18)
+***
 
-___
+### user\_agent?
 
-### user\_agent
+> `optional` **user\_agent?**: `string`
 
-• `Optional` **user\_agent**: `string`
+Defined in: [src/cluster\_master.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L34)
 
-#### Defined in
+***
 
-[src/cluster_master.ts:26](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L26)
+### validate?
 
-___
+> `optional` **validate?**: `boolean`
 
-### validate
+Defined in: [src/cluster\_master.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L32)
 
-• `Optional` **validate**: `boolean`
+***
 
-#### Defined in
+### version?
 
-[src/cluster_master.ts:24](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L24)
+> `optional` **version?**: `number`
 
-___
-
-### version
-
-• `Optional` **version**: `number`
-
-#### Defined in
-
-[src/cluster_master.ts:29](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L29)
+Defined in: [src/cluster\_master.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L37)

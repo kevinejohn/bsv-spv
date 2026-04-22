@@ -229,17 +229,21 @@ export default class DbBlocks {
   }
 
   async delBlock(hash: string | Buffer) {
-    let dir;
     hash = hash.toString("hex");
+    const blockHash = hash.split(".")[0];
+    let dir;
     if (hash.split(".").length > 1) {
       dir = path.join(this.blocksDir, hash);
     } else {
       dir = path.join(this.blocksDir, `${hash}.bin`);
     }
-    await fs.promises.unlink(dir);
-    hash = hash.split(".")[0];
-    if (this.blockExists(hash)) {
-      await this.dbi_blocks.remove(Buffer.from(hash, "hex"));
+    try {
+      await fs.promises.unlink(dir);
+    } catch (err: any) {
+      if (err?.code !== "ENOENT") throw err;
+    }
+    if (this.blockExists(blockHash)) {
+      await this.dbi_blocks.remove(Buffer.from(blockHash, "hex"));
     }
   }
 

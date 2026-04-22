@@ -1,161 +1,137 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / DbHeaders
 
 # Class: DbHeaders
 
-## Table of contents
-
-### Constructors
-
-- [constructor](DbHeaders.md#constructor)
-
-### Properties
-
-- [dbi\_headers](DbHeaders.md#dbi_headers)
-- [dbi\_root](DbHeaders.md#dbi_root)
-- [env](DbHeaders.md#env)
-- [headers](DbHeaders.md#headers)
-- [headersDir](DbHeaders.md#headersdir)
-
-### Methods
-
-- [close](DbHeaders.md#close)
-- [getHeader](DbHeaders.md#getheader)
-- [loadHeaders](DbHeaders.md#loadheaders)
-- [saveHeaders](DbHeaders.md#saveheaders)
+Defined in: [src/db\_headers.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L6)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new DbHeaders**(`«destructured»`)
+> **new DbHeaders**(`__namedParameters`): `DbHeaders`
+
+Defined in: [src/db\_headers.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L13)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `headers` | `any` |
-| › `headersDir` | `string` |
-| › `readOnly?` | `boolean` |
+##### \_\_namedParameters
 
-#### Defined in
+###### headers
 
-[src/db_headers.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L13)
+`any`
+
+###### headersDir
+
+`string`
+
+###### readOnly?
+
+`boolean` = `true`
+
+#### Returns
+
+`DbHeaders`
 
 ## Properties
 
 ### dbi\_headers
 
-• **dbi\_headers**: `Database`<`Buffer`, `Key`\>
+> **dbi\_headers**: `Database`\<`Buffer`\<`ArrayBufferLike`\>\>
 
-#### Defined in
+Defined in: [src/db\_headers.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L10)
 
-[src/db_headers.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L10)
-
-___
+***
 
 ### dbi\_root
 
-• **dbi\_root**: `RootDatabase`<`any`, `Key`\>
+> **dbi\_root**: `RootDatabase`
 
-#### Defined in
+Defined in: [src/db\_headers.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L9)
 
-[src/db_headers.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L9)
-
-___
+***
 
 ### env
 
-• **env**: `any`
+> **env**: `any`
 
-#### Defined in
+Defined in: [src/db\_headers.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L8)
 
-[src/db_headers.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L8)
-
-___
+***
 
 ### headers
 
-• **headers**: `default`
+> **headers**: `Headers`
 
-#### Defined in
+Defined in: [src/db\_headers.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L7)
 
-[src/db_headers.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L7)
-
-___
+***
 
 ### headersDir
 
-• **headersDir**: `string`
+> **headersDir**: `string`
 
-#### Defined in
-
-[src/db_headers.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L11)
+Defined in: [src/db\_headers.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L11)
 
 ## Methods
 
-### close
+### close()
 
-▸ **close**(): `Promise`<`void`\>
+> **close**(): `Promise`\<`void`\>
+
+Defined in: [src/db\_headers.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L37)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/db_headers.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L37)
+### getHeader()
 
-___
+> **getHeader**(`hash`): `Header`
 
-### getHeader
-
-▸ **getHeader**(`hash`): `default`
+Defined in: [src/db\_headers.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L59)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` \| `Buffer` |
+##### hash
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
 
 #### Returns
 
-`default`
+`Header`
 
-#### Defined in
+***
 
-[src/db_headers.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L59)
+### loadHeaders()
 
-___
+> **loadHeaders**(): `void`
 
-### loadHeaders
-
-▸ **loadHeaders**(): `void`
+Defined in: [src/db\_headers.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L72)
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/db_headers.ts:70](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L70)
+### saveHeaders()
 
-___
+> **saveHeaders**(`headerArray`): `Promise`\<`Buffer`\<`ArrayBufferLike`\>[]\>
 
-### saveHeaders
-
-▸ **saveHeaders**(`headerArray`): `Promise`<`Buffer`[]\>
+Defined in: [src/db\_headers.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L46)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `headerArray` | `default`[] |
+##### headerArray
+
+`Header`[]
 
 #### Returns
 
-`Promise`<`Buffer`[]\>
-
-#### Defined in
-
-[src/db_headers.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_headers.ts#L46)
+`Promise`\<`Buffer`\<`ArrayBufferLike`\>[]\>

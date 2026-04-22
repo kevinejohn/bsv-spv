@@ -1,78 +1,127 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / Worker
 
 # Class: Worker
 
-## Table of contents
-
-### Constructors
-
-- [constructor](Worker.md#constructor)
-
-### Properties
-
-- [spv](Worker.md#spv)
-
-### Methods
-
-- [sendToMaster](Worker.md#sendtomaster)
-- [start](Worker.md#start)
+Defined in: [src/cluster\_worker.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L12)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new Worker**()
+> **new Worker**(): `Worker`
 
-#### Defined in
+Defined in: [src/cluster\_worker.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L20)
 
-[src/cluster_worker.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L15)
+#### Returns
+
+`Worker`
 
 ## Properties
 
-### spv
+### blockInterval?
 
-• `Optional` **spv**: [`Spv`](Spv.md)
+> `optional` **blockInterval?**: `Timeout`
 
-#### Defined in
+Defined in: [src/cluster\_worker.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L15)
 
-[src/cluster_worker.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L13)
+***
+
+### memoryInterval?
+
+> `optional` **memoryInterval?**: `Timeout`
+
+Defined in: [src/cluster\_worker.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L16)
+
+***
+
+### resetInterval?
+
+> `optional` **resetInterval?**: `Timeout`
+
+Defined in: [src/cluster\_worker.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L17)
+
+***
+
+### shuttingDown
+
+> **shuttingDown**: `boolean`
+
+Defined in: [src/cluster\_worker.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L14)
+
+***
+
+### spv?
+
+> `optional` **spv?**: [`Spv`](Spv.md)
+
+Defined in: [src/cluster\_worker.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L13)
+
+***
+
+### statusInterval?
+
+> `optional` **statusInterval?**: `Timeout`
+
+Defined in: [src/cluster\_worker.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L18)
 
 ## Methods
 
-### sendToMaster
+### sendToMaster()
 
-▸ **sendToMaster**(`obj`): `void`
+> **sendToMaster**(`obj`): `void`
+
+Defined in: [src/cluster\_worker.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L46)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `obj` | `any` |
+##### obj
+
+`any`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/cluster_worker.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L36)
+### shutdown()
 
-___
+> **shutdown**(`exitCode?`, `reason?`): `Promise`\<`void`\>
 
-### start
-
-▸ **start**(`config`): `Promise`<`void`\>
+Defined in: [src/cluster\_worker.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L50)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `config` | [`SpvOptions`](../interfaces/SpvOptions.md) |
+##### exitCode?
+
+`number` = `0`
+
+##### reason?
+
+`string` = `"shutdown"`
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/cluster_worker.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L40)
+### start()
+
+> **start**(`config`): `Promise`\<`void`\>
+
+Defined in: [src/cluster\_worker.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L68)
+
+#### Parameters
+
+##### config
+
+[`SpvOptions`](../interfaces/SpvOptions.md)
+
+#### Returns
+
+`Promise`\<`void`\>

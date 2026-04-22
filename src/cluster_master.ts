@@ -5,6 +5,14 @@ import DbBlocks from "./db_blocks";
 import * as Helpers from "./helpers";
 import Net from "net";
 import path from "path";
+import { assertSupportedTicker, SupportedTicker } from "./tickers";
+
+type WorkerType = "block" | "mempool";
+type ManagedWorker = Worker & {
+  spvType?: WorkerType;
+  spvNode?: string;
+  spvKey?: string;
+};
 
 process.on("unhandledRejection", (reason, p) => {
   console.error(reason, "Master Unhandled Rejection at Promise", p);
@@ -15,7 +23,7 @@ process.on("uncaughtException", (err) => {
 });
 
 export interface MasterOptions {
-  ticker: string;
+  ticker: SupportedTicker;
   nodes: string[];
   seedNodesOnly?: boolean;
   enableIpv6?: boolean;
@@ -41,6 +49,7 @@ export default class Master {
   workers: { [key: string]: Worker };
   server?: Net.Server;
   db_nodes: DbNodes;
+  workerConfig: SpvOptions;
   queue_block_nodes: string[];
   queue_mempool_nodes: string[];
   block_nodes: Set<string>;
@@ -49,6 +58,8 @@ export default class Master {
   mempool: number;
   blocks: number;
   seedNodesOnly: boolean;
+  shuttingDown: boolean;
+  memoryInterval?: NodeJS.Timeout;
 
   constructor({
     ticker,
@@ -73,14 +84,11 @@ export default class Master {
     this.sockets = {};
     this.mempool_sockets = {};
     this.workers = {};
+    this.shuttingDown = false;
+    process.once("SIGINT", () => this.shutdown("SIGINT"));
+    process.once("SIGTERM", () => this.shutdown("SIGTERM"));
 
-    cluster.on("exit", (worker, code, signal) => {
-      console.error(
-        `master: Worker ${worker.id} exited with code: ${code}, signal: ${signal}`
-      );
-      process.exit(code); // TODO: Recover instead of shutting down
-    });
-
+    assertSupportedTicker(ticker);
     const nodesDir = path.join(dataDir, ticker, "nodes");
     this.db_nodes = new DbNodes({ nodesDir, enableIpv6, readOnly: false });
     this.seed_nodes = nodes;
@@ -118,87 +126,22 @@ export default class Master {
       DEBUG_LOG,
       DEBUG_MEMORY,
     };
+    this.workerConfig = workerConfig;
+
+    cluster.on("exit", (worker, code, signal) => {
+      this.onWorkerExit(worker as ManagedWorker, code, signal);
+    });
 
     for (let i = 0; i < blocks; i++) {
-      let node = this.getNextNode("block");
-      let worker = cluster.fork();
-      worker.on("message", async (data) => {
-        if (typeof data !== "string") return;
-        try {
-          const { command } = JSON.parse(data);
-          if (command === "send_new_node") {
-            const oldNode = node;
-            this.block_nodes.delete(node);
-            node = this.getNextNode("block");
-            this.block_nodes.add(node);
-            // await new Promise((r) => setTimeout(r, 100));
-            worker.send(
-              JSON.stringify({ command: "new_node", data: { node } })
-            );
-            console.log(
-              `master: #${worker.id} blocks-${oldNode} disconnected trying node: ${node}`
-            );
-            return;
-          }
-        } catch (err) {}
-        this.onMessage(data);
-      });
-      this.block_nodes.add(node);
-      worker.send(
-        `${JSON.stringify({
-          ...workerConfig,
-          uid: worker.id,
-          command: "init",
-          node,
-          blocks: true,
-        })}\n\n`
-      );
-      this.workers[`blocks-${node}`] = worker;
-      console.log(`master: Forked blocks-${node}`);
+      this.forkWorker("block");
     }
 
     for (let i = 0; i < mempool; i++) {
-      let node = this.getNextNode("mempool");
-      let worker = cluster.fork();
-      worker.on("message", async (data) => {
-        if (typeof data !== "string") return;
-        try {
-          const { command } = JSON.parse(data);
-          if (command === "mempool_tx") {
-            return this.onMempoolTxMessage(data);
-          } else if (command === "send_new_node") {
-            const oldNode = node;
-            this.mempool_nodes.delete(node);
-            node = this.getNextNode("mempool");
-            this.mempool_nodes.add(node);
-            // await new Promise((r) => setTimeout(r, 100));
-            worker.send(
-              JSON.stringify({ command: "new_node", data: { node } })
-            );
-            console.log(
-              `master: #${worker.id} mempool-${oldNode} disconnected trying node: ${node}`
-            );
-            return;
-          }
-        } catch (err) {}
-        this.onMessage(data);
-      });
-      this.mempool_nodes.add(node);
-      worker.send(
-        `${JSON.stringify({
-          ...workerConfig,
-          uid: worker.id,
-          command: "init",
-          node,
-          mempool: true,
-        })}\n\n`
-      );
-      this.workers[`mempool-${node}`] = worker;
-      console.log(`master: Forked mempool-${node}`);
+      this.forkWorker("mempool");
     }
 
     if (DEBUG_MEMORY) {
-      setInterval(() => {
+      this.memoryInterval = setInterval(() => {
         const m: any = process.memoryUsage();
         console.log(
           `master: Memory: ${Object.keys(m)
@@ -207,6 +150,94 @@ export default class Master {
         );
       }, 1000 * 60);
     }
+  }
+
+  private workerKey(type: WorkerType, node: string) {
+    return `${type === "block" ? "blocks" : "mempool"}-${node}`;
+  }
+
+  private unregisterWorker(worker: ManagedWorker) {
+    if (worker.spvKey && this.workers[worker.spvKey] === worker) {
+      delete this.workers[worker.spvKey];
+    } else {
+      for (const key in this.workers) {
+        if (this.workers[key] === worker) delete this.workers[key];
+      }
+    }
+    worker.spvKey = undefined;
+  }
+
+  private registerWorker(worker: ManagedWorker, type: WorkerType, node: string) {
+    this.unregisterWorker(worker);
+    const key = this.workerKey(type, node);
+    worker.spvType = type;
+    worker.spvNode = node;
+    worker.spvKey = key;
+    this.workers[key] = worker;
+  }
+
+  private onWorkerExit(
+    worker: ManagedWorker,
+    code: number | null,
+    signal: string | null
+  ) {
+    const { spvType: type, spvNode: node } = worker;
+    console.error(
+      `master: Worker ${worker.id} exited with code: ${code}, signal: ${signal}`
+    );
+    this.unregisterWorker(worker);
+    if (type === "block") {
+      if (node) this.block_nodes.delete(node);
+      if (!this.shuttingDown && !worker.exitedAfterDisconnect)
+        this.forkWorker("block");
+    } else if (type === "mempool") {
+      if (node) this.mempool_nodes.delete(node);
+      if (!this.shuttingDown && !worker.exitedAfterDisconnect)
+        this.forkWorker("mempool");
+    }
+  }
+
+  private forkWorker(type: WorkerType) {
+    const label = type === "block" ? "blocks" : "mempool";
+    const activeNodes =
+      type === "block" ? this.block_nodes : this.mempool_nodes;
+    let node = this.getNextNode(type);
+    const worker = cluster.fork() as ManagedWorker;
+    activeNodes.add(node);
+    this.registerWorker(worker, type, node);
+
+    worker.on("message", async (data) => {
+      if (typeof data !== "string") return;
+      try {
+        const { command } = JSON.parse(data);
+        if (type === "mempool" && command === "mempool_tx") {
+          return this.onMempoolTxMessage(data);
+        } else if (command === "send_new_node") {
+          const oldNode = node;
+          activeNodes.delete(node);
+          node = this.getNextNode(type);
+          activeNodes.add(node);
+          this.registerWorker(worker, type, node);
+          worker.send(JSON.stringify({ command: "new_node", data: { node } }));
+          console.log(
+            `master: #${worker.id} ${label}-${oldNode} disconnected trying node: ${node}`
+          );
+          return;
+        }
+      } catch (err) {}
+      this.onMessage(data);
+    });
+
+    const initConfig: any = {
+      ...this.workerConfig,
+      uid: worker.id,
+      command: "init",
+      node,
+    };
+    initConfig[type === "block" ? "blocks" : "mempool"] = true;
+    worker.send(`${JSON.stringify(initConfig)}\n\n`);
+    console.log(`master: Forked ${label}-${node}`);
+    return worker;
   }
 
   startServer({
@@ -375,5 +406,63 @@ export default class Master {
       node ||
       this.seed_nodes[Math.floor(Math.random() * this.seed_nodes.length)]
     );
+  }
+
+  async close() {
+    this.shuttingDown = true;
+    clearInterval(this.memoryInterval);
+    const workers = Object.values(this.workers);
+    const workerExits = workers.map(
+      (worker) =>
+        new Promise<void>((resolve) => {
+          if (worker.isDead()) return resolve();
+          worker.once("exit", () => resolve());
+        })
+    );
+    for (const worker of workers) {
+      try {
+        worker.send(`${JSON.stringify({ command: "shutdown" })}\n\n`);
+      } catch (err) {}
+    }
+    await Promise.race([
+      Promise.all(workerExits),
+      new Promise((resolve) => setTimeout(resolve, 1000 * 10)),
+    ]);
+    for (const worker of workers) {
+      if (!worker.isDead()) {
+        try {
+          worker.kill();
+        } catch (err) {}
+      }
+    }
+    for (const key in this.sockets) {
+      try {
+        this.sockets[key].end();
+      } catch (err) {}
+    }
+    for (const key in this.mempool_sockets) {
+      try {
+        this.mempool_sockets[key].end();
+      } catch (err) {}
+    }
+    await new Promise<void>((resolve, reject) => {
+      if (!this.server || !this.server.listening) return resolve();
+      this.server.close((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    await this.db_nodes.close();
+  }
+
+  private async shutdown(reason: string) {
+    console.log(`master: Shutting down from ${reason}...`);
+    try {
+      await this.close();
+      process.exit(0);
+    } catch (err) {
+      console.error(`master: Shutdown error`, err);
+      process.exit(1);
+    }
   }
 }

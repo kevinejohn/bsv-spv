@@ -1,103 +1,81 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / ListenerOptions
 
 # Interface: ListenerOptions
 
-## Table of contents
-
-### Properties
-
-- [DEBUG\_MEMORY](ListenerOptions.md#debug_memory)
-- [blockHeight](ListenerOptions.md#blockheight)
-- [dataDir](ListenerOptions.md#datadir)
-- [disableInterval](ListenerOptions.md#disableinterval)
-- [genesisHeader](ListenerOptions.md#genesisheader)
-- [multithread](ListenerOptions.md#multithread)
-- [name](ListenerOptions.md#name)
-- [ticker](ListenerOptions.md#ticker)
+Defined in: [src/listener.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L13)
 
 ## Properties
 
-### DEBUG\_MEMORY
-
-• `Optional` **DEBUG\_MEMORY**: `boolean`
-
-#### Defined in
-
-[src/listener.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L19)
-
-___
-
 ### blockHeight
 
-• **blockHeight**: `number`
+> **blockHeight**: `number`
 
-#### Defined in
+Defined in: [src/listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L15)
 
-[src/listener.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L14)
-
-___
+***
 
 ### dataDir
 
-• **dataDir**: `string`
+> **dataDir**: `string`
 
-#### Defined in
+Defined in: [src/listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L16)
 
-[src/listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L15)
+***
 
-___
+### DEBUG\_MEMORY?
 
-### disableInterval
+> `optional` **DEBUG\_MEMORY?**: `boolean`
 
-• `Optional` **disableInterval**: `boolean`
+Defined in: [src/listener.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L20)
 
-#### Defined in
+***
 
-[src/listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L18)
+### disableInterval?
 
-___
+> `optional` **disableInterval?**: `boolean`
 
-### genesisHeader
+Defined in: [src/listener.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L19)
 
-• `Optional` **genesisHeader**: `string`
+***
 
-#### Defined in
+### genesisHeader?
 
-[src/listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L17)
+> `optional` **genesisHeader?**: `string`
 
-___
+Defined in: [src/listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L18)
 
-### multithread
+***
 
-• `Optional` **multithread**: `Object`
+### multithread?
 
-#### Type declaration
+> `optional` **multithread?**: `object`
 
-| Name | Type |
-| :------ | :------ |
-| `index` | `number` |
-| `threads` | `number` |
+Defined in: [src/listener.ts:21](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L21)
 
-#### Defined in
+#### index
 
-[src/listener.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L20)
+> **index**: `number`
 
-___
+#### threads
+
+> **threads**: `number`
+
+***
 
 ### name
 
-• **name**: `string`
+> **name**: `string`
 
-#### Defined in
+Defined in: [src/listener.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L14)
 
-[src/listener.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L13)
-
-___
+***
 
 ### ticker
 
-• **ticker**: `string`
+> **ticker**: `ChainTicker`
 
-#### Defined in
-
-[src/listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L16)
+Defined in: [src/listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/listener.ts#L17)

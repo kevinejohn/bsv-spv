@@ -1,369 +1,339 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / DbBlocks
 
 # Class: DbBlocks
 
-## Table of contents
-
-### Constructors
-
-- [constructor](DbBlocks.md#constructor)
-
-### Properties
-
-- [blocksDir](DbBlocks.md#blocksdir)
-- [dbPath](DbBlocks.md#dbpath)
-- [dbi\_blocks](DbBlocks.md#dbi_blocks)
-- [dbi\_root](DbBlocks.md#dbi_root)
-- [writeDir](DbBlocks.md#writedir)
-- [writeStream](DbBlocks.md#writestream)
-
-### Methods
-
-- [blockExists](DbBlocks.md#blockexists)
-- [blockFileExists](DbBlocks.md#blockfileexists)
-- [close](DbBlocks.md#close)
-- [delBlock](DbBlocks.md#delblock)
-- [fileExists](DbBlocks.md#fileexists)
-- [getBlocks](DbBlocks.md#getblocks)
-- [getBlocksSync](DbBlocks.md#getblockssync)
-- [getSavedBlocks](DbBlocks.md#getsavedblocks)
-- [getSavedBlocksSync](DbBlocks.md#getsavedblockssync)
-- [getTx](DbBlocks.md#gettx)
-- [markBlockSaved](DbBlocks.md#markblocksaved)
-- [streamBlock](DbBlocks.md#streamblock)
-- [syncDb](DbBlocks.md#syncdb)
-- [writeBlockChunk](DbBlocks.md#writeblockchunk)
+Defined in: [src/db\_blocks.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L6)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new DbBlocks**(`«destructured»`)
+> **new DbBlocks**(`__namedParameters`): `DbBlocks`
+
+Defined in: [src/db\_blocks.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L14)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `blocksDir` | `string` |
-| › `readOnly?` | `boolean` |
+##### \_\_namedParameters
 
-#### Defined in
+###### blocksDir
 
-[src/db_blocks.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L14)
+`string`
+
+###### readOnly?
+
+`boolean` = `true`
+
+#### Returns
+
+`DbBlocks`
 
 ## Properties
 
 ### blocksDir
 
-• **blocksDir**: `string`
+> **blocksDir**: `string`
 
-#### Defined in
+Defined in: [src/db\_blocks.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L7)
 
-[src/db_blocks.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L7)
-
-___
-
-### dbPath
-
-• **dbPath**: `string`
-
-#### Defined in
-
-[src/db_blocks.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L12)
-
-___
+***
 
 ### dbi\_blocks
 
-• **dbi\_blocks**: `Database`<`Buffer`, `Key`\>
+> **dbi\_blocks**: `Database`\<`Buffer`\<`ArrayBufferLike`\>\>
 
-#### Defined in
+Defined in: [src/db\_blocks.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L10)
 
-[src/db_blocks.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L10)
-
-___
+***
 
 ### dbi\_root
 
-• **dbi\_root**: `RootDatabase`<`Buffer`, `Key`\>
+> **dbi\_root**: `RootDatabase`\<`Buffer`\<`ArrayBufferLike`\>\>
 
-#### Defined in
+Defined in: [src/db\_blocks.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L11)
 
-[src/db_blocks.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L11)
+***
 
-___
+### dbPath
 
-### writeDir
+> **dbPath**: `string`
 
-• `Optional` **writeDir**: `string`
+Defined in: [src/db\_blocks.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L12)
 
-#### Defined in
+***
 
-[src/db_blocks.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L8)
+### writeDir?
 
-___
+> `optional` **writeDir?**: `string`
 
-### writeStream
+Defined in: [src/db\_blocks.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L8)
 
-• `Optional` **writeStream**: `WriteStream`
+***
 
-#### Defined in
+### writeStream?
 
-[src/db_blocks.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L9)
+> `optional` **writeStream?**: `WriteStream`
+
+Defined in: [src/db\_blocks.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L9)
 
 ## Methods
 
-### blockExists
+### blockExists()
 
-▸ **blockExists**(`hash`): `boolean`
+> **blockExists**(`hash`): `boolean`
+
+Defined in: [src/db\_blocks.ts:250](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L250)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` |
+##### hash
+
+`string`
 
 #### Returns
 
 `boolean`
 
-#### Defined in
+***
 
-[src/db_blocks.ts:246](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L246)
+### blockFileExists()
 
-___
+> **blockFileExists**(`hash`): `Promise`\<`boolean`\>
 
-### blockFileExists
-
-▸ **blockFileExists**(`hash`): `Promise`<`boolean`\>
+Defined in: [src/db\_blocks.ts:254](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L254)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` |
+##### hash
+
+`string`
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:250](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L250)
+### close()
 
-___
+> **close**(): `Promise`\<`void`\>
 
-### close
-
-▸ **close**(): `Promise`<`void`\>
+Defined in: [src/db\_blocks.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L58)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L58)
+### delBlock()
 
-___
+> **delBlock**(`hash`): `Promise`\<`void`\>
 
-### delBlock
-
-▸ **delBlock**(`hash`): `Promise`<`void`\>
+Defined in: [src/db\_blocks.ts:231](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L231)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` \| `Buffer` |
+##### hash
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:231](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L231)
+### fileExists()
 
-___
+> **fileExists**(`dir`): `Promise`\<`boolean`\>
 
-### fileExists
-
-▸ **fileExists**(`dir`): `Promise`<`boolean`\>
+Defined in: [src/db\_blocks.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L98)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `dir` | `string` |
+##### dir
+
+`string`
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:98](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L98)
+### getBlocks()
 
-___
+> **getBlocks**(): `Promise`\<`string`[]\>
 
-### getBlocks
-
-▸ **getBlocks**(): `Promise`<`string`[]\>
+Defined in: [src/db\_blocks.ts:75](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L75)
 
 #### Returns
 
-`Promise`<`string`[]\>
+`Promise`\<`string`[]\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:75](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L75)
+### getBlocksSync()
 
-___
+> **getBlocksSync**(): `string`[]
 
-### getBlocksSync
-
-▸ **getBlocksSync**(): `string`[]
+Defined in: [src/db\_blocks.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L80)
 
 #### Returns
 
 `string`[]
 
-#### Defined in
+***
 
-[src/db_blocks.ts:80](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L80)
+### getSavedBlocks()
 
-___
+> **getSavedBlocks**(): `string`[]
 
-### getSavedBlocks
-
-▸ **getSavedBlocks**(): `string`[]
+Defined in: [src/db\_blocks.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L67)
 
 #### Returns
 
 `string`[]
 
-#### Defined in
+***
 
-[src/db_blocks.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L67)
+### getSavedBlocksSync()
 
-___
+> **getSavedBlocksSync**(): `Set`\<`string`\>
 
-### getSavedBlocksSync
-
-▸ **getSavedBlocksSync**(): `Set`<`string`\>
+Defined in: [src/db\_blocks.ts:85](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L85)
 
 #### Returns
 
-`Set`<`string`\>
+`Set`\<`string`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:85](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L85)
+### getTx()
 
-___
+> **getTx**(`__namedParameters`): `Promise`\<\{ `buffer`: `Buffer`\<`ArrayBuffer`\>; `bytesRead`: `number`; `tx`: `Transaction` \| `undefined`; \}\>
 
-### getTx
-
-▸ **getTx**(`«destructured»`): `Promise`<{ `buffer`: `Buffer` ; `bytesRead`: `number` ; `tx`: `undefined` \| `default`  }\>
+Defined in: [src/db\_blocks.ts:259](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L259)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `block` | `string` \| `Buffer` |
-| › `len` | `number` |
-| › `pos` | `number` |
-| › `txid?` | `string` \| `Buffer` |
+##### \_\_namedParameters
+
+###### block
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
+
+###### len
+
+`number` = `1000000`
+
+###### pos
+
+`number`
+
+###### txid?
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
 
 #### Returns
 
-`Promise`<{ `buffer`: `Buffer` ; `bytesRead`: `number` ; `tx`: `undefined` \| `default`  }\>
+`Promise`\<\{ `buffer`: `Buffer`\<`ArrayBuffer`\>; `bytesRead`: `number`; `tx`: `Transaction` \| `undefined`; \}\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:255](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L255)
+### markBlockSaved()
 
-___
+> **markBlockSaved**(`hash`): `Promise`\<`boolean`\> \| `undefined`
 
-### markBlockSaved
-
-▸ **markBlockSaved**(`hash`): `undefined` \| `Promise`<`boolean`\>
+Defined in: [src/db\_blocks.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L107)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `hash` | `string` |
+##### hash
+
+`string`
 
 #### Returns
 
-`undefined` \| `Promise`<`boolean`\>
+`Promise`\<`boolean`\> \| `undefined`
 
-#### Defined in
+***
 
-[src/db_blocks.ts:107](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L107)
+### streamBlock()
 
-___
+> **streamBlock**(`__namedParameters`, `callback`): `Promise`\<`boolean`\>
 
-### streamBlock
-
-▸ **streamBlock**(`«destructured»`, `callback`): `Promise`<`boolean`\>
+Defined in: [src/db\_blocks.ts:169](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L169)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `hash` | `string` \| `Buffer` |
-| › `height` | `number` |
-| › `highWaterMark?` | `number` |
-| `callback` | (`params`: `BlockStream`) => `any` |
+##### \_\_namedParameters
+
+###### hash
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
+
+###### height
+
+`number`
+
+###### highWaterMark?
+
+`number` = `...`
+
+##### callback
+
+(`params`) => `any`
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:169](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L169)
+### syncDb()
 
-___
+> **syncDb**(): `Promise`\<`void`\>
 
-### syncDb
-
-▸ **syncDb**(): `Promise`<`void`\>
+Defined in: [src/db\_blocks.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L40)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/db_blocks.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L40)
+### writeBlockChunk()
 
-___
+> **writeBlockChunk**(`__namedParameters`): `Promise`\<`unknown`\>
 
-### writeBlockChunk
-
-▸ **writeBlockChunk**(`«destructured»`): `Promise`<`unknown`\>
+Defined in: [src/db\_blocks.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L113)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `blockHash` | `Buffer` |
-| › `chunk` | `Buffer` |
-| › `finished` | `boolean` |
-| › `started` | `boolean` |
+##### \_\_namedParameters
+
+###### blockHash
+
+`Buffer`
+
+###### chunk
+
+`Buffer`
+
+###### finished
+
+`boolean`
+
+###### started
+
+`boolean`
 
 #### Returns
 
-`Promise`<`unknown`\>
-
-#### Defined in
-
-[src/db_blocks.ts:113](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_blocks.ts#L113)
+`Promise`\<`unknown`\>

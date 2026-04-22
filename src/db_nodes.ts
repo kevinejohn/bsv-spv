@@ -15,7 +15,7 @@ export default class DbNodes {
 
   constructor({
     nodesDir,
-    blacklistTime = (+new Date() - 1000 * 60 * 60 * 24) / 1000, // 24 hour blacklist
+    blacklistTime = 1000 * 60 * 60 * 24, // 24 hour blacklist
     enableIpv6 = false,
     readOnly = true,
   }: {
@@ -134,18 +134,23 @@ export default class DbNodes {
   isBlacklisted({ node, port }: { node: string; port?: number }): boolean {
     const url = this.formatUrl({ node, port });
     const date = this.dbi_blacklisted.get(url);
-    return typeof date === "number" && date > this.blacklistTime;
+    return typeof date === "number" && date > this.getBlacklistCutoff();
   }
 
   getBlacklistedNodes() {
     const nodes = [];
+    const blacklistCutoff = this.getBlacklistCutoff();
     for (const { key: url, value: date } of this.dbi_blacklisted.getRange()) {
       if (typeof url !== "string" || typeof date !== "number") continue;
-      if (date > this.blacklistTime) {
+      if (date > blacklistCutoff) {
         if (this.enableIpv6 || url.split(":").length === 2) nodes.push(url);
       }
     }
     return nodes;
+  }
+
+  getBlacklistCutoff() {
+    return Math.round((+new Date() - this.blacklistTime) / 1000);
   }
 
   getConnectedNodes() {

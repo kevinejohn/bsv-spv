@@ -1,7 +1,5 @@
 import { Header, Transaction, TxIndex } from "bsv-minimal";
 import TypedEventEmitter from "./TypedEventEmitter";
-import { PeerEmitter } from "bsv-p2p/lib/types/PeerEmitter";
-import Peer from "bsv-p2p";
 import { VersionOptions } from "bsv-p2p/lib/messages/version";
 
 export type SpvEvents = {

@@ -1,287 +1,269 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / Master
 
 # Class: Master
 
-## Table of contents
-
-### Constructors
-
-- [constructor](Master.md#constructor)
-
-### Properties
-
-- [block\_nodes](Master.md#block_nodes)
-- [blocks](Master.md#blocks)
-- [db\_nodes](Master.md#db_nodes)
-- [mempool](Master.md#mempool)
-- [mempool\_nodes](Master.md#mempool_nodes)
-- [mempool\_sockets](Master.md#mempool_sockets)
-- [queue\_block\_nodes](Master.md#queue_block_nodes)
-- [queue\_mempool\_nodes](Master.md#queue_mempool_nodes)
-- [seedNodesOnly](Master.md#seednodesonly)
-- [seed\_nodes](Master.md#seed_nodes)
-- [server](Master.md#server)
-- [sockets](Master.md#sockets)
-- [workers](Master.md#workers)
-
-### Methods
-
-- [getNextNode](Master.md#getnextnode)
-- [getNodes](Master.md#getnodes)
-- [onMempoolTxMessage](Master.md#onmempooltxmessage)
-- [onMessage](Master.md#onmessage)
-- [startServer](Master.md#startserver)
+Defined in: [src/cluster\_master.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L46)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new Master**(`«destructured»`)
+> **new Master**(`__namedParameters`): `Master`
+
+Defined in: [src/cluster\_master.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L64)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | [`MasterOptions`](../interfaces/MasterOptions.md) |
+##### \_\_namedParameters
 
-#### Defined in
+[`MasterOptions`](../interfaces/MasterOptions.md)
 
-[src/cluster_master.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L53)
+#### Returns
+
+`Master`
 
 ## Properties
 
 ### block\_nodes
 
-• **block\_nodes**: `Set`<`string`\>
+> **block\_nodes**: `Set`\<`string`\>
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L55)
 
-[src/cluster_master.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L46)
-
-___
+***
 
 ### blocks
 
-• **blocks**: `number`
+> **blocks**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L59)
 
-[src/cluster_master.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L50)
-
-___
+***
 
 ### db\_nodes
 
-• **db\_nodes**: [`DbNodes`](DbNodes.md)
+> **db\_nodes**: [`DbNodes`](DbNodes.md)
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L51)
 
-[src/cluster_master.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L43)
+***
 
-___
+### memoryInterval?
+
+> `optional` **memoryInterval?**: `Timeout`
+
+Defined in: [src/cluster\_master.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L62)
+
+***
 
 ### mempool
 
-• **mempool**: `number`
+> **mempool**: `number`
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L58)
 
-[src/cluster_master.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L49)
-
-___
+***
 
 ### mempool\_nodes
 
-• **mempool\_nodes**: `Set`<`string`\>
+> **mempool\_nodes**: `Set`\<`string`\>
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L56)
 
-[src/cluster_master.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L47)
-
-___
+***
 
 ### mempool\_sockets
 
-• **mempool\_sockets**: `Object`
+> **mempool\_sockets**: `object`
 
-#### Index signature
+Defined in: [src/cluster\_master.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L48)
 
-▪ [key: `string`]: `Net.Socket`
+#### Index Signature
 
-#### Defined in
+\[`key`: `string`\]: `Socket`
 
-[src/cluster_master.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L40)
-
-___
+***
 
 ### queue\_block\_nodes
 
-• **queue\_block\_nodes**: `string`[]
+> **queue\_block\_nodes**: `string`[]
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L53)
 
-[src/cluster_master.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L44)
-
-___
+***
 
 ### queue\_mempool\_nodes
 
-• **queue\_mempool\_nodes**: `string`[]
+> **queue\_mempool\_nodes**: `string`[]
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L54)
 
-[src/cluster_master.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L45)
-
-___
-
-### seedNodesOnly
-
-• **seedNodesOnly**: `boolean`
-
-#### Defined in
-
-[src/cluster_master.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L51)
-
-___
+***
 
 ### seed\_nodes
 
-• **seed\_nodes**: `string`[]
+> **seed\_nodes**: `string`[]
 
-#### Defined in
+Defined in: [src/cluster\_master.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L57)
 
-[src/cluster_master.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L48)
+***
 
-___
+### seedNodesOnly
 
-### server
+> **seedNodesOnly**: `boolean`
 
-• `Optional` **server**: `Server`
+Defined in: [src/cluster\_master.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L60)
 
-#### Defined in
+***
 
-[src/cluster_master.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L42)
+### server?
 
-___
+> `optional` **server?**: `Server`
+
+Defined in: [src/cluster\_master.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L50)
+
+***
+
+### shuttingDown
+
+> **shuttingDown**: `boolean`
+
+Defined in: [src/cluster\_master.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L61)
+
+***
 
 ### sockets
 
-• **sockets**: `Object`
+> **sockets**: `object`
 
-#### Index signature
+Defined in: [src/cluster\_master.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L47)
 
-▪ [key: `string`]: `Net.Socket`
+#### Index Signature
 
-#### Defined in
+\[`key`: `string`\]: `Socket`
 
-[src/cluster_master.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L39)
+***
 
-___
+### workerConfig
+
+> **workerConfig**: [`SpvOptions`](../interfaces/SpvOptions.md)
+
+Defined in: [src/cluster\_master.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L52)
+
+***
 
 ### workers
 
-• **workers**: `Object`
+> **workers**: `object`
 
-#### Index signature
+Defined in: [src/cluster\_master.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L49)
 
-▪ [key: `string`]: `Worker`
+#### Index Signature
 
-#### Defined in
-
-[src/cluster_master.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L41)
+\[`key`: `string`\]: `Worker`
 
 ## Methods
 
-### getNextNode
+### close()
 
-▸ **getNextNode**(`type`): `string`
+> **close**(): `Promise`\<`void`\>
+
+Defined in: [src/cluster\_master.ts:411](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L411)
+
+#### Returns
+
+`Promise`\<`void`\>
+
+***
+
+### getNextNode()
+
+> **getNextNode**(`type`): `string`
+
+Defined in: [src/cluster\_master.ts:378](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L378)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `type` | ``"block"`` \| ``"mempool"`` |
+##### type
+
+`"block"` \| `"mempool"`
 
 #### Returns
 
 `string`
 
-#### Defined in
+***
 
-[src/cluster_master.ts:347](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L347)
+### getNodes()
 
-___
+> **getNodes**(): `string`[]
 
-### getNodes
-
-▸ **getNodes**(): `string`[]
+Defined in: [src/cluster\_master.ts:347](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L347)
 
 #### Returns
 
 `string`[]
 
-#### Defined in
+***
 
-[src/cluster_master.ts:316](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L316)
+### onMempoolTxMessage()
 
-___
+> **onMempoolTxMessage**(`data`): `void`
 
-### onMempoolTxMessage
-
-▸ **onMempoolTxMessage**(`data`): `void`
+Defined in: [src/cluster\_master.ts:336](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L336)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `any` |
+##### data
+
+`any`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/cluster_master.ts:305](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L305)
+### onMessage()
 
-___
+> **onMessage**(`data`): `void`
 
-### onMessage
-
-▸ **onMessage**(`data`): `void`
+Defined in: [src/cluster\_master.ts:324](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L324)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `data` | `any` |
+##### data
+
+`any`
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/cluster_master.ts:293](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L293)
+### startServer()
 
-___
+> **startServer**(`__namedParameters`): `void`
 
-### startServer
-
-▸ **startServer**(`«destructured»`): `void`
+Defined in: [src/cluster\_master.ts:243](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L243)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `host?` | `string` |
-| › `port` | `number` |
+##### \_\_namedParameters
+
+###### host?
+
+`string` = `"localhost"`
+
+###### port
+
+`number` = `8080`
 
 #### Returns
 
 `void`
-
-#### Defined in
-
-[src/cluster_master.ts:212](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L212)

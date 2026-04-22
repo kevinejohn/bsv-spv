@@ -8,12 +8,13 @@ import path from "path";
 import * as Helpers from "./helpers";
 import * as bsv from "bsv-minimal";
 import { SpvEmitter, SpvEvents } from "./types/SpvEmitter";
+import { assertSupportedTicker, SupportedTicker } from "./tickers";
 
 export interface ListenerOptions {
   name: string;
   blockHeight: number;
   dataDir: string;
-  ticker: string;
+  ticker: SupportedTicker;
   genesisHeader?: string;
   disableInterval?: boolean;
   DEBUG_MEMORY?: boolean;
@@ -44,6 +45,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
   txsSeen: number;
   txsSize: number;
   syncingBlocks: boolean;
+  closing: boolean;
 
   constructor({
     name, // Name of plugin
@@ -69,6 +71,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     }
     if (!name) throw Error(`Missing plugin name`);
     if (!ticker) throw Error(`Missing ticker!`);
+    assertSupportedTicker(ticker);
     if (!dataDir) throw Error(`Missing dataDir`);
     this.ticker = ticker;
     this.name = name;
@@ -81,6 +84,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     this.txsSeen = 0;
     this.txsSize = 0;
     this.syncingBlocks = false;
+    this.closing = false;
     this.multithread = multithread;
     const startDate = +new Date();
 
@@ -89,7 +93,10 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
     const listenerDir = path.join(dataDir, ticker, "listeners", name);
 
     console.log(`Loading headers from disk....`);
-    const headers = new Headers({ genesisHeader });
+    const headers = new Headers({
+      genesisHeader,
+      network: ticker,
+    });
     this.headers = headers;
     this.db_blocks = new DbBlocks({ blocksDir });
     this.db_headers = new DbHeaders({
@@ -109,6 +116,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
   }
 
   reconnect() {
+    if (this.closing) return;
     this.disconnect();
     this.reconnectTimeout = setTimeout(
       () => this.connect({ host: this.host, port: this.port }),
@@ -240,7 +248,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
       // console.error(
       //   `Disconnected! Reconnecting to ${host}:${port} ${this.reconnectTime} in seconds...`
       // );
-      this.reconnect();
+      if (!this.closing) this.reconnect();
     });
 
     client.on("error", (err) => {
@@ -248,7 +256,7 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
       //   `Socket error! Reconnecting in ${this.reconnectTime} seconds...`,
       //   err
       // );
-      this.reconnect();
+      if (!this.closing) this.reconnect();
     });
 
     if (!this.disableInterval) {
@@ -412,5 +420,15 @@ export default class Listener extends (EventEmitter as new () => SpvEmitter) {
       { hash, height, highWaterMark },
       callback
     );
+  }
+
+  async close() {
+    this.closing = true;
+    this.disconnect();
+    await Promise.all([
+      this.db_blocks.close(),
+      this.db_headers.close(),
+      this.db_listener.close(),
+    ]);
   }
 }

@@ -1,270 +1,231 @@
+[**bsv-spv**](../README.md)
+
+***
+
 [bsv-spv](../README.md) / DbListener
 
 # Class: DbListener
 
-## Table of contents
-
-### Constructors
-
-- [constructor](DbListener.md#constructor)
-
-### Properties
-
-- [dbi\_blocks](DbListener.md#dbi_blocks)
-- [dbi\_heights](DbListener.md#dbi_heights)
-- [dbi\_root](DbListener.md#dbi_root)
-- [listenerDir](DbListener.md#listenerdir)
-
-### Methods
-
-- [batchBlocksProcessed](DbListener.md#batchblocksprocessed)
-- [blocksProcessed](DbListener.md#blocksprocessed)
-- [close](DbListener.md#close)
-- [delBlocks](DbListener.md#delblocks)
-- [getBlockHash](DbListener.md#getblockhash)
-- [getBlockInfo](DbListener.md#getblockinfo)
-- [getHash](DbListener.md#gethash)
-- [getSize](DbListener.md#getsize)
-- [isProcessed](DbListener.md#isprocessed)
-- [markBlockProcessed](DbListener.md#markblockprocessed)
+Defined in: [src/db\_listener.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L14)
 
 ## Constructors
 
-### constructor
+### Constructor
 
-• **new DbListener**(`«destructured»`)
+> **new DbListener**(`__namedParameters`): `DbListener`
+
+Defined in: [src/db\_listener.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L20)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `Object` |
-| › `listenerDir` | `string` |
-| › `readOnly?` | `boolean` |
+##### \_\_namedParameters
 
-#### Defined in
+###### listenerDir
 
-[src/db_listener.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L20)
+`string`
+
+###### readOnly?
+
+`boolean` = `false`
+
+#### Returns
+
+`DbListener`
 
 ## Properties
 
 ### dbi\_blocks
 
-• **dbi\_blocks**: `Database`<`Buffer`, `Key`\>
+> **dbi\_blocks**: `Database`\<`Buffer`\<`ArrayBufferLike`\>\>
 
-#### Defined in
+Defined in: [src/db\_listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L16)
 
-[src/db_listener.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L16)
-
-___
+***
 
 ### dbi\_heights
 
-• **dbi\_heights**: `Database`<`Buffer`, `Key`\>
+> **dbi\_heights**: `Database`\<`Buffer`\<`ArrayBufferLike`\>\>
 
-#### Defined in
+Defined in: [src/db\_listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L17)
 
-[src/db_listener.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L17)
-
-___
+***
 
 ### dbi\_root
 
-• **dbi\_root**: `RootDatabase`<`any`, `Key`\>
+> **dbi\_root**: `RootDatabase`
 
-#### Defined in
+Defined in: [src/db\_listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L15)
 
-[src/db_listener.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L15)
-
-___
+***
 
 ### listenerDir
 
-• **listenerDir**: `string`
+> **listenerDir**: `string`
 
-#### Defined in
-
-[src/db_listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L18)
+Defined in: [src/db\_listener.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L18)
 
 ## Methods
 
-### batchBlocksProcessed
+### batchBlocksProcessed()
 
-▸ **batchBlocksProcessed**(`array`): `Promise`<`boolean`\>
+> **batchBlocksProcessed**(`array`): `Promise`\<`boolean`\>
+
+Defined in: [src/db\_listener.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L81)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `array` | `ListenerOptions`[] |
+##### array
+
+[`DbListenerBlockOptions`](../interfaces/DbListenerBlockOptions.md)[]
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/db_listener.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L81)
+### blocksProcessed()
 
-___
+> **blocksProcessed**(): `number`
 
-### blocksProcessed
-
-▸ **blocksProcessed**(): `number`
+Defined in: [src/db\_listener.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L99)
 
 #### Returns
 
 `number`
 
-#### Defined in
+***
 
-[src/db_listener.ts:99](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L99)
+### close()
 
-___
+> **close**(): `Promise`\<`void`\>
 
-### close
-
-▸ **close**(): `Promise`<`void`\>
+Defined in: [src/db\_listener.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L44)
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`\<`void`\>
 
-#### Defined in
+***
 
-[src/db_listener.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L44)
+### delBlocks()
 
-___
+> **delBlocks**(`from`, `to`): `Promise`\<`boolean`\>
 
-### delBlocks
-
-▸ **delBlocks**(`from`, `to`): `Promise`<`boolean`\>
+Defined in: [src/db\_listener.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L121)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `from` | `number` |
-| `to` | `number` |
+##### from
+
+`number`
+
+##### to
+
+`number`
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`\<`boolean`\>
 
-#### Defined in
+***
 
-[src/db_listener.ts:121](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L121)
+### getBlockHash()
 
-___
+> **getBlockHash**(`height`): `string`
 
-### getBlockHash
-
-▸ **getBlockHash**(`height`): `string`
+Defined in: [src/db\_listener.ts:115](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L115)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `height` | `number` |
+##### height
+
+`number`
 
 #### Returns
 
 `string`
 
-#### Defined in
+***
 
-[src/db_listener.ts:115](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L115)
+### getBlockInfo()
 
-___
+> **getBlockInfo**(`blockHash`): `any`
 
-### getBlockInfo
-
-▸ **getBlockInfo**(`blockHash`): `any`
+Defined in: [src/db\_listener.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L108)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `blockHash` | `string` \| `Buffer` |
+##### blockHash
+
+`string` \| `Buffer`\<`ArrayBufferLike`\>
 
 #### Returns
 
 `any`
 
-#### Defined in
+***
 
-[src/db_listener.ts:108](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L108)
+### getHash()
 
-___
+> **getHash**(`height`): `string`
 
-### getHash
-
-▸ **getHash**(`height`): `string`
+Defined in: [src/db\_listener.ts:102](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L102)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `height` | `number` |
+##### height
+
+`number`
 
 #### Returns
 
 `string`
 
-#### Defined in
+***
 
-[src/db_listener.ts:102](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L102)
+### getSize()
 
-___
+> **getSize**(): `void`
 
-### getSize
-
-▸ **getSize**(): `void`
+Defined in: [src/db\_listener.ts:128](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L128)
 
 #### Returns
 
 `void`
 
-#### Defined in
+***
 
-[src/db_listener.ts:128](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L128)
+### isProcessed()
 
-___
+> **isProcessed**(`height`): `boolean`
 
-### isProcessed
-
-▸ **isProcessed**(`height`): `boolean`
+Defined in: [src/db\_listener.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L96)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `height` | `number` |
+##### height
+
+`number`
 
 #### Returns
 
 `boolean`
 
-#### Defined in
+***
 
-[src/db_listener.ts:96](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L96)
+### markBlockProcessed()
 
-___
+> **markBlockProcessed**(`__namedParameters`): `Promise`\<\[`boolean`, `boolean`\]\>
 
-### markBlockProcessed
-
-▸ **markBlockProcessed**(`«destructured»`): `Promise`<[`boolean`, `boolean`]\>
+Defined in: [src/db\_listener.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L56)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `«destructured»` | `ListenerOptions` |
+##### \_\_namedParameters
+
+[`DbListenerBlockOptions`](../interfaces/DbListenerBlockOptions.md)
 
 #### Returns
 
-`Promise`<[`boolean`, `boolean`]\>
-
-#### Defined in
-
-[src/db_listener.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_listener.ts#L56)
+`Promise`\<\[`boolean`, `boolean`\]\>

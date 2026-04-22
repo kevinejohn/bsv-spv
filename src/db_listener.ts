@@ -1,7 +1,7 @@
 import * as lmdb from "lmdb";
 import fs from "fs";
 
-export interface ListenerOptions {
+export interface DbListenerBlockOptions {
   blockHash: string | Buffer;
   height: number;
   matches?: number;
@@ -61,7 +61,7 @@ export default class DbListener {
     txCount,
     size,
     timer,
-  }: ListenerOptions) {
+  }: DbListenerBlockOptions) {
     if (!Buffer.isBuffer(blockHash)) blockHash = Buffer.from(blockHash, "hex");
     const date = +new Date();
     const value = Buffer.from(
@@ -78,7 +78,7 @@ export default class DbListener {
     return Promise.all([this.dbi_heights.flushed, this.dbi_blocks.flushed]);
   }
 
-  batchBlocksProcessed(array: ListenerOptions[]): Promise<boolean> {
+  batchBlocksProcessed(array: DbListenerBlockOptions[]): Promise<boolean> {
     const date = +new Date();
     for (const obj of array) {
       let { blockHash, height, matches, errors, txCount, size, timer } = obj;

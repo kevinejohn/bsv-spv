@@ -1,20 +1,33 @@
 {
   "name": "bsv-spv",
-  "version": "1.0.8",
+  "version": "3.0.0",
   "description": "Stay in sync with latest bitcoin headers, blocks and mempool txs",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "files": [
+    "CHANGELOG.md",
     "lib",
     "src"
   ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "npm run test-cluster",
-    "test-cluster": "ts-node ./tests/cluster.ts",
-    "test-lister": "ts-node ./tests/lister.ts",
+    "test": "npm run build && npm run test-types && npm run test-unit",
+    "test-unit": "ts-node ./tests/regression.ts",
+    "test-types": "tsc --noEmit --ignoreConfig --target es2016 --module Node16 --moduleResolution node16 --esModuleInterop --strict --skipLibCheck tests/*.ts",
+    "test-cluster": "npm run test-live:bsv",
+    "test-live": "npm run test-live:bsv",
+    "test-live:bch": "ts-node ./tests/cluster_bch.ts",
+    "test-live:bsv": "ts-node ./tests/cluster_bsv.ts",
+    "test-live:btc": "ts-node ./tests/cluster_btc.ts",
+    "test-lister": "ts-node ./tests/listener.ts",
+    "test-listener": "ts-node ./tests/listener.ts",
+    "test-server": "ts-node ./tests/server.ts",
     "build": "tsc",
     "docs": "typedoc",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test"
   },
   "repository": {
     "type": "git",
@@ -28,25 +41,25 @@
     "headers"
   ],
   "dependencies": {
-    "bsv-headers": "^1.0.2",
-    "bsv-minimal": "^2.0.0",
-    "bsv-p2p": "^2.0.1",
-    "cors": "^2.8.5",
-    "express": "^4.18.2",
+    "bsv-headers": "^3.0.5",
+    "bsv-minimal": "^3.0.1",
+    "bsv-p2p": "^3.0.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
     "levelup": "^5.1.1",
-    "lmdb": "^2.7.11",
+    "lmdb": "^3.5.4",
     "rocksdb": "^5.2.1",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.20",
-    "@types/levelup": "^5.1.4",
-    "@types/node": "^20.8.9",
-    "@types/rocksdb": "^3.0.3",
-    "ts-node": "^10.9.1",
-    "typedoc": "^0.25.2",
-    "typedoc-plugin-markdown": "^3.16.0",
-    "typescript": "^5.2.2"
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/levelup": "^5.1.5",
+    "@types/node": "^25.6.0",
+    "@types/rocksdb": "^3.0.5",
+    "ts-node": "^10.9.2",
+    "typedoc": "^0.28.19",
+    "typedoc-plugin-markdown": "^4.11.0",
+    "typescript": "^6.0.3"
   }
 }

@@ -17,10 +17,10 @@ const onBlock = ({
   height,
   txCount,
   txRead,
-  transactions,
+  txs,
   startDate,
 }: BlockStream) => {
-  for (const [index, tx, pos, len] of transactions) {
+  for (const { index, tx } of txs) {
     console.log(`#${index} tx ${tx.getTxid()} in block ${height}`);
   }
 };

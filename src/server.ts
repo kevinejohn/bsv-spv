@@ -6,6 +6,7 @@ import * as bsv from "bsv-minimal";
 import DbMempool from "./db_mempool";
 import path from "path";
 import cors from "cors";
+import { SupportedTicker } from "./tickers";
 
 export default class Server extends Listener {
   app: Express;
@@ -25,7 +26,7 @@ export default class Server extends Listener {
     DEBUG_MEMORY = false,
   }: {
     name: string;
-    ticker: string;
+    ticker: SupportedTicker;
     dataDir: string;
     mempool?: boolean;
     genesisHeader?: string;
@@ -138,5 +139,17 @@ export default class Server extends Listener {
     this.server.listen(port, host, () => {
       console.log(`Tx server listening on ${host}:${port}`);
     });
+  }
+
+  async close() {
+    await new Promise<void>((resolve, reject) => {
+      if (!this.server.listening) return resolve();
+      this.server.close((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    if (this.db_mempool) await this.db_mempool.close();
+    await super.close();
   }
 }
