@@ -3,4 +3,5 @@ node_modules
 *.bin
 tests/data
 /lib
+*.tgz
 .DS_Store
