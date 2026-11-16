@@ -12,6 +12,17 @@
 
 - Regression coverage for the mempool backend swap: legacy RocksDB directory cleanup, preservation of unrelated files, and a guard asserting `rocksdb` is never loaded.
 
+### Security
+
+- Updated `express` to `^5.3.0`, clearing a critical `proxy-addr` IP-spoofing advisory, a high-severity `body-parser` denial of service, and a `qs` denial of service. These are runtime dependencies and were reachable through the tx server.
+- Pinned `brace-expansion` to `^5.0.13` through `overrides`, clearing seven denial-of-service advisories reachable via the docs toolchain.
+- Updated `lmdb` to `^3.5.10`, `typedoc` to `^0.28.20`, `typedoc-plugin-markdown` to `^4.14.1`, and `@types/node` to `^25.9.9`.
+
+### Known issues
+
+- `minimatch@10.2.6`, pulled in by `typedoc`, remains flagged for a moderate denial of service. It is only fixed in `minimatch@11`, which removed the `matchOne` API that `typedoc@0.28.20` still calls — forcing it breaks `npm run docs`. Development-only, blocked on an upstream typedoc release.
+- TypeScript 7 compiles this project, but `ts-node@10` cannot run it (`ts.sys` is absent from the native compiler). Adopting TypeScript 7 requires replacing `ts-node` with `tsx` across the test scripts.
+
 ## 3.0.0
 
 This release contains bug fixes, dependency upgrades, stronger test coverage, and runtime cleanup changes. Because it raises the minimum Node.js version, removes XEC support, updates several major dependencies, and changes header-network validation behavior, publish this as a major release unless consumers have already opted into these changes.
