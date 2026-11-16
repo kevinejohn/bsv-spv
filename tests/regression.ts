@@ -355,6 +355,37 @@ async function testMasterDoesNotRehandFailedHost() {
   });
 }
 
+// A peer store of 836k entries (BTC) overflowed the stack on queue refill when
+// the refill used push(...nodes). Guard the large-set path and the dequeue order.
+async function testGetNextNodeHandlesLargeNodeSets() {
+  await withTempDir("bsv-spv-largenodes-", async (dir) => {
+    const db = new DbNodes({ nodesDir: dir, readOnly: false });
+    const master = makeNodeMaster(db, ["127.0.0.1:8333"]);
+    const big = Array.from(
+      { length: 200000 },
+      (_, i) => `10.${(i >> 16) & 255}.${(i >> 8) & 255}.${i & 255}:8333`
+    );
+    master.getNodes = () => big;
+
+    const first = master.getNextNode("block");
+    assert.equal(
+      first.node,
+      big[0],
+      "dequeues in the same order the previous shift() produced"
+    );
+    assert.equal(
+      master.queue_block_nodes.length,
+      big.length - 1,
+      "whole node set is queued without overflowing"
+    );
+
+    const second = master.getNextNode("block");
+    assert.equal(second.node, big[1], "second dequeue continues the sequence");
+
+    await db.close();
+  });
+}
+
 async function testMasterPrefersHealthyHostDuringCooldown() {
   await withTempDir("bsv-spv-prefer-", async (dir) => {
     const db = new DbNodes({ nodesDir: dir, readOnly: false });
@@ -662,6 +693,7 @@ async function main() {
   testStableConnectionResetsFailureStreak();
   await testPingTimeoutDefersToNodeOwner();
   await testMasterDoesNotRehandFailedHost();
+  await testGetNextNodeHandlesLargeNodeSets();
   await testMasterPrefersHealthyHostDuringCooldown();
   testWorkerExitRestartsActiveWorkers();
   testWorkerExitDoesNotRestartIntentionalDisconnects();

@@ -491,11 +491,16 @@ export default class Master {
     for (let i = 0; i < maxTries; i++) {
       if (queue.length === 0) {
         const nodes = this.getNodes();
-        queue.push(...nodes);
+        // Push in reverse and pop, rather than push(...nodes) and shift.
+        // Spreading a large array into push() passes every element as an
+        // argument and overflows the stack once a peer store grows past
+        // ~125k entries; shift() is also O(n) on an array this size. This
+        // dequeue order is identical to the previous shift() behaviour.
+        for (let j = nodes.length - 1; j >= 0; j--) queue.push(nodes[j]);
         console.log(`master: Refilling ${label} queue`, queue.length);
         if (queue.length === 0) break;
       }
-      const node = queue.shift();
+      const node = queue.pop();
       if (!node) break;
       if (activeNodes.has(node)) continue;
       return { node, waitMs: 0 };

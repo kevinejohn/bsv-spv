@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.1.1
+
+### Fixed
+
+- `Master#getNextNode` no longer overflows the stack when refilling its node queue. 4.1.0 replaced a plain array assignment with `queue.push(...nodes)`, which passes every node as a separate argument and throws `RangeError: Maximum call stack size exceeded` once a peer store exceeds roughly 125k entries. Any long-running instance accumulates seen peers without bound, so this aborted startup for stores of that size — a BTC instance with 836k seen peers crashed on every launch. The queue is now filled with a loop.
+- `getNextNode` dequeues with `pop()` against a reverse-ordered push instead of `shift()`, which is O(n) on an array of this size. The dequeue order is unchanged.
+
 ## 4.1.0
 
 ### Added
