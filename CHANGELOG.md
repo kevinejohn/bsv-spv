@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- `DbMempool` now uses the bundled LMDB backend instead of RocksDB, matching `DbBlocks`, `DbHeaders`, `DbListener` and `DbNodes`. This drops `rocksdb`, `@types/rocksdb`, `levelup` and `@types/levelup` from the dependency tree, so installing `bsv-spv` no longer compiles RocksDB from source on platforms without a prebuilt binary.
+- `DbMempool` exposes `dbi_root` and `dbi_txs` instead of the former LevelUP `db` handle. Code that reached into `db` directly must migrate; the public methods (`saveTx`, `getTx`, `getTxids`, `delTxs`, `pruneTxs`, `close`) are unchanged.
+- On first open, `DbMempool` discards leftover RocksDB files from an existing mempool directory. The mempool is a cache, so no data migration is required.
+
+### Added
+
+- Regression coverage for the mempool backend swap: legacy RocksDB directory cleanup, preservation of unrelated files, and a guard asserting `rocksdb` is never loaded.
+
 ## 3.0.0
 
 This release contains bug fixes, dependency upgrades, stronger test coverage, and runtime cleanup changes. Because it raises the minimum Node.js version, removes XEC support, updates several major dependencies, and changes header-network validation behavior, publish this as a major release unless consumers have already opted into these changes.

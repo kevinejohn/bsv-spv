@@ -1,10 +1,31 @@
 import * as bsv from "bsv-minimal";
-import levelup, { LevelUp } from "levelup";
-import rocksdb from "rocksdb";
+import * as lmdb from "lmdb";
 import fs from "fs";
+import path from "path";
+
+/**
+ * Legacy RocksDB artifacts left behind by the previous backend.
+ * The mempool database is a disposable cache, so these can be discarded
+ * once the LMDB store has been initialised.
+ */
+const LEGACY_ROCKSDB_FILE =
+  /^(CURRENT|LOCK|LOG|LOG\.old\..*|IDENTITY|MANIFEST-\d+|OPTIONS-\d+|\d+\.(log|sst|ldb))$/;
+
+function removeLegacyRocksdbFiles(dir: string) {
+  let removed = 0;
+  for (const entry of fs.readdirSync(dir)) {
+    if (!LEGACY_ROCKSDB_FILE.test(entry)) continue;
+    try {
+      fs.rmSync(path.join(dir, entry), { force: true });
+      removed++;
+    } catch (err) {}
+  }
+  return removed;
+}
 
 export default class DbMempool {
-  db: LevelUp;
+  dbi_root: lmdb.RootDatabase;
+  dbi_txs: lmdb.Database<Buffer, Buffer>;
   txs: { [key: string]: Buffer };
   batch: { type: "put"; key: Buffer; value: Buffer }[];
   intervalBatch?: NodeJS.Timeout;
@@ -24,7 +45,21 @@ export default class DbMempool {
     fs.mkdirSync(mempoolDir, { recursive: true });
     this.pruneAfter = pruneAfter;
     this.batch = [];
-    this.db = levelup(rocksdb(mempoolDir), { readOnly });
+
+    if (!readOnly && !fs.existsSync(path.join(mempoolDir, "data.mdb"))) {
+      const removed = removeLegacyRocksdbFiles(mempoolDir);
+      if (removed > 0)
+        console.log(
+          `Discarded ${removed} legacy RocksDB file(s) from ${mempoolDir}`
+        );
+    }
+
+    this.dbi_root = lmdb.open({ path: mempoolDir, noSubdir: false, readOnly });
+    this.dbi_txs = this.dbi_root.openDB({
+      name: "txs",
+      keyEncoding: "binary",
+      encoding: "binary",
+    });
     this.txs = {};
   }
 
@@ -33,13 +68,18 @@ export default class DbMempool {
     clearInterval(this.intervalPrune);
     this.intervalBatch = undefined;
     this.intervalPrune = undefined;
-    await this.saveTxs();
-    await new Promise<void>((resolve, reject) => {
-      this.db.close((err: any) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
+    try {
+      await this.saveTxs();
+    } catch (err) {}
+    try {
+      await this.dbi_txs.flushed;
+    } catch (err) {}
+    try {
+      await this.dbi_txs.close();
+    } catch (err) {}
+    try {
+      await this.dbi_root.close();
+    } catch (err) {}
   }
 
   saveTx(tx: bsv.Transaction) {
@@ -59,28 +99,20 @@ export default class DbMempool {
       this.intervalPrune = setInterval(() => this.pruneTxs(), 1000 * 60 * 20);
   }
 
-  saveTxs() {
-    return new Promise((resolve, reject) => {
-      if (this.batch.length === 0) return resolve(null);
-      const operations = this.batch;
-      this.batch = [];
-      this.db.batch(operations, (err: any) => {
-        if (err) return reject(err);
-        resolve(null);
-        operations.map(({ key }) => delete this.txs[key.toString("hex")]);
-      });
+  async saveTxs() {
+    if (this.batch.length === 0) return;
+    const operations = this.batch;
+    this.batch = [];
+    this.dbi_txs.transactionSync(() => {
+      for (const { key, value } of operations) this.dbi_txs.put(key, value);
     });
+    for (const { key } of operations) delete this.txs[key.toString("hex")];
   }
 
-  delTxs(txids: Buffer[]) {
-    return new Promise((resolve, reject) => {
-      if (txids.length === 0) return resolve(null);
-      const operations: any = [];
-      txids.map((txid) => operations.push({ type: "del", key: txid }));
-      this.db.batch(operations, (err: any) => {
-        if (err) return reject(err);
-        resolve(null);
-      });
+  async delTxs(txids: Buffer[]) {
+    if (txids.length === 0) return;
+    this.dbi_txs.transactionSync(() => {
+      for (const txid of txids) this.dbi_txs.remove(txid);
     });
   }
 
@@ -91,31 +123,28 @@ export default class DbMempool {
     olderThan?: number;
     newerThan?: number;
   }): Promise<Buffer[]> {
-    return new Promise((resolve, reject) => {
-      try {
-        const txids: Buffer[] = [];
-        const hasOlderThan = typeof olderThan === "number";
-        const hasNewerThan = typeof newerThan === "number";
-        const stream = this.db.createReadStream({ keys: true, values: true });
-        stream.on("data", ({ key, value }: { key: Buffer; value: Buffer }) => {
-          const br = new bsv.utils.BufferReader(value);
-          const time = br.readVarintNum();
-          if (hasOlderThan && hasNewerThan) {
-            if (time < olderThan && time > newerThan) txids.push(key);
-          } else if (hasOlderThan) {
-            if (time < olderThan) txids.push(key);
-          } else if (hasNewerThan) {
-            if (time > newerThan) txids.push(key);
-          } else {
-            txids.push(key);
-          }
-        });
-        stream.on("error", (err: any) => reject(err));
-        stream.on("end", () => resolve(txids));
-      } catch (err) {
-        reject(err);
+    try {
+      const txids: Buffer[] = [];
+      const hasOlderThan = typeof olderThan === "number";
+      const hasNewerThan = typeof newerThan === "number";
+      for (const { key, value } of this.dbi_txs.getRange()) {
+        if (!Buffer.isBuffer(key) || !Buffer.isBuffer(value)) continue;
+        const br = new bsv.utils.BufferReader(value);
+        const time = br.readVarintNum();
+        if (hasOlderThan && hasNewerThan) {
+          if (time < olderThan! && time > newerThan!) txids.push(key);
+        } else if (hasOlderThan) {
+          if (time < olderThan!) txids.push(key);
+        } else if (hasNewerThan) {
+          if (time > newerThan!) txids.push(key);
+        } else {
+          txids.push(key);
+        }
       }
-    });
+      return Promise.resolve(txids);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async getTx(txid: string | Buffer) {
@@ -127,7 +156,7 @@ export default class DbMempool {
       return { tx, size, time };
     }
     if (!Buffer.isBuffer(txid)) txid = Buffer.from(txid, "hex");
-    const buf = await this.db.get(txid);
+    const buf = this.dbi_txs.get(txid);
     if (!buf) throw Error(`Tx not found`);
     const br = new bsv.utils.BufferReader(buf);
     const time = Math.floor(br.readVarintNum() / 1000);

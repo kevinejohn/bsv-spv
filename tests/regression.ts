@@ -33,13 +33,11 @@ function mempoolValue(time: number, payload: Buffer) {
   return bw.toBuffer();
 }
 
-function putLevel(db: DbMempool["db"], key: Buffer, value: Buffer) {
-  return new Promise<void>((resolve, reject) => {
-    db.put(key, value, (err: Error | null | undefined) => {
-      if (err) reject(err);
-      else resolve();
-    });
+function putMempool(db: DbMempool, key: Buffer, value: Buffer) {
+  db.dbi_txs.transactionSync(() => {
+    db.dbi_txs.put(key, value);
   });
+  return Promise.resolve();
 }
 
 const GENESIS_TX_HEX =
@@ -57,12 +55,12 @@ async function testMempoolPruneKeepsFreshTxs() {
     const now = +new Date();
     const cutoff = now - 1000;
 
-    await putLevel(
-      db.db,
+    await putMempool(
+      db,
       oldKey,
       mempoolValue(now - 10_000, Buffer.from([1]))
     );
-    await putLevel(db.db, freshKey, mempoolValue(now, Buffer.from([2])));
+    await putMempool(db, freshKey, mempoolValue(now, Buffer.from([2])));
 
     const prunable = await db.getTxids({ olderThan: cutoff });
     assert.deepEqual(
@@ -92,6 +90,7 @@ async function testMempoolCloseFlushesPendingBatchAndClearsIntervals() {
     await db.close();
     assert.equal(db.intervalBatch, undefined);
     assert.equal(db.intervalPrune, undefined);
+    await db.close(); // close must be idempotent
 
     const reopened = new DbMempool({ mempoolDir: dir });
     const saved = await reopened.getTx(tx.getTxid());
@@ -371,8 +370,50 @@ async function testServerTxEndpointValidationAndSources() {
   });
 }
 
+async function testMempoolDiscardsLegacyRocksdbFiles() {
+  await withTempDir("bsv-spv-mempool-legacy-", async (dir) => {
+    const legacy = [
+      "CURRENT",
+      "MANIFEST-000004",
+      "OPTIONS-000007",
+      "000003.log",
+      "000005.sst",
+      "LOCK",
+      "IDENTITY",
+    ];
+    for (const name of legacy) fs.writeFileSync(path.join(dir, name), "junk");
+    const unrelated = path.join(dir, "keep-me.txt");
+    fs.writeFileSync(unrelated, "keep");
+
+    const db = new DbMempool({ mempoolDir: dir });
+
+    for (const name of legacy)
+      assert.equal(
+        fs.existsSync(path.join(dir, name)),
+        false,
+        `${name} should be discarded`
+      );
+    assert.equal(fs.existsSync(unrelated), true, "unrelated files preserved");
+    assert.equal(
+      fs.existsSync(path.join(dir, "data.mdb")),
+      true,
+      "LMDB store initialised"
+    );
+    await db.close();
+  });
+}
+
+function testMempoolDoesNotLoadRocksdb() {
+  const loaded = Object.keys(require.cache).filter((key) =>
+    key.includes(`${path.sep}rocksdb${path.sep}`)
+  );
+  assert.deepEqual(loaded, [], `rocksdb must not be loaded: ${loaded}`);
+}
+
 async function main() {
+  testMempoolDoesNotLoadRocksdb();
   await testMempoolPruneKeepsFreshTxs();
+  await testMempoolDiscardsLegacyRocksdbFiles();
   await testMempoolCloseFlushesPendingBatchAndClearsIntervals();
   await testDelBlockClearsStaleSavedMarker();
   await testBlacklistUsesRollingExpiry();
