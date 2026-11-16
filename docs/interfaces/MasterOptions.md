@@ -38,7 +38,7 @@ Defined in: [src/cluster\_master.ts:39](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **DEBUG\_LOG?**: `boolean`
 
-Defined in: [src/cluster\_master.ts:42](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L42)
+Defined in: [src/cluster\_master.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L48)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [src/cluster\_master.ts:42](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **DEBUG\_MEMORY?**: `boolean`
 
-Defined in: [src/cluster\_master.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L43)
+Defined in: [src/cluster\_master.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L49)
 
 ***
 
@@ -98,11 +98,41 @@ Defined in: [src/cluster\_master.ts:30](https://github.com/kevinejohn/bsv-spv/bl
 
 ***
 
+### nodeBackoffBase?
+
+> `optional` **nodeBackoffBase?**: `number`
+
+Defined in: [src/cluster\_master.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L43)
+
+First cooldown applied to a host after it fails to connect.
+
+***
+
+### nodeBackoffMax?
+
+> `optional` **nodeBackoffMax?**: `number`
+
+Defined in: [src/cluster\_master.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L45)
+
+Ceiling for the per-host exponential cooldown.
+
+***
+
 ### nodes
 
 > **nodes**: `string`[]
 
 Defined in: [src/cluster\_master.ts:27](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L27)
+
+***
+
+### nodeStableTime?
+
+> `optional` **nodeStableTime?**: `number`
+
+Defined in: [src/cluster\_master.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L47)
+
+A connection held at least this long resets the host's failure streak.
 
 ***
 

@@ -69,6 +69,7 @@ export type SpvEvents = {
   mempool_tx: (data: { transaction: Transaction }) => void;
   mempool_txs_seen: (data: { txids: Buffer[] }) => void;
   could_not_connect: (data: { ticker: string; node: string }) => void;
+  node_unresponsive: (data: { ticker: string; node: string }) => void;
   block_downloading: (data: { hash: string; height: number }) => void;
   block_pruned: (data: { height?: number; hash: string }) => void;
 };

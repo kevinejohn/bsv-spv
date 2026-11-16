@@ -104,7 +104,7 @@ Defined in: [src/types/SpvEmitter.ts:33](https://github.com/kevinejohn/bsv-spv/b
 
 > **block\_downloading**: (`data`) => `void`
 
-Defined in: [src/types/SpvEmitter.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/SpvEmitter.ts#L72)
+Defined in: [src/types/SpvEmitter.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/SpvEmitter.ts#L73)
 
 #### Parameters
 
@@ -128,7 +128,7 @@ Defined in: [src/types/SpvEmitter.ts:72](https://github.com/kevinejohn/bsv-spv/b
 
 > **block\_pruned**: (`data`) => `void`
 
-Defined in: [src/types/SpvEmitter.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/SpvEmitter.ts#L73)
+Defined in: [src/types/SpvEmitter.ts:74](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/SpvEmitter.ts#L74)
 
 #### Parameters
 
@@ -429,6 +429,30 @@ Defined in: [src/types/SpvEmitter.ts:70](https://github.com/kevinejohn/bsv-spv/b
 ###### txids
 
 `Buffer`[]
+
+#### Returns
+
+`void`
+
+***
+
+### node\_unresponsive
+
+> **node\_unresponsive**: (`data`) => `void`
+
+Defined in: [src/types/SpvEmitter.ts:72](https://github.com/kevinejohn/bsv-spv/blob/master/src/types/SpvEmitter.ts#L72)
+
+#### Parameters
+
+##### data
+
+###### node
+
+`string`
+
+###### ticker
+
+`string`
 
 #### Returns
 

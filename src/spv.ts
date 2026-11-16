@@ -70,6 +70,7 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
   DEBUG_LOG: boolean;
   getPeersTimeout?: NodeJS.Timeout;
   peerPingInterval?: NodeJS.Timeout;
+  reconnectTimeout?: NodeJS.Timeout;
 
   constructor({
     uid,
@@ -319,14 +320,11 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
           failedPings = 0;
         } catch (err) {
           if (!this.peer) return;
-          if (failedPings++ >= 2) {
-            // Reconnect
+          if (++failedPings >= 3) {
             console.error(
-              `${this.id} Node did not respond to ping ${failedPings} times. Reconnecting...`
+              `${this.id} Node ${this.node} did not respond to ping ${failedPings} times. Dropping it.`
             );
-            this.peer.disconnects = 0; // Reset disconnects
-            this.disconnect();
-            this.connect();
+            this.onNodeUnresponsive();
           }
         }
       }, 1000 * 60 * 1);
@@ -608,9 +606,32 @@ export default class Spv extends (EventEmitter as new () => SpvEmitter) {
       this.emit("could_not_connect", { ticker, node });
     }
   }
+  /**
+   * The peer stopped answering pings.
+   *
+   * Reports the failure and stands down instead of dialling the same host
+   * again. When this instance owns its own reconnection it retries after
+   * `autoReconnectWait`; when it is managed by the cluster master, the master
+   * applies its per-host cooldown and decides which node comes next.
+   */
+  onNodeUnresponsive() {
+    if (!this.peer) return;
+    this.emit("node_unresponsive", { ticker: this.ticker, node: this.node });
+    this.disconnect();
+    if (!this.autoReconnect) return;
+    const wait =
+      typeof this.autoReconnectWait === "number" ? this.autoReconnectWait : 2000;
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectTimeout = undefined;
+      this.connect().catch(() => {});
+    }, wait);
+  }
+
   disconnect() {
     clearInterval(this.peerPingInterval);
     clearTimeout(this.getPeersTimeout);
+    clearTimeout(this.reconnectTimeout);
+    this.reconnectTimeout = undefined;
     this.syncingBlocks = false;
     this.syncingHeaders = undefined;
     this.connecting = false;

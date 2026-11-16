@@ -1,5 +1,26 @@
 # Changelog
 
+## 4.1.0
+
+### Added
+
+- Per-host connection backoff. `Master` records every failed connection attempt in a new `peers_attempts` LMDB store and will not hand that host out again until `nodeBackoffBase * 2^(failures - 1)` has elapsed, capped at `nodeBackoffMax`. Defaults are 10 seconds and 10 minutes. Holding a connection for `nodeStableTime` (default 1 minute) resets the host's failure streak, so a peer that finally drops after hours is retried promptly while a flapping one escalates.
+- `DbNodes` gains `recordFailure`, `recordConnected`, `resetAttempts`, `getAttempt` and `getBackoffRemaining`, and exports a pure `backoffDelay(count, base, max)` helper. `NodeAttempt` and `backoffDelay` are exported from the package root.
+- `Spv` emits `node_unresponsive` when a peer stops answering pings, so callers can distinguish a silent peer from a dropped socket.
+- Regression coverage for the backoff: escalation and cap, persistence across a reopen, the stable-versus-flapping reset, and the master refusing to re-hand a host it just failed.
+
+### Changed
+
+- `MasterOptions` adds `nodeBackoffBase`, `nodeBackoffMax` and `nodeStableTime`.
+- `Master#getNextNode` now returns `{ node, waitMs }` instead of a bare node string. `waitMs` is only non-zero when every known host is still cooling down, in which case the shortest outstanding cooldown wins.
+- Workers no longer reconnect on their own. `Master` passes `autoReconnect: false` and owns node selection, so a failed host cannot be retried behind its back before the cooldown expires.
+
+### Fixed
+
+- `Master` no longer reconnects to a host that just failed. Previously a failing seed node was handed straight back to the worker with no delay: `getNodes()` passed seed nodes through unfiltered, and `getNextNode()` fell back to a random seed once its queue drained. Against a closed port this produced roughly 29,000 reconnect attempts to one IP in 15 seconds; it is now one attempt per cooldown.
+- `ClusterWorker` sent `send_new_node` on every `could_not_connect` without any throttle, bypassing the `disconnects >= 3` gate entirely. Requests are now de-duplicated per attempt and carry the host that failed, so the master can apply the correct cooldown.
+- `Spv` reconnected to the same host immediately after three missed pings, resetting `peer.disconnects` first so the failure never counted. It now emits `node_unresponsive`, tears the peer down and stands down: under a `Master` the cooldown decides what happens next, and a standalone instance retries after `autoReconnectWait` instead of dialling straight away.
+
 ## 4.0.0
 
 ### Breaking

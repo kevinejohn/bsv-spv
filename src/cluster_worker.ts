@@ -12,6 +12,8 @@ process.on("uncaughtException", (err) => {
 export default class Worker {
   spv?: Spv;
   shuttingDown: boolean;
+  requestedNode: boolean;
+  pendingNodeTimer?: NodeJS.Timeout;
   blockInterval?: NodeJS.Timeout;
   memoryInterval?: NodeJS.Timeout;
   resetInterval?: NodeJS.Timeout;
@@ -19,6 +21,7 @@ export default class Worker {
 
   constructor() {
     this.shuttingDown = false;
+    this.requestedNode = false;
     process.on("SIGINT", () => this.shutdown(0, "SIGINT"));
     process.on("SIGTERM", () => this.shutdown(0, "SIGTERM"));
     process.on("message", (message: any) => {
@@ -30,9 +33,8 @@ export default class Worker {
           if (obj.command === "init") {
             this.start(obj).catch((err) => console.error(err));
           } else if (obj.command === "new_node") {
-            const { node } = obj.data;
-            this.spv?.disconnect();
-            this.spv?.connect(node);
+            const { node, waitMs } = obj.data;
+            this.assignNode(node, waitMs);
           } else if (obj.command === "shutdown") {
             this.shutdown(0, "master shutdown");
           }
@@ -41,6 +43,43 @@ export default class Worker {
         console.error(err);
       }
     });
+  }
+
+  /**
+   * Dial a node handed out by the master. A non-zero `waitMs` means every
+   * known host is still cooling down after a failed attempt, so wait it out
+   * instead of reconnecting immediately.
+   */
+  private assignNode(node: string, waitMs = 0) {
+    clearTimeout(this.pendingNodeTimer);
+    this.pendingNodeTimer = undefined;
+    this.requestedNode = false;
+    try {
+      this.spv?.disconnect();
+    } catch (err) {}
+    if (this.shuttingDown) return;
+    if (waitMs > 0) {
+      console.log(
+        `Worker waiting ${Number(waitMs / 1000).toFixed(1)}s before connecting to ${node}`
+      );
+      this.pendingNodeTimer = setTimeout(() => {
+        this.pendingNodeTimer = undefined;
+        if (this.shuttingDown) return;
+        this.spv?.connect(node).catch(() => {});
+      }, waitMs);
+      return;
+    }
+    this.spv?.connect(node).catch(() => {});
+  }
+
+  /**
+   * Ask the master to move this worker to another host. De-duplicated so a
+   * single failed attempt produces a single request.
+   */
+  private requestNode(node?: string) {
+    if (this.requestedNode) return;
+    this.requestedNode = true;
+    this.sendToMaster({ command: `send_new_node`, data: { node } });
   }
 
   sendToMaster(obj: any) {
@@ -55,6 +94,8 @@ export default class Worker {
     clearInterval(this.memoryInterval);
     clearInterval(this.resetInterval);
     clearInterval(this.statusInterval);
+    clearTimeout(this.pendingNodeTimer);
+    this.pendingNodeTimer = undefined;
     try {
       await this.spv?.close();
     } catch (err) {
@@ -65,7 +106,7 @@ export default class Worker {
     }
   }
 
-  async start(config: SpvOptions) {
+  async start(config: SpvOptions & { connectAfterMs?: number }) {
     const { mempool, blocks, DEBUG_MEMORY } = config;
     const REFRESH = 10; // console.log status every 10 seconds
     let txsSeen = 0;
@@ -100,8 +141,8 @@ export default class Worker {
     spv.on("version_invalid", ({ error }) => {
       // console.error(
       //   `${spv.id} has invalid user_agent: ${user_agent}. Will only connect to nodes that match "${expected_user_agent}"`
-      // );
-      this.sendToMaster({ command: `send_new_node` });
+      // )
+      this.requestNode();
     });
     spv.on("disconnected", ({ node, disconnects }) => {
       if (hasConnected)
@@ -115,11 +156,14 @@ export default class Worker {
         command: `disconnected`,
         data: { node, disconnects },
       });
-      if (disconnects >= 3) this.sendToMaster({ command: `send_new_node` });
+      // Always hand the failed host back to the master. It owns the per-host
+      // cooldown, so reconnecting is never attempted behind its back.
+      this.requestNode(node);
     });
     spv.on("connected", async ({ node }) => {
       console.log(`${spv.id} connected at ${new Date().toLocaleString()}`);
       hasConnected = true;
+      this.requestedNode = false;
 
       this.sendToMaster({
         command: `connected`,
@@ -158,8 +202,8 @@ export default class Worker {
         }
       }
     });
-    spv.on("could_not_connect", () => {
-      this.sendToMaster({ command: `send_new_node` });
+    spv.on("could_not_connect", ({ node }) => {
+      this.requestNode(node);
     });
 
     spv.on("headers_new", ({ headers }) => {
@@ -342,6 +386,16 @@ export default class Worker {
       }
     }, REFRESH * 1000);
 
+    const connectAfterMs = config.connectAfterMs || 0;
+    if (connectAfterMs > 0) {
+      console.log(
+        `${spv.id} Waiting ${Number(connectAfterMs / 1000).toFixed(
+          1
+        )}s before connecting to ${config.node}...`
+      );
+      await new Promise((resolve) => setTimeout(resolve, connectAfterMs));
+      if (this.shuttingDown) return;
+    }
     console.log(`${spv.id} Connecting to node ${config.node}...`);
     await spv.connect();
   }

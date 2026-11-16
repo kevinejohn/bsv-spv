@@ -6,7 +6,7 @@
 
 # Class: Master
 
-Defined in: [src/cluster\_master.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L46)
+Defined in: [src/cluster\_master.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L52)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/cluster\_master.ts:46](https://github.com/kevinejohn/bsv-spv/bl
 
 > **new Master**(`__namedParameters`): `Master`
 
-Defined in: [src/cluster\_master.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L64)
+Defined in: [src/cluster\_master.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L73)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [src/cluster\_master.ts:64](https://github.com/kevinejohn/bsv-spv/bl
 
 > **block\_nodes**: `Set`\<`string`\>
 
-Defined in: [src/cluster\_master.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L55)
+Defined in: [src/cluster\_master.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L61)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [src/cluster\_master.ts:55](https://github.com/kevinejohn/bsv-spv/bl
 
 > **blocks**: `number`
 
-Defined in: [src/cluster\_master.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L59)
+Defined in: [src/cluster\_master.ts:65](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L65)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [src/cluster\_master.ts:59](https://github.com/kevinejohn/bsv-spv/bl
 
 > **db\_nodes**: [`DbNodes`](DbNodes.md)
 
-Defined in: [src/cluster\_master.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L51)
+Defined in: [src/cluster\_master.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L57)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [src/cluster\_master.ts:51](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **memoryInterval?**: `Timeout`
 
-Defined in: [src/cluster\_master.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L62)
+Defined in: [src/cluster\_master.ts:71](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L71)
 
 ***
 
@@ -64,7 +64,7 @@ Defined in: [src/cluster\_master.ts:62](https://github.com/kevinejohn/bsv-spv/bl
 
 > **mempool**: `number`
 
-Defined in: [src/cluster\_master.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L58)
+Defined in: [src/cluster\_master.ts:64](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L64)
 
 ***
 
@@ -72,7 +72,7 @@ Defined in: [src/cluster\_master.ts:58](https://github.com/kevinejohn/bsv-spv/bl
 
 > **mempool\_nodes**: `Set`\<`string`\>
 
-Defined in: [src/cluster\_master.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L56)
+Defined in: [src/cluster\_master.ts:62](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L62)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [src/cluster\_master.ts:56](https://github.com/kevinejohn/bsv-spv/bl
 
 > **mempool\_sockets**: `object`
 
-Defined in: [src/cluster\_master.ts:48](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L48)
+Defined in: [src/cluster\_master.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L54)
 
 #### Index Signature
 
@@ -88,11 +88,35 @@ Defined in: [src/cluster\_master.ts:48](https://github.com/kevinejohn/bsv-spv/bl
 
 ***
 
+### nodeBackoffBase
+
+> **nodeBackoffBase**: `number`
+
+Defined in: [src/cluster\_master.ts:67](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L67)
+
+***
+
+### nodeBackoffMax
+
+> **nodeBackoffMax**: `number`
+
+Defined in: [src/cluster\_master.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L68)
+
+***
+
+### nodeStableTime
+
+> **nodeStableTime**: `number`
+
+Defined in: [src/cluster\_master.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L69)
+
+***
+
 ### queue\_block\_nodes
 
 > **queue\_block\_nodes**: `string`[]
 
-Defined in: [src/cluster\_master.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L53)
+Defined in: [src/cluster\_master.ts:59](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L59)
 
 ***
 
@@ -100,7 +124,7 @@ Defined in: [src/cluster\_master.ts:53](https://github.com/kevinejohn/bsv-spv/bl
 
 > **queue\_mempool\_nodes**: `string`[]
 
-Defined in: [src/cluster\_master.ts:54](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L54)
+Defined in: [src/cluster\_master.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L60)
 
 ***
 
@@ -108,7 +132,7 @@ Defined in: [src/cluster\_master.ts:54](https://github.com/kevinejohn/bsv-spv/bl
 
 > **seed\_nodes**: `string`[]
 
-Defined in: [src/cluster\_master.ts:57](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L57)
+Defined in: [src/cluster\_master.ts:63](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L63)
 
 ***
 
@@ -116,7 +140,7 @@ Defined in: [src/cluster\_master.ts:57](https://github.com/kevinejohn/bsv-spv/bl
 
 > **seedNodesOnly**: `boolean`
 
-Defined in: [src/cluster\_master.ts:60](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L60)
+Defined in: [src/cluster\_master.ts:66](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L66)
 
 ***
 
@@ -124,7 +148,7 @@ Defined in: [src/cluster\_master.ts:60](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **server?**: `Server`
 
-Defined in: [src/cluster\_master.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L50)
+Defined in: [src/cluster\_master.ts:56](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L56)
 
 ***
 
@@ -132,7 +156,7 @@ Defined in: [src/cluster\_master.ts:50](https://github.com/kevinejohn/bsv-spv/bl
 
 > **shuttingDown**: `boolean`
 
-Defined in: [src/cluster\_master.ts:61](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L61)
+Defined in: [src/cluster\_master.ts:70](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L70)
 
 ***
 
@@ -140,7 +164,7 @@ Defined in: [src/cluster\_master.ts:61](https://github.com/kevinejohn/bsv-spv/bl
 
 > **sockets**: `object`
 
-Defined in: [src/cluster\_master.ts:47](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L47)
+Defined in: [src/cluster\_master.ts:53](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L53)
 
 #### Index Signature
 
@@ -152,7 +176,7 @@ Defined in: [src/cluster\_master.ts:47](https://github.com/kevinejohn/bsv-spv/bl
 
 > **workerConfig**: [`SpvOptions`](../interfaces/SpvOptions.md)
 
-Defined in: [src/cluster\_master.ts:52](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L52)
+Defined in: [src/cluster\_master.ts:58](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L58)
 
 ***
 
@@ -160,7 +184,7 @@ Defined in: [src/cluster\_master.ts:52](https://github.com/kevinejohn/bsv-spv/bl
 
 > **workers**: `object`
 
-Defined in: [src/cluster\_master.ts:49](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L49)
+Defined in: [src/cluster\_master.ts:55](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L55)
 
 #### Index Signature
 
@@ -172,7 +196,7 @@ Defined in: [src/cluster\_master.ts:49](https://github.com/kevinejohn/bsv-spv/bl
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [src/cluster\_master.ts:411](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L411)
+Defined in: [src/cluster\_master.ts:521](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L521)
 
 #### Returns
 
@@ -180,21 +204,50 @@ Defined in: [src/cluster\_master.ts:411](https://github.com/kevinejohn/bsv-spv/b
 
 ***
 
+### getAllNodes()
+
+> **getAllNodes**(): `string`[]
+
+Defined in: [src/cluster\_master.ts:448](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L448)
+
+Every known node, regardless of cooldown state.
+
+#### Returns
+
+`string`[]
+
+***
+
 ### getNextNode()
 
-> **getNextNode**(`type`): `string`
+> **getNextNode**(`type`): `object`
 
-Defined in: [src/cluster\_master.ts:378](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L378)
+Defined in: [src/cluster\_master.ts:483](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L483)
+
+Pick the next node for a worker.
+
+Returns the node plus how long the worker should wait before dialling it.
+`waitMs` is only non-zero when every known host is still cooling down
+after a failed attempt, in which case the shortest outstanding cooldown
+wins rather than spinning on a host that is known to be down.
 
 #### Parameters
 
 ##### type
 
-`"block"` \| `"mempool"`
+[`WorkerType`](../type-aliases/WorkerType.md)
 
 #### Returns
 
-`string`
+`object`
+
+##### node
+
+> **node**: `string`
+
+##### waitMs
+
+> **waitMs**: `number`
 
 ***
 
@@ -202,7 +255,7 @@ Defined in: [src/cluster\_master.ts:378](https://github.com/kevinejohn/bsv-spv/b
 
 > **getNodes**(): `string`[]
 
-Defined in: [src/cluster\_master.ts:347](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L347)
+Defined in: [src/cluster\_master.ts:414](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L414)
 
 #### Returns
 
@@ -214,7 +267,7 @@ Defined in: [src/cluster\_master.ts:347](https://github.com/kevinejohn/bsv-spv/b
 
 > **onMempoolTxMessage**(`data`): `void`
 
-Defined in: [src/cluster\_master.ts:336](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L336)
+Defined in: [src/cluster\_master.ts:403](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L403)
 
 #### Parameters
 
@@ -232,7 +285,7 @@ Defined in: [src/cluster\_master.ts:336](https://github.com/kevinejohn/bsv-spv/b
 
 > **onMessage**(`data`): `void`
 
-Defined in: [src/cluster\_master.ts:324](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L324)
+Defined in: [src/cluster\_master.ts:391](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L391)
 
 #### Parameters
 
@@ -250,7 +303,7 @@ Defined in: [src/cluster\_master.ts:324](https://github.com/kevinejohn/bsv-spv/b
 
 > **startServer**(`__namedParameters`): `void`
 
-Defined in: [src/cluster\_master.ts:243](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L243)
+Defined in: [src/cluster\_master.ts:310](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_master.ts#L310)
 
 #### Parameters
 

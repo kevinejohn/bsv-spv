@@ -7,7 +7,7 @@ import Net from "net";
 import path from "path";
 import { assertSupportedTicker, SupportedTicker } from "./tickers";
 
-type WorkerType = "block" | "mempool";
+export type WorkerType = "block" | "mempool";
 type ManagedWorker = Worker & {
   spvType?: WorkerType;
   spvNode?: string;
@@ -39,6 +39,12 @@ export interface MasterOptions {
   dataDir: string;
   pruneBlocks: number;
   blockHeight: number;
+  /** First cooldown applied to a host after it fails to connect. */
+  nodeBackoffBase?: number;
+  /** Ceiling for the per-host exponential cooldown. */
+  nodeBackoffMax?: number;
+  /** A connection held at least this long resets the host's failure streak. */
+  nodeStableTime?: number;
   DEBUG_LOG?: boolean;
   DEBUG_MEMORY?: boolean;
 }
@@ -58,6 +64,9 @@ export default class Master {
   mempool: number;
   blocks: number;
   seedNodesOnly: boolean;
+  nodeBackoffBase: number;
+  nodeBackoffMax: number;
+  nodeStableTime: number;
   shuttingDown: boolean;
   memoryInterval?: NodeJS.Timeout;
 
@@ -78,6 +87,9 @@ export default class Master {
     mempool = 0,
     blocks = 0,
     validate,
+    nodeBackoffBase = 1000 * 10, // 10 seconds
+    nodeBackoffMax = 1000 * 60 * 10, // 10 minutes
+    nodeStableTime = 1000 * 60, // 1 minute
     DEBUG_LOG,
     DEBUG_MEMORY,
   }: MasterOptions) {
@@ -85,6 +97,9 @@ export default class Master {
     this.mempool_sockets = {};
     this.workers = {};
     this.shuttingDown = false;
+    this.nodeBackoffBase = nodeBackoffBase;
+    this.nodeBackoffMax = Math.max(nodeBackoffBase, nodeBackoffMax);
+    this.nodeStableTime = nodeStableTime;
     process.once("SIGINT", () => this.shutdown("SIGINT"));
     process.once("SIGTERM", () => this.shutdown("SIGTERM"));
 
@@ -122,7 +137,10 @@ export default class Master {
       pruneBlocks,
       blockHeight,
       validate,
-      autoReconnectWait: 100,
+      // The master owns node selection, so workers must not retry a dead host
+      // on their own. Every failure is reported back here, which applies the
+      // per-host cooldown before handing out another node.
+      autoReconnect: false,
       DEBUG_LOG,
       DEBUG_MEMORY,
     };
@@ -197,34 +215,78 @@ export default class Master {
     }
   }
 
+  private recordNodeFailure(node: string) {
+    if (!node) return;
+    try {
+      this.db_nodes.recordFailure({ node }, { stableTime: this.nodeStableTime });
+    } catch (err) {}
+  }
+
+  private isCoolingDown(node: string) {
+    return (
+      this.db_nodes.getBackoffRemaining(
+        { node },
+        { base: this.nodeBackoffBase, max: this.nodeBackoffMax }
+      ) > 0
+    );
+  }
+
   private forkWorker(type: WorkerType) {
     const label = type === "block" ? "blocks" : "mempool";
     const activeNodes =
       type === "block" ? this.block_nodes : this.mempool_nodes;
-    let node = this.getNextNode(type);
+    const selection = this.getNextNode(type);
+    let node = selection.node;
+    const waitMs = selection.waitMs;
     const worker = cluster.fork() as ManagedWorker;
     activeNodes.add(node);
     this.registerWorker(worker, type, node);
 
     worker.on("message", async (data) => {
       if (typeof data !== "string") return;
+      let obj: any;
       try {
-        const { command } = JSON.parse(data);
-        if (type === "mempool" && command === "mempool_tx") {
-          return this.onMempoolTxMessage(data);
-        } else if (command === "send_new_node") {
-          const oldNode = node;
-          activeNodes.delete(node);
-          node = this.getNextNode(type);
-          activeNodes.add(node);
-          this.registerWorker(worker, type, node);
-          worker.send(JSON.stringify({ command: "new_node", data: { node } }));
-          console.log(
-            `master: #${worker.id} ${label}-${oldNode} disconnected trying node: ${node}`
-          );
-          return;
-        }
-      } catch (err) {}
+        obj = JSON.parse(data);
+      } catch (err) {
+        return;
+      }
+      const { command } = obj;
+      if (type === "mempool" && command === "mempool_tx") {
+        return this.onMempoolTxMessage(data);
+      } else if (command === "connected") {
+        // Marks the host as healthy so a later disconnect is treated as a
+        // one-off instead of another consecutive failure.
+        const connectedNode = obj.data?.node || node;
+        try {
+          this.db_nodes.recordConnected({ node: connectedNode });
+        } catch (err) {}
+        return this.onMessage(data);
+      } else if (command === "send_new_node") {
+        const oldNode = node;
+        // Key the cooldown on the exact string this master handed out. The
+        // worker reports the peer's parsed `{node, port}`, which drops the
+        // port and would not match an entry in the node list.
+        this.recordNodeFailure(oldNode);
+        activeNodes.delete(node);
+        const next = this.getNextNode(type);
+        node = next.node;
+        activeNodes.add(node);
+        this.registerWorker(worker, type, node);
+        worker.send(
+          JSON.stringify({
+            command: "new_node",
+            data: { node, waitMs: next.waitMs },
+          })
+        );
+        const wait =
+          next.waitMs > 0
+            ? ` in ${Number(next.waitMs / 1000).toFixed(1)}s`
+            : "";
+        console.log(
+          `master: #${worker.id} ${label}-${oldNode} disconnected trying node: ${node}${wait}`
+        );
+        return;
+      }
       this.onMessage(data);
     });
 
@@ -233,10 +295,15 @@ export default class Master {
       uid: worker.id,
       command: "init",
       node,
+      connectAfterMs: waitMs,
     };
     initConfig[type === "block" ? "blocks" : "mempool"] = true;
     worker.send(`${JSON.stringify(initConfig)}\n\n`);
-    console.log(`master: Forked ${label}-${node}`);
+    console.log(
+      `master: Forked ${label}-${node}${
+        waitMs > 0 ? ` (waiting ${Number(waitMs / 1000).toFixed(1)}s)` : ""
+      }`
+    );
     return worker;
   }
 
@@ -372,40 +439,83 @@ export default class Master {
           added.add(node);
         });
     }
-    return nodes.reverse();
+    // Hosts that recently failed to connect sit out their cooldown. This is
+    // what stops the master re-handing the same IP straight after a failure.
+    return nodes.filter((node) => !this.isCoolingDown(node)).reverse();
   }
 
-  getNextNode(type: "block" | "mempool") {
-    let node;
-    for (let i = 0; i < this.mempool + this.blocks; i++) {
-      if (type === "block") {
-        if (this.queue_block_nodes.length === 0) {
-          this.queue_block_nodes = this.getNodes();
-          console.log(
-            `master: Refilling block queue`,
-            this.queue_block_nodes.length
-          );
-        }
-        node = this.queue_block_nodes.pop();
-        if (node && !this.block_nodes.has(node)) break;
-      } else if (type === "mempool") {
-        if (this.queue_mempool_nodes.length === 0) {
-          this.queue_mempool_nodes = this.getNodes();
-          console.log(
-            `master: Refilling mempool queue`,
-            this.queue_mempool_nodes.length
-          );
-        }
-        node = this.queue_mempool_nodes.pop();
-        if (node && !this.mempool_nodes.has(node)) break;
-      } else {
-        throw Error(`Invalid type`);
+  /** Every known node, regardless of cooldown state. */
+  getAllNodes() {
+    const nodes: string[] = [];
+    const added: Set<string> = new Set();
+    for (const node of this.seed_nodes) {
+      if (!added.has(node)) {
+        nodes.push(node);
+        added.add(node);
       }
     }
-    return (
-      node ||
-      this.seed_nodes[Math.floor(Math.random() * this.seed_nodes.length)]
-    );
+    if (!this.seedNodesOnly) {
+      const blacklisted = new Set(this.db_nodes.getBlacklistedNodes());
+      for (const node of this.db_nodes.getSeenNodes()) {
+        if (!added.has(node) && !blacklisted.has(node)) {
+          nodes.push(node);
+          added.add(node);
+        }
+      }
+      for (const node of this.db_nodes.getConnectedNodes()) {
+        if (!added.has(node) && !blacklisted.has(node)) {
+          nodes.push(node);
+          added.add(node);
+        }
+      }
+    }
+    return nodes;
+  }
+
+  /**
+   * Pick the next node for a worker.
+   *
+   * Returns the node plus how long the worker should wait before dialling it.
+   * `waitMs` is only non-zero when every known host is still cooling down
+   * after a failed attempt, in which case the shortest outstanding cooldown
+   * wins rather than spinning on a host that is known to be down.
+   */
+  getNextNode(type: WorkerType): { node: string; waitMs: number } {
+    const activeNodes =
+      type === "block" ? this.block_nodes : this.mempool_nodes;
+    const queue =
+      type === "block" ? this.queue_block_nodes : this.queue_mempool_nodes;
+    const label = type === "block" ? "block" : "mempool";
+    const maxTries = Math.max(1, this.mempool + this.blocks);
+
+    for (let i = 0; i < maxTries; i++) {
+      if (queue.length === 0) {
+        const nodes = this.getNodes();
+        queue.push(...nodes);
+        console.log(`master: Refilling ${label} queue`, queue.length);
+        if (queue.length === 0) break;
+      }
+      const node = queue.shift();
+      if (!node) break;
+      if (activeNodes.has(node)) continue;
+      return { node, waitMs: 0 };
+    }
+
+    // Nothing is eligible yet: wait out the shortest remaining cooldown.
+    let best: { node: string; waitMs: number } | undefined;
+    for (const node of this.getAllNodes()) {
+      const waitMs = this.db_nodes.getBackoffRemaining(
+        { node },
+        { base: this.nodeBackoffBase, max: this.nodeBackoffMax }
+      );
+      if (!best || waitMs < best.waitMs) best = { node, waitMs };
+    }
+    if (best) return best;
+
+    return {
+      node: this.seed_nodes[Math.floor(Math.random() * this.seed_nodes.length)],
+      waitMs: 0,
+    };
   }
 
   async close() {

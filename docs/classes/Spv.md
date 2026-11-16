@@ -18,7 +18,7 @@ Defined in: [src/spv.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/sr
 
 > **new Spv**(`__namedParameters`): `Spv`
 
-Defined in: [src/spv.ts:74](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L74)
+Defined in: [src/spv.ts:75](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L75)
 
 #### Parameters
 
@@ -220,6 +220,14 @@ Defined in: [src/spv.ts:45](https://github.com/kevinejohn/bsv-spv/blob/master/sr
 
 ***
 
+### reconnectTimeout?
+
+> `optional` **reconnectTimeout?**: `Timeout`
+
+Defined in: [src/spv.ts:73](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L73)
+
+***
+
 ### saveMempool
 
 > **saveMempool**: `boolean`
@@ -304,7 +312,7 @@ Defined in: [src/spv.ts:44](https://github.com/kevinejohn/bsv-spv/blob/master/sr
 
 > **addHeaders**(`__namedParameters`): `Promise`\<`number`\>
 
-Defined in: [src/spv.ts:151](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L151)
+Defined in: [src/spv.ts:152](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L152)
 
 #### Parameters
 
@@ -356,7 +364,7 @@ Defined in: [src/types/TypedEventEmitter.ts:24](https://github.com/kevinejohn/bs
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [src/spv.ts:626](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L626)
+Defined in: [src/spv.ts:647](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L647)
 
 #### Returns
 
@@ -368,7 +376,7 @@ Defined in: [src/spv.ts:626](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **connect**(`node?`): `Promise`\<`void`\>
 
-Defined in: [src/spv.ts:215](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L215)
+Defined in: [src/spv.ts:216](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L216)
 
 #### Parameters
 
@@ -386,7 +394,7 @@ Defined in: [src/spv.ts:215](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **disconnect**(): `void`
 
-Defined in: [src/spv.ts:611](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L611)
+Defined in: [src/spv.ts:630](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L630)
 
 #### Returns
 
@@ -398,7 +406,7 @@ Defined in: [src/spv.ts:611](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **downloadBlock**(`__namedParameters`): `Promise`\<`boolean`\>
 
-Defined in: [src/spv.ts:679](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L679)
+Defined in: [src/spv.ts:700](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L700)
 
 #### Parameters
 
@@ -470,7 +478,7 @@ Defined in: [src/types/TypedEventEmitter.ts:42](https://github.com/kevinejohn/bs
 
 > **getBlockTx**(`__namedParameters`): `Promise`\<\{ `tx`: `Transaction` \| `undefined`; \}\>
 
-Defined in: [src/spv.ts:664](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L664)
+Defined in: [src/spv.ts:685](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L685)
 
 #### Parameters
 
@@ -502,7 +510,7 @@ Defined in: [src/spv.ts:664](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **getHash**(`height`): `string`
 
-Defined in: [src/spv.ts:641](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L641)
+Defined in: [src/spv.ts:662](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L662)
 
 #### Parameters
 
@@ -520,7 +528,7 @@ Defined in: [src/spv.ts:641](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **getHeader**(`__namedParameters`): `Header`
 
-Defined in: [src/spv.ts:647](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L647)
+Defined in: [src/spv.ts:668](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L668)
 
 #### Parameters
 
@@ -544,7 +552,7 @@ Defined in: [src/spv.ts:647](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **getHeight**(`hash?`): `number`
 
-Defined in: [src/spv.ts:638](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L638)
+Defined in: [src/spv.ts:659](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L659)
 
 #### Parameters
 
@@ -578,7 +586,7 @@ Defined in: [src/types/TypedEventEmitter.ts:47](https://github.com/kevinejohn/bs
 
 > **getNodePeers**(): `Promise`\<\{ `addrs`: `NetAddress`[]; `node`: `string`; `port`: `number`; `ticker`: `string`; \}\>
 
-Defined in: [src/spv.ts:652](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L652)
+Defined in: [src/spv.ts:673](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L673)
 
 #### Returns
 
@@ -590,7 +598,7 @@ Defined in: [src/spv.ts:652](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **getTip**(): `object`
 
-Defined in: [src/spv.ts:644](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L644)
+Defined in: [src/spv.ts:665](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L665)
 
 #### Returns
 
@@ -610,7 +618,7 @@ Defined in: [src/spv.ts:644](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **isConnected**(): `boolean`
 
-Defined in: [src/spv.ts:635](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L635)
+Defined in: [src/spv.ts:656](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L656)
 
 #### Returns
 
@@ -770,6 +778,25 @@ Defined in: [src/types/TypedEventEmitter.ts:26](https://github.com/kevinejohn/bs
 
 ***
 
+### onNodeUnresponsive()
+
+> **onNodeUnresponsive**(): `void`
+
+Defined in: [src/spv.ts:617](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L617)
+
+The peer stopped answering pings.
+
+Reports the failure and stands down instead of dialling the same host
+again. When this instance owns its own reconnection it retries after
+`autoReconnectWait`; when it is managed by the cluster master, the master
+applies its per-host cooldown and decides which node comes next.
+
+#### Returns
+
+`void`
+
+***
+
 ### prependListener()
 
 > **prependListener**\<`E`\>(`event`, `listener`): `this`
@@ -866,7 +893,7 @@ Defined in: [src/types/TypedEventEmitter.ts:43](https://github.com/kevinejohn/bs
 
 > **readBlock**(`__namedParameters`, `callback`): `Promise`\<`boolean`\>
 
-Defined in: [src/spv.ts:693](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L693)
+Defined in: [src/spv.ts:714](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L714)
 
 #### Parameters
 
@@ -980,7 +1007,7 @@ Defined in: [src/types/TypedEventEmitter.ts:48](https://github.com/kevinejohn/bs
 
 > **syncBlocks**(): `Promise`\<`number`\>
 
-Defined in: [src/spv.ts:713](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L713)
+Defined in: [src/spv.ts:734](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L734)
 
 #### Returns
 
@@ -992,7 +1019,7 @@ Defined in: [src/spv.ts:713](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **syncHeaders**(): `Promise`\<`number`\>
 
-Defined in: [src/spv.ts:174](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L174)
+Defined in: [src/spv.ts:175](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L175)
 
 #### Returns
 
@@ -1004,7 +1031,7 @@ Defined in: [src/spv.ts:174](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **updateId**(): `void`
 
-Defined in: [src/spv.ts:139](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L139)
+Defined in: [src/spv.ts:140](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L140)
 
 #### Returns
 
@@ -1016,7 +1043,7 @@ Defined in: [src/spv.ts:139](https://github.com/kevinejohn/bsv-spv/blob/master/s
 
 > **warningPruneBlocks**(): `Promise`\<`number`\>
 
-Defined in: [src/spv.ts:745](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L745)
+Defined in: [src/spv.ts:766](https://github.com/kevinejohn/bsv-spv/blob/master/src/spv.ts#L766)
 
 #### Returns
 

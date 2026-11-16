@@ -6,7 +6,7 @@
 
 # Class: DbNodes
 
-Defined in: [src/db\_nodes.ts:5](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L5)
+Defined in: [src/db\_nodes.ts:31](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L31)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [src/db\_nodes.ts:5](https://github.com/kevinejohn/bsv-spv/blob/mast
 
 > **new DbNodes**(`__namedParameters`): `DbNodes`
 
-Defined in: [src/db\_nodes.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L16)
+Defined in: [src/db\_nodes.ts:43](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L43)
 
 #### Parameters
 
@@ -46,7 +46,15 @@ Defined in: [src/db\_nodes.ts:16](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **blacklistTime**: `number`
 
-Defined in: [src/db\_nodes.ts:6](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L6)
+Defined in: [src/db\_nodes.ts:32](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L32)
+
+***
+
+### dbi\_attempts
+
+> **dbi\_attempts**: `Database`\<[`NodeAttempt`](../interfaces/NodeAttempt.md), `string`\>
+
+Defined in: [src/db\_nodes.ts:39](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L39)
 
 ***
 
@@ -54,7 +62,7 @@ Defined in: [src/db\_nodes.ts:6](https://github.com/kevinejohn/bsv-spv/blob/mast
 
 > **dbi\_blacklisted**: `Database`\<`number`, `string`\>
 
-Defined in: [src/db\_nodes.ts:12](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L12)
+Defined in: [src/db\_nodes.ts:38](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L38)
 
 ***
 
@@ -62,7 +70,7 @@ Defined in: [src/db\_nodes.ts:12](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **dbi\_connected**: `Database`\<`number`, `string`\>
 
-Defined in: [src/db\_nodes.ts:11](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L11)
+Defined in: [src/db\_nodes.ts:37](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L37)
 
 ***
 
@@ -70,7 +78,7 @@ Defined in: [src/db\_nodes.ts:11](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **dbi\_meta**: `Database`\<`any`, `string`\>
 
-Defined in: [src/db\_nodes.ts:9](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L9)
+Defined in: [src/db\_nodes.ts:35](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L35)
 
 ***
 
@@ -78,7 +86,7 @@ Defined in: [src/db\_nodes.ts:9](https://github.com/kevinejohn/bsv-spv/blob/mast
 
 > **dbi\_root**: `RootDatabase`
 
-Defined in: [src/db\_nodes.ts:8](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L8)
+Defined in: [src/db\_nodes.ts:34](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L34)
 
 ***
 
@@ -86,7 +94,7 @@ Defined in: [src/db\_nodes.ts:8](https://github.com/kevinejohn/bsv-spv/blob/mast
 
 > **dbi\_seen**: `Database`\<`any`, `string`\>
 
-Defined in: [src/db\_nodes.ts:10](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L10)
+Defined in: [src/db\_nodes.ts:36](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L36)
 
 ***
 
@@ -94,7 +102,7 @@ Defined in: [src/db\_nodes.ts:10](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **enableIpv6**: `boolean`
 
-Defined in: [src/db\_nodes.ts:14](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L14)
+Defined in: [src/db\_nodes.ts:41](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L41)
 
 ***
 
@@ -102,7 +110,7 @@ Defined in: [src/db\_nodes.ts:14](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **env**: `any`
 
-Defined in: [src/db\_nodes.ts:7](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L7)
+Defined in: [src/db\_nodes.ts:33](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L33)
 
 ***
 
@@ -110,7 +118,7 @@ Defined in: [src/db\_nodes.ts:7](https://github.com/kevinejohn/bsv-spv/blob/mast
 
 > **nodesDir**: `string`
 
-Defined in: [src/db\_nodes.ts:13](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L13)
+Defined in: [src/db\_nodes.ts:40](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L40)
 
 ## Methods
 
@@ -118,7 +126,7 @@ Defined in: [src/db\_nodes.ts:13](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **blacklist**(`__namedParameters`): `void`
 
-Defined in: [src/db\_nodes.ts:126](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L126)
+Defined in: [src/db\_nodes.ts:245](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L245)
 
 #### Parameters
 
@@ -142,7 +150,7 @@ Defined in: [src/db\_nodes.ts:126](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **close**(): `Promise`\<`void`\>
 
-Defined in: [src/db\_nodes.ts:51](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L51)
+Defined in: [src/db\_nodes.ts:81](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L81)
 
 #### Returns
 
@@ -154,7 +162,7 @@ Defined in: [src/db\_nodes.ts:51](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 > **connected**(`__namedParameters`): `void`
 
-Defined in: [src/db\_nodes.ts:114](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L114)
+Defined in: [src/db\_nodes.ts:147](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L147)
 
 #### Parameters
 
@@ -178,7 +186,7 @@ Defined in: [src/db\_nodes.ts:114](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **formatUrl**(`__namedParameters`): `string`
 
-Defined in: [src/db\_nodes.ts:69](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L69)
+Defined in: [src/db\_nodes.ts:102](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L102)
 
 #### Parameters
 
@@ -198,11 +206,76 @@ Defined in: [src/db\_nodes.ts:69](https://github.com/kevinejohn/bsv-spv/blob/mas
 
 ***
 
+### getAttempt()
+
+> **getAttempt**(`__namedParameters`): [`NodeAttempt`](../interfaces/NodeAttempt.md) \| `undefined`
+
+Defined in: [src/db\_nodes.ts:159](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L159)
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### node
+
+`string`
+
+###### port?
+
+`number`
+
+#### Returns
+
+[`NodeAttempt`](../interfaces/NodeAttempt.md) \| `undefined`
+
+***
+
+### getBackoffRemaining()
+
+> **getBackoffRemaining**(`__namedParameters`, `__namedParameters`): `number`
+
+Defined in: [src/db\_nodes.ts:230](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L230)
+
+Milliseconds remaining before this node may be attempted again.
+Returns 0 when the node has no failures or its cooldown has elapsed.
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### node
+
+`string`
+
+###### port?
+
+`number`
+
+##### \_\_namedParameters
+
+###### base
+
+`number`
+
+###### max
+
+`number`
+
+###### now?
+
+`number` = `...`
+
+#### Returns
+
+`number`
+
+***
+
 ### getBlacklistCutoff()
 
 > **getBlacklistCutoff**(): `number`
 
-Defined in: [src/db\_nodes.ts:152](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L152)
+Defined in: [src/db\_nodes.ts:271](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L271)
 
 #### Returns
 
@@ -214,7 +287,7 @@ Defined in: [src/db\_nodes.ts:152](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **getBlacklistedNodes**(): `string`[]
 
-Defined in: [src/db\_nodes.ts:140](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L140)
+Defined in: [src/db\_nodes.ts:259](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L259)
 
 #### Returns
 
@@ -226,7 +299,7 @@ Defined in: [src/db\_nodes.ts:140](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **getConnectedNodes**(): `string`[]
 
-Defined in: [src/db\_nodes.ts:156](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L156)
+Defined in: [src/db\_nodes.ts:275](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L275)
 
 #### Returns
 
@@ -238,7 +311,7 @@ Defined in: [src/db\_nodes.ts:156](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **getSeenNodes**(): `string`[]
 
-Defined in: [src/db\_nodes.ts:165](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L165)
+Defined in: [src/db\_nodes.ts:284](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L284)
 
 #### Returns
 
@@ -250,7 +323,7 @@ Defined in: [src/db\_nodes.ts:165](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **hasConnected**(`__namedParameters`): `boolean`
 
-Defined in: [src/db\_nodes.ts:120](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L120)
+Defined in: [src/db\_nodes.ts:153](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L153)
 
 #### Parameters
 
@@ -274,7 +347,7 @@ Defined in: [src/db\_nodes.ts:120](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **hasSavedSeen**(`secondsAgo?`): `boolean`
 
-Defined in: [src/db\_nodes.ts:104](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L104)
+Defined in: [src/db\_nodes.ts:137](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L137)
 
 #### Parameters
 
@@ -292,7 +365,7 @@ Defined in: [src/db\_nodes.ts:104](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **isBlacklisted**(`__namedParameters`): `boolean`
 
-Defined in: [src/db\_nodes.ts:134](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L134)
+Defined in: [src/db\_nodes.ts:253](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L253)
 
 #### Parameters
 
@@ -316,7 +389,103 @@ Defined in: [src/db\_nodes.ts:134](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **markSavedSeen**(): `void`
 
-Defined in: [src/db\_nodes.ts:101](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L101)
+Defined in: [src/db\_nodes.ts:134](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L134)
+
+#### Returns
+
+`void`
+
+***
+
+### recordConnected()
+
+> **recordConnected**(`__namedParameters`): `void`
+
+Defined in: [src/db\_nodes.ts:201](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L201)
+
+Record a successful connection. Does not clear the failure counter.
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### node
+
+`string`
+
+###### now?
+
+`number` = `...`
+
+###### port?
+
+`number`
+
+#### Returns
+
+`void`
+
+***
+
+### recordFailure()
+
+> **recordFailure**(`__namedParameters`, `__namedParameters?`): [`NodeAttempt`](../interfaces/NodeAttempt.md)
+
+Defined in: [src/db\_nodes.ts:179](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L179)
+
+Record the outcome of a connection attempt that failed.
+
+Consecutive failures escalate the backoff. A host that had been connected
+for at least `stableTime` is treated as a fresh, one-off failure instead of
+a flapping host, so a long-lived peer that finally drops is retried soon.
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### node
+
+`string`
+
+###### port?
+
+`number`
+
+##### \_\_namedParameters?
+
+###### now?
+
+`number` = `...`
+
+###### stableTime?
+
+`number` = `0`
+
+#### Returns
+
+[`NodeAttempt`](../interfaces/NodeAttempt.md)
+
+***
+
+### resetAttempts()
+
+> **resetAttempts**(`__namedParameters`): `void`
+
+Defined in: [src/db\_nodes.ts:219](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L219)
+
+Forget a host's failure streak.
+
+#### Parameters
+
+##### \_\_namedParameters
+
+###### node
+
+`string`
+
+###### port?
+
+`number`
 
 #### Returns
 
@@ -328,7 +497,7 @@ Defined in: [src/db\_nodes.ts:101](https://github.com/kevinejohn/bsv-spv/blob/ma
 
 > **saveSeenNodes**(`addrs`): `Promise`\<`number`\>
 
-Defined in: [src/db\_nodes.ts:82](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L82)
+Defined in: [src/db\_nodes.ts:115](https://github.com/kevinejohn/bsv-spv/blob/master/src/db_nodes.ts#L115)
 
 #### Parameters
 

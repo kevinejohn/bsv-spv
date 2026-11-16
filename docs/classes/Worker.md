@@ -14,7 +14,7 @@ Defined in: [src/cluster\_worker.ts:12](https://github.com/kevinejohn/bsv-spv/bl
 
 > **new Worker**(): `Worker`
 
-Defined in: [src/cluster\_worker.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L20)
+Defined in: [src/cluster\_worker.ts:22](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L22)
 
 #### Returns
 
@@ -26,7 +26,7 @@ Defined in: [src/cluster\_worker.ts:20](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **blockInterval?**: `Timeout`
 
-Defined in: [src/cluster\_worker.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L15)
+Defined in: [src/cluster\_worker.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L17)
 
 ***
 
@@ -34,7 +34,23 @@ Defined in: [src/cluster\_worker.ts:15](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **memoryInterval?**: `Timeout`
 
+Defined in: [src/cluster\_worker.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L18)
+
+***
+
+### pendingNodeTimer?
+
+> `optional` **pendingNodeTimer?**: `Timeout`
+
 Defined in: [src/cluster\_worker.ts:16](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L16)
+
+***
+
+### requestedNode
+
+> **requestedNode**: `boolean`
+
+Defined in: [src/cluster\_worker.ts:15](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L15)
 
 ***
 
@@ -42,7 +58,7 @@ Defined in: [src/cluster\_worker.ts:16](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **resetInterval?**: `Timeout`
 
-Defined in: [src/cluster\_worker.ts:17](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L17)
+Defined in: [src/cluster\_worker.ts:19](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L19)
 
 ***
 
@@ -66,7 +82,7 @@ Defined in: [src/cluster\_worker.ts:13](https://github.com/kevinejohn/bsv-spv/bl
 
 > `optional` **statusInterval?**: `Timeout`
 
-Defined in: [src/cluster\_worker.ts:18](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L18)
+Defined in: [src/cluster\_worker.ts:20](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L20)
 
 ## Methods
 
@@ -74,7 +90,7 @@ Defined in: [src/cluster\_worker.ts:18](https://github.com/kevinejohn/bsv-spv/bl
 
 > **sendToMaster**(`obj`): `void`
 
-Defined in: [src/cluster\_worker.ts:46](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L46)
+Defined in: [src/cluster\_worker.ts:85](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L85)
 
 #### Parameters
 
@@ -92,7 +108,7 @@ Defined in: [src/cluster\_worker.ts:46](https://github.com/kevinejohn/bsv-spv/bl
 
 > **shutdown**(`exitCode?`, `reason?`): `Promise`\<`void`\>
 
-Defined in: [src/cluster\_worker.ts:50](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L50)
+Defined in: [src/cluster\_worker.ts:89](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L89)
 
 #### Parameters
 
@@ -114,13 +130,13 @@ Defined in: [src/cluster\_worker.ts:50](https://github.com/kevinejohn/bsv-spv/bl
 
 > **start**(`config`): `Promise`\<`void`\>
 
-Defined in: [src/cluster\_worker.ts:68](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L68)
+Defined in: [src/cluster\_worker.ts:109](https://github.com/kevinejohn/bsv-spv/blob/master/src/cluster_worker.ts#L109)
 
 #### Parameters
 
 ##### config
 
-[`SpvOptions`](../interfaces/SpvOptions.md)
+[`SpvOptions`](../interfaces/SpvOptions.md) & `object`
 
 #### Returns
 

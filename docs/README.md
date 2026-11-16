@@ -22,9 +22,15 @@
 - [DbListenerBlockOptions](interfaces/DbListenerBlockOptions.md)
 - [ListenerOptions](interfaces/ListenerOptions.md)
 - [MasterOptions](interfaces/MasterOptions.md)
+- [NodeAttempt](interfaces/NodeAttempt.md)
 - [SpvOptions](interfaces/SpvOptions.md)
 
 ## Type Aliases
 
 - [SpvEvents](type-aliases/SpvEvents.md)
 - [SupportedTicker](type-aliases/SupportedTicker.md)
+- [WorkerType](type-aliases/WorkerType.md)
+
+## Functions
+
+- [backoffDelay](functions/backoffDelay.md)

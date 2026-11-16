@@ -11,7 +11,8 @@ import Master from "../src/cluster_master";
 import DbBlocks from "../src/db_blocks";
 import DbHeaders from "../src/db_headers";
 import DbMempool from "../src/db_mempool";
-import DbNodes from "../src/db_nodes";
+import DbNodes, { backoffDelay } from "../src/db_nodes";
+import Spv from "../src/spv";
 import Server from "../src/server";
 
 async function withTempDir(
@@ -134,6 +135,244 @@ async function testBlacklistUsesRollingExpiry() {
     db.dbi_blacklisted.put(url, Math.round(+new Date() / 1000));
     await db.dbi_blacklisted.flushed;
     assert.equal(db.isBlacklisted({ node, port }), true);
+
+    await db.close();
+  });
+}
+
+function makeNodeMaster(
+  db: DbNodes,
+  seeds: string[],
+  opts: Partial<{
+    nodeBackoffBase: number;
+    nodeBackoffMax: number;
+    nodeStableTime: number;
+    blocks: number;
+    mempool: number;
+  }> = {}
+) {
+  const master: any = Object.create(Master.prototype);
+  master.db_nodes = db;
+  master.seed_nodes = seeds;
+  master.seedNodesOnly = false;
+  master.block_nodes = new Set<string>();
+  master.mempool_nodes = new Set<string>();
+  master.queue_block_nodes = [];
+  master.queue_mempool_nodes = [];
+  master.mempool = opts.mempool ?? 1;
+  master.blocks = opts.blocks ?? 1;
+  master.nodeBackoffBase = opts.nodeBackoffBase ?? 10000;
+  master.nodeBackoffMax = opts.nodeBackoffMax ?? 600000;
+  master.nodeStableTime = opts.nodeStableTime ?? 60000;
+  return master;
+}
+
+function testBackoffDelayEscalatesAndCaps() {
+  assert.equal(backoffDelay(0, 10000, 600000), 0);
+  assert.equal(backoffDelay(1, 10000, 600000), 10000);
+  assert.equal(backoffDelay(2, 10000, 600000), 20000);
+  assert.equal(backoffDelay(3, 10000, 600000), 40000);
+  assert.equal(backoffDelay(64, 10000, 600000), 600000, "capped at max");
+  assert.equal(backoffDelay(1000, 10000, 600000), 600000, "no overflow");
+  assert.equal(backoffDelay(5, 0, 600000), 0, "disabled when base is 0");
+}
+
+async function testNodeFailureBackoffPersistsAndExpires() {
+  await withTempDir("bsv-spv-attempts-", async (dir) => {
+    const node = "127.0.0.1:8333";
+    const base = 10000;
+    const db = new DbNodes({ nodesDir: dir, readOnly: false });
+
+    assert.equal(
+      db.getBackoffRemaining({ node }, { base, max: 600000 }),
+      0,
+      "unknown node is eligible"
+    );
+
+    const t0 = 1_000_000;
+    const first = db.recordFailure({ node }, { now: t0 });
+    assert.equal(first.count, 1);
+    assert.equal(
+      db.getBackoffRemaining({ node }, { base, max: 600000, now: t0 }),
+      base,
+      "first failure waits the base delay"
+    );
+
+    const second = db.recordFailure({ node }, { now: t0 + base });
+    assert.equal(second.count, 2);
+    assert.equal(
+      db.getBackoffRemaining({ node }, { base, max: 600000, now: t0 + base }),
+      base * 2,
+      "second failure doubles the delay"
+    );
+
+    assert.equal(
+      db.getBackoffRemaining(
+        { node },
+        { base, max: 600000, now: t0 + base + base * 2 }
+      ),
+      0,
+      "cooldown expires"
+    );
+
+    await db.close();
+
+    // The cooldown must survive a restart so a master bounce does not
+    // immediately re-hammer a host that was just failing.
+    const reopened = new DbNodes({ nodesDir: dir, readOnly: false });
+    assert.equal(
+      reopened.getAttempt({ node })?.count,
+      2,
+      "failure streak is persisted"
+    );
+    await reopened.close();
+  });
+}
+
+function testAttemptKeyIncludesPort() {
+  const db = new DbNodes({
+    nodesDir: fs.mkdtempSync(path.join(os.tmpdir(), "bsv-spv-portkey-")),
+    readOnly: false,
+  });
+  // bsv-p2p reports `disconnected` with the port stripped. The master must key
+  // the cooldown on the exact string it handed out, otherwise a cooling host
+  // still looks eligible and gets retried instantly.
+  db.recordFailure({ node: "1.2.3.4:8333" }, { stableTime: 60000 });
+  assert.ok(db.getBackoffRemaining({ node: "1.2.3.4:8333" }, { base: 10000, max: 600000 }) > 0);
+  assert.equal(
+    db.getBackoffRemaining({ node: "1.2.3.4" }, { base: 10000, max: 600000 }),
+    0,
+    "port-stripped host is a different key"
+  );
+  db.close();
+}
+
+function testStableConnectionResetsFailureStreak() {
+  const db = new DbNodes({
+    nodesDir: fs.mkdtempSync(path.join(os.tmpdir(), "bsv-spv-stable-")),
+    readOnly: false,
+  });
+  const node = "10.0.0.1:8333";
+  const now = 2_000_000;
+  const stableTime = 60000;
+
+  db.recordFailure({ node }, { now, stableTime });
+  db.recordFailure({ node }, { now: now + 1, stableTime });
+  assert.equal(db.getAttempt({ node })?.count, 2);
+
+  // Connected and held for longer than `stableTime`: treat the next failure
+  // as a fresh one instead of escalating.
+  db.recordConnected({ node, now: now + 2 });
+  const afterStable = db.recordFailure(
+    { node },
+    { now: now + 2 + stableTime + 1, stableTime }
+  );
+  assert.equal(afterStable.count, 1, "stable host starts over");
+
+  // A host that connects and drops straight away keeps escalating.
+  db.recordConnected({ node, now: now + 1000 });
+  const flapping = db.recordFailure(
+    { node },
+    { now: now + 1100, stableTime }
+  );
+  assert.equal(flapping.count, 2, "flapping host keeps escalating");
+  db.close();
+}
+
+async function testPingTimeoutDefersToNodeOwner() {
+  // Managed by a master: report the failure and stand down.
+  await withTempDir("bsv-spv-ping-managed-", async (dir) => {
+    const spv: any = new Spv({
+      ticker: "BSV",
+      node: "10.0.0.9:8333",
+      dataDir: dir,
+      autoReconnect: false,
+    });
+    let unresponsive = 0;
+    let connects = 0;
+    spv.on("node_unresponsive", () => unresponsive++);
+    spv.connect = async () => {
+      connects++;
+    };
+    spv.peer = { disconnect() {}, connected: true };
+
+    spv.onNodeUnresponsive();
+
+    assert.equal(unresponsive, 1, "failure is reported to the owner");
+    assert.equal(spv.peer, undefined, "peer is torn down");
+    assert.equal(connects, 0, "does not dial the same host again");
+    assert.equal(spv.reconnectTimeout, undefined, "no retry is scheduled");
+    await spv.close();
+  });
+
+  // Standalone: retry after autoReconnectWait instead of immediately.
+  await withTempDir("bsv-spv-ping-solo-", async (dir) => {
+    const spv: any = new Spv({
+      ticker: "BSV",
+      node: "10.0.0.9:8333",
+      dataDir: dir,
+      autoReconnect: true,
+      autoReconnectWait: 10,
+    });
+    let retries = 0;
+    spv.connect = async () => {
+      retries++;
+    };
+    spv.peer = { disconnect() {}, connected: true };
+
+    spv.onNodeUnresponsive();
+    assert.equal(retries, 0, "waits instead of reconnecting immediately");
+
+    await new Promise((resolve) => setTimeout(resolve, 80));
+    assert.equal(retries, 1, "retries once the wait elapses");
+    await spv.close();
+  });
+}
+
+async function testMasterDoesNotRehandFailedHost() {
+  await withTempDir("bsv-spv-rehand-", async (dir) => {
+    const db = new DbNodes({ nodesDir: dir, readOnly: false });
+    const node = "127.0.0.1:8333";
+    const master = makeNodeMaster(db, [node]);
+
+    const before = master.getNextNode("block");
+    assert.deepEqual(
+      { node: before.node, waitMs: before.waitMs },
+      { node, waitMs: 0 },
+      "fresh host is dialled immediately"
+    );
+
+    // This is the regression: the host just failed, so the very next call must
+    // not hand it straight back with no wait.
+    db.recordFailure({ node }, { stableTime: 60000 });
+    const after = master.getNextNode("block");
+    assert.equal(after.node, node, "only known host is still chosen");
+    assert.ok(after.waitMs > 0, `expected a cooldown, got ${after.waitMs}`);
+    assert.ok(after.waitMs <= 10000, "cooldown matches the base delay");
+    assert.deepEqual(master.getNodes(), [], "cooling host is skipped");
+
+    await db.close();
+  });
+}
+
+async function testMasterPrefersHealthyHostDuringCooldown() {
+  await withTempDir("bsv-spv-prefer-", async (dir) => {
+    const db = new DbNodes({ nodesDir: dir, readOnly: false });
+    const failing = "10.0.0.1:8333";
+    const healthy = "10.0.0.2:8333";
+    const master = makeNodeMaster(db, [failing, healthy]);
+
+    db.recordFailure({ node: failing }, { stableTime: 60000 });
+
+    assert.deepEqual(
+      master.getNodes().sort(),
+      [healthy],
+      "only the healthy host is eligible"
+    );
+
+    const next = master.getNextNode("block");
+    assert.equal(next.node, healthy, "healthy host wins");
+    assert.equal(next.waitMs, 0, "no wait when a host is eligible");
 
     await db.close();
   });
@@ -417,6 +656,13 @@ async function main() {
   await testMempoolCloseFlushesPendingBatchAndClearsIntervals();
   await testDelBlockClearsStaleSavedMarker();
   await testBlacklistUsesRollingExpiry();
+  testBackoffDelayEscalatesAndCaps();
+  await testNodeFailureBackoffPersistsAndExpires();
+  testAttemptKeyIncludesPort();
+  testStableConnectionResetsFailureStreak();
+  await testPingTimeoutDefersToNodeOwner();
+  await testMasterDoesNotRehandFailedHost();
+  await testMasterPrefersHealthyHostDuringCooldown();
   testWorkerExitRestartsActiveWorkers();
   testWorkerExitDoesNotRestartIntentionalDisconnects();
   testMasterSocketFanout();

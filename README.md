@@ -36,6 +36,12 @@ const config = {
   blockHeight: -10, // Sync to block height. 0 to sync to genesis. Negative to sync to X blocks from current heightafter 2 hours
   mempool: 1, // Number of mempool tx threads
   blocks: 1, // Number of bitcoin block threads
+  // Per-host reconnect backoff. A host that fails to connect is skipped for
+  // nodeBackoffBase * 2^(failures - 1), capped at nodeBackoffMax. Holding a
+  // connection for nodeStableTime clears that host's streak.
+  nodeBackoffBase: 10000, // 10 seconds
+  nodeBackoffMax: 600000, // 10 minutes
+  nodeStableTime: 60000, // 1 minute
 };
 
 if (cluster.isWorker) {
