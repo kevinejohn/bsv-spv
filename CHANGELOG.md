@@ -1,11 +1,15 @@
 # Changelog
 
-## Unreleased
+## 4.0.0
+
+### Breaking
+
+- `DbMempool` no longer exposes the LevelUP `db` handle. It is replaced by `dbi_root` (the LMDB root database) and `dbi_txs` (the `txs` sub-database). The public methods — `saveTx`, `getTx`, `getTxids`, `delTxs`, `pruneTxs` and `close` — are unchanged. Code that reached into `db` must move to the LMDB handles.
+- Importing the package no longer installs `source-map-support` as a side effect. Source maps now use Node's built-in support, which requires Node 20 or newer — already required by `engines`.
 
 ### Changed
 
 - `DbMempool` now uses the bundled LMDB backend instead of RocksDB, matching `DbBlocks`, `DbHeaders`, `DbListener` and `DbNodes`. This drops `rocksdb`, `@types/rocksdb`, `levelup` and `@types/levelup` from the dependency tree, so installing `bsv-spv` no longer compiles RocksDB from source on platforms without a prebuilt binary.
-- `DbMempool` exposes `dbi_root` and `dbi_txs` instead of the former LevelUP `db` handle. Code that reached into `db` directly must migrate; the public methods (`saveTx`, `getTx`, `getTxids`, `delTxs`, `pruneTxs`, `close`) are unchanged.
 - On first open, `DbMempool` discards leftover RocksDB files from an existing mempool directory. The mempool is a cache, so no data migration is required.
 
 ### Added
