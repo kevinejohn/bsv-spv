@@ -1,4 +1,4 @@
-require("source-map-support").install();
+process.setSourceMapsEnabled(true);
 import Spv, { SpvOptions } from "./spv";
 import DbBlocks from "./db_blocks";
 import DbHeaders from "./db_headers";

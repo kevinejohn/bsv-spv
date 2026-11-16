@@ -18,6 +18,10 @@
 - Pinned `brace-expansion` to `^5.0.13` through `overrides`, clearing seven denial-of-service advisories reachable via the docs toolchain.
 - Updated `lmdb` to `^3.5.10`, `typedoc` to `^0.28.20`, `typedoc-plugin-markdown` to `^4.14.1`, and `@types/node` to `^25.9.9`.
 
+### Removed
+
+- Dropped `source-map-support`, which pulled in `source-map` and `buffer-from` as well. Node has supported source maps natively since v16.6, and the package requires Node 20 or newer, so `src/index.ts` now calls `process.setSourceMapsEnabled(true)`. Stack traces are unchanged: a thrown error still resolves to `src/db_mempool.ts:44:28` rather than the compiled `lib/` path.
+
 ### Known issues
 
 - `minimatch@10.2.6`, pulled in by `typedoc`, remains flagged for a moderate denial of service. It is only fixed in `minimatch@11`, which removed the `matchOne` API that `typedoc@0.28.20` still calls — forcing it breaks `npm run docs`. Development-only, blocked on an upstream typedoc release.
